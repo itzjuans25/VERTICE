@@ -8,7 +8,7 @@ root = Path(__file__).resolve().parent.parent
 resultados = root / 'resultados'
 articulo = root / 'docs' / 'articulo'
 perfiles = ('carga', 'estres-6vu', 'estres')
-modulos = (('Auth','auth/auth/auth'), ('Catálogo','catalogo/catalogo'), ('Notificaciones','notificaciones'))
+modulos = (('Auth','auth'), ('Catálogo','catalogo'), ('Notificaciones','notificaciones'))
 
 
 def leer(ruta):

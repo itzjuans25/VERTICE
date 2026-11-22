@@ -86,8 +86,8 @@ if (-not $env:MAIL_HOST) { $env:MAIL_HOST = 'localhost' }
 if (-not $env:MAIL_PORT) { $env:MAIL_PORT = $env:MAILPIT_SMTP_PORT }
 
 $services = @{
-    auth = @{ Path = 'auth\auth\auth'; Port = $env:AUTH_PORT }
-    catalogo = @{ Path = 'catalogo\catalogo'; Port = $env:CATALOGO_PORT }
+    auth = @{ Path = 'auth'; Port = $env:AUTH_PORT }
+    catalogo = @{ Path = 'catalogo'; Port = $env:CATALOGO_PORT }
     notificaciones = @{ Path = 'notificaciones'; Port = $env:NOTIFICACIONES_PORT }
 }
 

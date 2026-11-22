@@ -33,7 +33,7 @@ services:
     runtime: docker
     region: oregon
     plan: free
-    rootDir: auth/auth/auth
+    rootDir: auth
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
@@ -71,7 +71,7 @@ services:
     runtime: docker
     region: oregon
     plan: free
-    rootDir: catalogo/catalogo
+    rootDir: catalogo
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:

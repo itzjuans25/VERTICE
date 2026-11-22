@@ -72,7 +72,7 @@ Reglas:
 
 ## 3. Servicios
 
-### 3.1 Auth (`auth/auth/auth`)
+### 3.1 Auth (`auth`)
 
 Responsabilidades:
 
@@ -89,7 +89,7 @@ Reglas:
 - El JWT incluye `sub` (id), `email`, `nombre`, `role`, `iat` y `exp`.
 - `JWT_SECRET` debe tener al menos 32 caracteres; el servicio falla al arrancar si no se cumple.
 
-### 3.2 Catálogo (`catalogo/catalogo`)
+### 3.2 Catálogo (`catalogo`)
 
 Responsabilidades:
 

@@ -16,8 +16,8 @@ jobs:
       fail-fast: false
       matrix:
         service:
-          - auth/auth/auth
-          - catalogo/catalogo
+          - auth
+          - catalogo
           - notificaciones
     steps:
       - uses: actions/checkout@v4

@@ -13,7 +13,7 @@ Todas las dependencias son open source. Ya no se usan SDK de AWS, Twilio, ModelM
 - **Spring Boot Starter Test**
 - **Spring Boot Maven Plugin**
 
-### Auth (`auth/auth/auth/pom.xml`)
+### Auth (`auth/pom.xml`)
 
 | Dependencia | Uso |
 | --- | --- |
@@ -28,7 +28,7 @@ Todas las dependencias son open source. Ya no se usan SDK de AWS, Twilio, ModelM
 | `spring-security-test` (test) | Pruebas de seguridad |
 | `h2` (test) | Base de datos en memoria para tests |
 
-### Catálogo (`catalogo/catalogo/pom.xml`)
+### Catálogo (`catalogo/pom.xml`)
 
 | Dependencia | Uso |
 | --- | --- |
@@ -109,7 +109,7 @@ Opcionales:
 ### Maven
 
 ```bash
-cd auth/auth/auth
+cd auth
 ./mvnw versions:display-dependency-updates
 ```
 

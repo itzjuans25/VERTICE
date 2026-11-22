@@ -45,7 +45,7 @@ if ($Docker) {
     if (-not $env:ERLANG_HOME) { $env:ERLANG_HOME = Join-Path $env:ProgramFiles 'Erlang OTP' }
     if (-not (Test-Path (Join-Path $env:ERLANG_HOME 'bin/erl.exe'))) { throw 'Falta Erlang OTP o ERLANG_HOME.' }
 
-    $services = [ordered]@{ auth = 'auth/auth/auth'; catalogo = 'catalogo/catalogo'; notificaciones = 'notificaciones' }
+    $services = [ordered]@{ auth = 'auth'; catalogo = 'catalogo'; notificaciones = 'notificaciones' }
     foreach ($service in $services.Keys) {
         $location = $services[$service]
         $jar = Get-ChildItem "$location/target/$service-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1

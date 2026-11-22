@@ -5,7 +5,7 @@ Set-Location (Split-Path $PSScriptRoot)
 $cult = [Globalization.CultureInfo]::InvariantCulture
 function Numero([double]$valor) { $valor.ToString('0.00', $cult) }
 
-$modulos = [ordered]@{ Auth='auth/auth/auth'; 'Catálogo'='catalogo/catalogo'; Notificaciones='notificaciones' }
+$modulos = [ordered]@{ Auth='auth'; 'Catálogo'='catalogo'; Notificaciones='notificaciones' }
 $cobertura = foreach ($m in $modulos.GetEnumerator()) {
     [xml]$reporte = Get-Content -LiteralPath "$($m.Value)/target/site/jacoco/jacoco.xml" -Raw
     $lineas = $reporte.report.counter | Where-Object type -EQ 'LINE'

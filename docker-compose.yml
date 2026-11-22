@@ -50,7 +50,7 @@ services:
 
   auth:
     build:
-      context: ./auth/auth/auth
+      context: ./auth
     container_name: ecommerce-auth
     environment:
       SERVER_PORT: 9090
@@ -82,7 +82,7 @@ services:
 
   catalogo:
     build:
-      context: ./catalogo/catalogo
+      context: ./catalogo
     container_name: ecommerce-catalogo
     environment:
       SERVER_PORT: 9092

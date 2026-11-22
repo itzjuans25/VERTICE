@@ -11,8 +11,8 @@ resultados = root / 'resultados'
 articulo = root / 'docs' / 'articulo'
 perfiles = ('carga', 'estres-6vu', 'estres')
 modulos = (
-    ('Auth', 'auth/auth/auth', 22),
-    ('Catálogo', 'catalogo/catalogo', 31),
+    ('Auth', 'auth', 22),
+    ('Catálogo', 'catalogo', 31),
     ('Notificaciones', 'notificaciones', 21),
 )
 

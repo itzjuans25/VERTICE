@@ -126,7 +126,7 @@ async function main() {
       await page.locator('.opblock').first().waitFor();
       await capture('11-swagger-' + service);
     }
-    for (const [service, path] of Object.entries({ auth: 'auth/auth/auth', catalogo: 'catalogo/catalogo', notificaciones: 'notificaciones' })) {
+    for (const [service, path] of Object.entries({ auth: 'auth', catalogo: 'catalogo', notificaciones: 'notificaciones' })) {
       await page.goto(pathToFileURL(resolve(path, 'target/site/jacoco/index.html')).href);
       await capture('12-cobertura-' + service);
     }

@@ -180,11 +180,11 @@ Alternativa manual (Linux/macOS):
 
 ```bash
 # Auth
-cd auth/auth/auth
+cd auth
 ./mvnw spring-boot:run
 
 # Catálogo
-cd catalogo/catalogo
+cd catalogo
 ./mvnw spring-boot:run
 
 # Notificaciones
@@ -238,18 +238,18 @@ No es la ruta recomendada porque la configuración de RabbitMQ, SMTP y PostgreSQ
 ### Backend
 
 ```bash
-cd auth/auth/auth && ./mvnw clean verify
-cd catalogo/catalogo && ./mvnw clean verify
+cd auth && ./mvnw clean verify
+cd catalogo && ./mvnw clean verify
 cd notificaciones && ./mvnw clean verify
 ```
 
 En Windows:
 
 ```powershell
-cd auth\auth\auth
+cd auth
 cmd /c "mvnw.cmd clean verify"
 
-cd ..\..\..\catalogo\catalogo
+cd ..\..\..\catalogo
 cmd /c "mvnw.cmd clean verify"
 
 cd ..\..\notificaciones
