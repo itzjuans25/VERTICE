@@ -1,0 +1,40 @@
+{
+  "os": "Windows",
+  "tienda": 200,
+  "mailpit": 200,
+  "Auth": {
+    "health": "UP",
+    "swagger": 200,
+    "operations": 10,
+    "port": 9090
+  },
+  "Catalogo": {
+    "health": "UP",
+    "swagger": 200,
+    "operations": 17,
+    "port": 9092
+  },
+  "Notificaciones": {
+    "health": "UP",
+    "swagger": 200,
+    "operations": 5,
+    "port": 9093
+  },
+  "postgresPuerto": 55432,
+  "rabbitmqPuerto": 5673,
+  "tasa": {
+    "precioCop": 15900.0,
+    "precioUsd": 4.63,
+    "tasa": 0.00029109,
+    "fechaTasa": "2026-11-21",
+    "fuente": "Frankfurter",
+    "ultimaConsulta": "2026-11-21T21:58:35.789423800Z"
+  },
+  "entrega": {
+    "fechaEstimada": "2026-11-25",
+    "diasHabiles": 3,
+    "incluyeFestivos": true,
+    "fuente": "Nager.Date"
+  },
+  "composeConfig": "OK"
+}

@@ -1,0 +1,17 @@
+% Generado por pruebas/generar-resultados.ps1 a partir de JaCoCo y k6.
+\newcommand{\FilasCobertura}{
+Auth & 81.34\% & 83.97\% & 330/393 \\
+Catálogo & 71.74\% & 86.62\% & 654/755 \\
+Notificaciones & 91.28\% & 83.20\% & 208/250 \\
+}
+\newcommand{\FilasLatencia}{
+carga (3) & 45.59 & 216.81 & 381.60 & 685.62 \\
+estres (8) & 32.16 & 197.74 & 358.69 & 483.97 \\
+estres (6) & 42.60 & 232.84 & 407.65 & 715.10 \\
+}
+\newcommand{\FilasVolumen}{
+carga (3) & 1224 & 33 & 0 & 40.55 \\
+estres (8) & 4182 & 33 & 0 & 105.14 \\
+estres (6) & 2652 & 33 & 0 & 66.64 \\
+}
+\newcommand{\ResultadoMedido}{Se observaron 2 combinaciones de ruta y perfil con máximos de 500 ms o superiores. La primera corrida detectó que vaciar un carrito inexistente devolvía 404. La operación quedó idempotente y se añadió una prueba de regresión. Se reutilizaron canales RabbitMQ con confirmación por mensaje. El historial pasó a cargar las líneas de compra en la misma consulta y el cambio de clave aplica BCrypt antes de una escritura condicional. La API de notificaciones acepta el aviso en PostgreSQL y un proceso separado confirma la publicación con RabbitMQ. En la versión anterior, una corrida coincidente con el arranque de React alcanzó 507.48 ms.}

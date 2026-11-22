@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import {
-  FaGem,
+  FaMicrochip,
   FaStore,
   FaShoppingCart,
   FaBox,
@@ -21,7 +21,7 @@ function Navbar({ user, onLogout, cartCount }) {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          <FaGem /> E-Commerce
+          <FaMicrochip aria-hidden="true" /> TechStore
         </Link>
 
         <div className="nav-menu">
@@ -55,6 +55,7 @@ function Navbar({ user, onLogout, cartCount }) {
               <span className="nav-user">
                 <FaUser /> {user.nombre}
               </span>
+              <Link to="/cuenta/contrasena" className="nav-link">Cambiar contraseña</Link>
               <button
                 type="button"
                 onClick={onLogout}
@@ -65,6 +66,7 @@ function Navbar({ user, onLogout, cartCount }) {
             </>
           ) : (
             <>
+              <Link to="/productos" className="nav-link"><FaStore /> Catálogo</Link>
               <Link to="/login" className="nav-btn">
                 <FaSignInAlt /> Iniciar Sesión
               </Link>

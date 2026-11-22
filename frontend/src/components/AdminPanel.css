@@ -16,8 +16,8 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(105, 222, 243, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(105, 222, 243, 0.05) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -30,11 +30,11 @@
   z-index: 1;
   animation: fadeInDown 0.6s ease-out;
   padding-bottom: 20px;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  border-bottom: 1px solid rgba(105, 222, 243, 0.2);
 }
 
 .admin-header h1 {
-  background: linear-gradient(135deg, #d4af37 0%, #f4e5c2 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c7f2fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -57,7 +57,7 @@
 }
 
 .btn-new-product {
-  background: linear-gradient(135deg, #d4af37 0%, #c4991f 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c4991f 100%);
   color: #0a0a0a;
   border: none;
   padding: 12px 28px;
@@ -71,8 +71,8 @@
 }
 
 .btn-new-product:hover {
-  background: linear-gradient(135deg, #f4e5c2 0%, #d4af37 100%);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, #c7f2fc 0%, #69def3 100%);
+  box-shadow: 0 6px 20px rgba(105, 222, 243, 0.3);
 }
 
 .product-form-card {
@@ -82,7 +82,7 @@
   padding: 35px;
   margin-bottom: 35px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(105, 222, 243, 0.2);
   position: relative;
   z-index: 1;
   animation: fadeIn 0.6s ease-out;
@@ -95,7 +95,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  background: linear-gradient(90deg, transparent, #69def3, transparent);
 }
 
 @keyframes fadeIn {
@@ -105,7 +105,7 @@
 
 .product-form-card h2 {
   margin-top: 0;
-  background: linear-gradient(135deg, #d4af37 0%, #f4e5c2 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c7f2fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -123,7 +123,7 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #d4af37;
+  color: #69def3;
   font-weight: 400;
   font-size: 12px;
   letter-spacing: 1px;
@@ -134,7 +134,7 @@
 .form-group textarea {
   width: 100%;
   padding: 13px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(105, 222, 243, 0.3);
   border-radius: 0;
   font-size: 14px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -146,8 +146,8 @@
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  border-color: #69def3;
+  box-shadow: 0 0 0 3px rgba(105, 222, 243, 0.1);
   background: rgba(10, 10, 10, 0.7);
 }
 
@@ -184,7 +184,7 @@
 }
 
 .btn-save {
-  background: linear-gradient(135deg, #d4af37 0%, #c4991f 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c4991f 100%);
   color: #0a0a0a;
   border: none;
   padding: 12px 24px;
@@ -198,8 +198,8 @@
 }
 
 .btn-save:hover {
-  background: linear-gradient(135deg, #f4e5c2 0%, #d4af37 100%);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, #c7f2fc 0%, #69def3 100%);
+  box-shadow: 0 6px 20px rgba(105, 222, 243, 0.3);
 }
 
 .products-table {
@@ -208,7 +208,7 @@
   border-radius: 0;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(105, 222, 243, 0.2);
   position: relative;
   z-index: 1;
   animation: fadeIn 0.7s ease-out;
@@ -220,8 +220,8 @@
 }
 
 .products-table thead {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(196, 153, 31, 0.2));
-  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, rgba(105, 222, 243, 0.2), rgba(196, 153, 31, 0.2));
+  border-bottom: 2px solid rgba(105, 222, 243, 0.3);
 }
 
 .products-table th {
@@ -229,14 +229,14 @@
   text-align: left;
   font-weight: 400;
   font-size: 12px;
-  color: #d4af37;
+  color: #69def3;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .products-table td {
   padding: 16px;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  border-bottom: 1px solid rgba(105, 222, 243, 0.1);
   color: #ffffff;
   font-weight: 300;
 }
@@ -246,7 +246,7 @@
 }
 
 .products-table tbody tr:hover {
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(105, 222, 243, 0.05);
   transform: translateX(4px);
 }
 
@@ -319,7 +319,7 @@
 }
 
 .upload-placeholder {
-  border: 2px dashed rgba(212, 175, 55, 0.3);
+  border: 2px dashed rgba(105, 222, 243, 0.3);
   background: rgba(10, 10, 10, 0.3);
   padding: 3rem;
   text-align: center;
@@ -331,13 +331,13 @@
 }
 
 .upload-placeholder:hover {
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.05);
+  border-color: #69def3;
+  background: rgba(105, 222, 243, 0.05);
 }
 
 .upload-placeholder svg {
   font-size: 3rem;
-  color: #d4af37;
+  color: #69def3;
 }
 
 .upload-placeholder span {
@@ -363,7 +363,7 @@
   max-height: 400px;
   object-fit: contain;
   background: rgba(10, 10, 10, 0.5);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(105, 222, 243, 0.2);
   padding: 10px;
 }
 
@@ -397,7 +397,7 @@
   width: 60px;
   height: 60px;
   object-fit: cover;
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(105, 222, 243, 0.2);
   background: rgba(10, 10, 10, 0.5);
 }
 

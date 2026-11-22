@@ -1,6 +1,9 @@
 package com.ecommerce.catalogo.infraestructura.entry_points;
 
 import com.ecommerce.catalogo.application.port.in.CarritoService;
+import com.ecommerce.catalogo.domain.model.Carrito;
+import com.ecommerce.catalogo.domain.model.ItemCarrito;
+import java.math.BigDecimal;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.AgregarItemRequest;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.CarritoResponse;
 import com.ecommerce.catalogo.infraestructura.entry_points.mapper.TiendaDtoMapper;
@@ -33,14 +36,26 @@ public class CarritoController {
     public CarritoResponse agregarItem(@AuthenticationPrincipal AuthenticatedUser usuario,
                                        @Valid @RequestBody AgregarItemRequest request) {
         Long usuarioId = usuarioId(usuario);
-        return mapper.toResponse(carritoService.agregarProductoAlCarrito(
+        return respuesta(carritoService.agregarProductoAlCarrito(
                 usuarioId, request.productoId(), request.cantidad()));
     }
 
     @GetMapping
     public CarritoResponse verCarrito(@AuthenticationPrincipal AuthenticatedUser usuario) {
-        return mapper.toResponse(carritoService.obtenerCarrito(usuarioId(usuario)));
+        return respuesta(carritoService.obtenerCarrito(usuarioId(usuario)));
     }
+
+    @GetMapping("/resumen")
+    public ResumenCarrito resumen(@AuthenticationPrincipal AuthenticatedUser usuario) {
+        var carrito = carritoService.obtenerCarrito(usuarioId(usuario));
+        int unidades = carrito.getItems().stream().mapToInt(ItemCarrito::getCantidad).sum();
+        var stock = carritoService.consultarStock(carrito);
+        boolean habilitaCompra = unidades > 0 && carrito.getItems().stream()
+                .allMatch(item -> stock.getOrDefault(item.getProductoId(), 0) >= item.getCantidad());
+        return new ResumenCarrito(unidades, carrito.getItems().size(), carrito.getPrecioTotal(), habilitaCompra);
+    }
+
+    public record ResumenCarrito(int unidades, int productosDistintos, BigDecimal totalCop, boolean habilitaCompra) {}
 
     @DeleteMapping("/vaciar")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -52,7 +67,7 @@ public class CarritoController {
     public CarritoResponse eliminarItemDelCarrito(
             @AuthenticationPrincipal AuthenticatedUser usuario,
             @PathVariable Long productoId) {
-        return mapper.toResponse(
+        return respuesta(
                 carritoService.eliminarProducto(usuarioId(usuario), productoId));
     }
 
@@ -61,8 +76,12 @@ public class CarritoController {
             @AuthenticationPrincipal AuthenticatedUser usuario,
             @PathVariable Long productoId,
             @RequestParam Integer cantidad) {
-        return mapper.toResponse(carritoService.actualizarCantidadProducto(
+        return respuesta(carritoService.actualizarCantidadProducto(
                 usuarioId(usuario), productoId, cantidad));
+    }
+
+    private CarritoResponse respuesta(Carrito carrito) {
+        return mapper.toResponse(carrito, carritoService.consultarStock(carrito));
     }
 
     private static Long usuarioId(AuthenticatedUser usuario) {

@@ -1,5 +1,6 @@
 package com.ecommerce.catalogo.infraestructura.entry_points.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 
 public record ItemCarritoResponse(
@@ -9,5 +10,6 @@ public record ItemCarritoResponse(
         BigDecimal precioUnitario,
         Integer cantidad,
         BigDecimal subtotal,
-        String imagenUrl) {
+        String imagenUrl,
+        @JsonInclude(JsonInclude.Include.NON_NULL) Integer stockDisponible) {
 }

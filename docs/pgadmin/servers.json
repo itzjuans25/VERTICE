@@ -1,0 +1,24 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "TechStore Local",
+      "Group": "TechStore",
+      "Host": "127.0.0.1",
+      "Port": 55432,
+      "MaintenanceDB": "ecommerce",
+      "Username": "ecommerce_dev",
+      "SSLMode": "prefer",
+      "ConnectionParameters": { "sslmode": "prefer", "connect_timeout": 10 }
+    },
+    "2": {
+      "Name": "TechStore Render",
+      "Group": "TechStore",
+      "Host": "REEMPLAZAR_HOST_EXTERNO",
+      "Port": 5432,
+      "MaintenanceDB": "ecommerce",
+      "Username": "REEMPLAZAR_USUARIO",
+      "SSLMode": "require",
+      "ConnectionParameters": { "sslmode": "require", "connect_timeout": 10 }
+    }
+  }
+}

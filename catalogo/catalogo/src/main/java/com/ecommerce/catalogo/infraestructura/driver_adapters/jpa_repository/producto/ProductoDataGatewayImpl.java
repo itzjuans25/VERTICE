@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,16 +24,25 @@ public class ProductoDataGatewayImpl implements ProductoGateway {
 
     @Override
     public Producto buscarPorId(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndEstadoPublicacion(id, "ACTIVA")
                 .map(mapper::toProducto)
                 .orElse(null);
     }
 
     @Override
     public List<Producto> obtenerTodos() {
-        return repository.findAll().stream()
+        return repository.findAllByEstadoPublicacion("ACTIVA").stream()
                 .map(mapper::toProducto)
                 .toList();
+    }
+
+    @Override
+    public Map<Long, Integer> consultarStock(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return Map.of();
+        }
+        return repository.consultarStock(ids).stream().collect(Collectors.toMap(
+                ProductoDataJpaRepository.Existencia::getId, ProductoDataJpaRepository.Existencia::getStock));
     }
 
     @Override

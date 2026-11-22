@@ -4,6 +4,8 @@ import './App.css';
 import Login from './components/Login';
 import Register from './components/Register';
 import ProductList from './components/ProductList';
+import ProductDetail from './components/ProductDetail';
+import CambiarClave from './components/CambiarClave';
 import Cart from './components/Cart';
 import Navbar from './components/Navbar';
 import AdminPanel from './components/AdminPanel';
@@ -130,12 +132,10 @@ function App() {
 
           <Route
             path="/productos"
-            element={
-              <RutaPrivada user={user}>
-                <ProductList setCartCount={setCartCount} />
-              </RutaPrivada>
-            }
+            element={<ProductList user={user} setCartCount={setCartCount} />}
           />
+          <Route path="/productos/:id" element={<ProductDetail user={user} setCartCount={setCartCount} />} />
+          <Route path="/cuenta/contrasena" element={<RutaPrivada user={user}><CambiarClave cerrarSesion={handleLogout} /></RutaPrivada>} />
 
           <Route
             path="/carrito"
@@ -158,12 +158,16 @@ function App() {
           <Route
             path="/"
             element={
-              <Navigate to={user ? inicioPara(user) : '/login'} replace />
+              <Navigate to="/productos" replace />
             }
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <footer className="tt-footer">
+          <span>TechStore</span>
+          <span>Tecnología nueva y usada · Precios en COP</span>
+        </footer>
       </div>
     </Router>
   );

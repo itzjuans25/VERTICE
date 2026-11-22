@@ -65,6 +65,10 @@ dist/
 # Logs
 logs/
 *.log.*
+*.log
+/output/tmp/
+/reportes-locales/
+/postman/*-raw.json
 
 # Database
 *.db
@@ -75,3 +79,5 @@ logs/
 *.pem
 *.key
 credentials.json
+__pycache__/
+*.pyc

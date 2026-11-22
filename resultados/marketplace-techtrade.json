@@ -1,0 +1,21 @@
+{
+  "publicacion": 1775,
+  "pedido": 1491,
+  "totalCop": 87000,
+  "estado": "VENDIDA",
+  "stockFinal": 0,
+  "correos": [
+    {
+      "asunto": "Publicación activa #1775",
+      "fecha": "2026-11-21T21:35:07.002-05:00"
+    },
+    {
+      "asunto": "Venta confirmada #1491",
+      "fecha": "2026-11-21T21:35:12.836-05:00"
+    },
+    {
+      "asunto": "Confirmacion de Compra #1491",
+      "fecha": "2026-11-21T21:35:12.768-05:00"
+    }
+  ]
+}

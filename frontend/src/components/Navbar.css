@@ -4,7 +4,7 @@
   width: 100%;
   background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  border-bottom: 1px solid rgba(105, 222, 243, 0.2);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   z-index: 1000;
   animation: slideDown 0.5s ease-out;
@@ -33,7 +33,7 @@
 .nav-logo {
   font-size: 1.6rem;
   font-weight: 300;
-  color: #d4af37;
+  color: #69def3;
   text-decoration: none;
   transition: all 0.3s;
   display: flex;
@@ -44,16 +44,16 @@
 }
 
 .nav-logo svg {
-  color: #d4af37;
+  color: #69def3;
   font-size: 1.8rem;
 }
 
 .nav-logo:hover {
-  color: #f4e5c2;
+  color: #c7f2fc;
 }
 
 .nav-logo:hover svg {
-  color: #f4e5c2;
+  color: #c7f2fc;
   transform: scale(1.1);
 }
 
@@ -86,7 +86,7 @@
   left: 20px;
   right: 20px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  background: linear-gradient(90deg, transparent, #69def3, transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -96,7 +96,7 @@
 }
 
 .nav-link:hover {
-  color: #d4af37;
+  color: #69def3;
 }
 
 .cart-link {
@@ -107,7 +107,7 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  background: linear-gradient(135deg, #d4af37 0%, #c4991f 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c4991f 100%);
   color: #0a0a0a;
   border-radius: 50%;
   width: 20px;
@@ -117,23 +117,23 @@
   justify-content: center;
   font-size: 10px;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 2px 8px rgba(105, 222, 243, 0.4);
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 2px 8px rgba(105, 222, 243, 0.4);
   }
   50% {
     transform: scale(1.08);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.6);
+    box-shadow: 0 4px 12px rgba(105, 222, 243, 0.6);
   }
 }
 
 .nav-user {
-  color: #d4af37;
+  color: #69def3;
   font-weight: 300;
   font-size: 14px;
   display: flex;
@@ -143,9 +143,9 @@
 }
 
 .nav-btn {
-  background: linear-gradient(135deg, #d4af37 0%, #c4991f 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c4991f 100%);
   color: #0a0a0a;
-  border: 1px solid #d4af37;
+  border: 1px solid #69def3;
   padding: 10px 24px;
   border-radius: 0;
   cursor: pointer;
@@ -161,19 +161,19 @@
 }
 
 .nav-btn:hover {
-  background: linear-gradient(135deg, #f4e5c2 0%, #d4af37 100%);
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, #c7f2fc 0%, #69def3 100%);
+  box-shadow: 0 4px 16px rgba(105, 222, 243, 0.3);
 }
 
 .register-btn {
   background: transparent;
-  color: #d4af37;
-  border: 1px solid #d4af37;
+  color: #69def3;
+  border: 1px solid #69def3;
 }
 
 .register-btn:hover {
-  background: rgba(212, 175, 55, 0.1);
-  color: #f4e5c2;
+  background: rgba(105, 222, 243, 0.1);
+  color: #c7f2fc;
 }
 
 .logout-btn {
@@ -188,6 +188,10 @@
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    position: relative;
+  }
+
   .nav-container {
     flex-direction: column;
     gap: 1rem;

@@ -102,7 +102,8 @@ export async function request(baseUrl, path, options = {}) {
   const url = `${baseUrl}${appendQuery(path, query)}`;
   const headers = { Accept: 'application/json' };
 
-  if (body !== undefined) {
+  const multipart = body instanceof FormData;
+  if (body !== undefined && !multipart) {
     headers['Content-Type'] = 'application/json';
   }
 
@@ -119,7 +120,7 @@ export async function request(baseUrl, path, options = {}) {
     response = await fetch(url, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: multipart ? body : body !== undefined ? JSON.stringify(body) : undefined,
       signal: controller.signal,
     });
   } catch (error) {

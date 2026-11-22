@@ -1,5 +1,9 @@
 package com.ecommerce.catalogo.infraestructura.entry_points;
 
+import com.ecommerce.catalogo.application.usecase.InformacionTienda;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.ecommerce.catalogo.application.port.in.ProductoService;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.ProductoRequest;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.ProductoResponse;
@@ -26,6 +30,20 @@ import java.util.List;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final InformacionTienda informacion;
+
+    @GetMapping("/{id}/precio-usd")
+    public InformacionTienda.Cotizacion precioUsd(@PathVariable Long id) {
+        return informacion.cotizar(productoService.obtenerProducto(id).getPrecio());
+    }
+
+    @GetMapping("/entrega")
+    public InformacionTienda.Entrega entrega(@RequestParam(defaultValue = "3") int diasHabiles) {
+        if (diasHabiles < 1 || diasHabiles > 15) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usa entre 1 y 15 dias habiles");
+        }
+        return informacion.estimarEntrega(diasHabiles);
+    }
     private final TiendaDtoMapper mapper;
 
     @GetMapping

@@ -9,11 +9,11 @@
 }
 
 .toast {
-  background: linear-gradient(135deg, #d4af37 0%, #c4991f 100%);
+  background: linear-gradient(135deg, #69def3 0%, #c4991f 100%);
   color: #0a0a0a;
   padding: 16px 24px;
   border-radius: 0;
-  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 10px 40px rgba(105, 222, 243, 0.4);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -21,13 +21,13 @@
   animation: slideIn 0.3s ease-out, slideOut 0.3s ease-in 2.7s;
   opacity: 0;
   animation-fill-mode: forwards;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(105, 222, 243, 0.3);
   backdrop-filter: blur(10px);
 }
 
 .toast-success {
-  background: linear-gradient(135deg, #d4af37 0%, #c4991f 100%);
-  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+  background: linear-gradient(135deg, #69def3 0%, #c4991f 100%);
+  box-shadow: 0 10px 40px rgba(105, 222, 243, 0.4);
 }
 
 .toast-error {

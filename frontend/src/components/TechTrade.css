@@ -1,0 +1,71 @@
+.tt-shell { width: min(1320px, 100% - 40px); margin: 0 auto; color: #e5f1f8; }
+.tt-shell a { color: #68ddf5; }
+.tt-shell p { line-height: 1.6; }
+.tt-shell h1, .tt-shell h2, .tt-shell h3 { margin: 0; }
+.tt-shell :focus-visible, .navbar :focus-visible { outline: 3px solid #78e7fb; outline-offset: 4px; }
+.tt-hero { position: relative; isolation: isolate; min-height: 435px; display: grid; align-items: center; overflow: hidden; padding: clamp(26px, 6vw, 86px); margin-top: 25px; border-radius: 22px; background: #101d2b; border: 1px solid #2d4457; }
+.tt-hero img { position: absolute; z-index: -2; height: 100%; width: 58%; object-fit: cover; right: 0; top: 0; }
+.tt-hero::before { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg,#101e2d 37%,rgba(16,30,45,.78) 56%,rgba(16,30,45,.06) 90%); }
+.tt-hero h1 { color: #f5fbff; font-size: clamp(2.65rem, 5.7vw, 5.2rem); letter-spacing: -.055em; line-height: .99; max-width: 740px; }
+.tt-hero h1 em { font-style: normal; color: #65def4; }
+.tt-hero p { max-width: 500px; color: #c5d9e5; }
+.tt-kicker { text-transform: uppercase; letter-spacing: .13em; font-weight: 650; font-size: .77rem; }
+.tt-acciones, .tt-paginas, .tt-etiquetas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.tt-section { margin-top: 42px; padding-bottom: 32px; }
+.tt-section-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; margin-bottom: 15px; }
+.tt-section-title span, .tt-detalle-menor { color: #b0c5d3; font-size: .92rem; }
+.tt-filtros, .tt-sell-form { display: grid; padding: 18px; border: 1px solid #2b4052; gap: 14px; border-radius: 14px; background: #101a26; align-items: end; }
+.tt-filtros { grid-template-columns: repeat(7,minmax(0,1fr)) auto; }
+.tt-filtros label, .tt-sell-form label { display: grid; gap: 7px; font-size: .87rem; color: #cadce7; font-weight: 650; }
+.tt-shell select, .tt-shell input, .tt-shell textarea { width: 100%; min-width: 0; min-height: 42px; color: #edf8ff; background: #0b131e; border: 1px solid #405669; border-radius: 7px; font: inherit; font-weight: 400; padding: 8px; }
+.tt-button, .tt-shell .tt-button { align-items: center; justify-content: center; cursor: pointer; display: inline-flex; gap: 8px; border: 1px solid #69def3; padding: .65rem .95rem; min-height: 42px; text-decoration: none; border-radius: 7px; background: #69def3; color: #092333; font: inherit; font-weight: 750; }
+.tt-button:hover { filter: brightness(1.13); }
+.tt-shell .tt-secondary { background: #142432; color: #b0f3ff; border-color: #436575; }
+.tt-button:disabled { opacity: .56; cursor: default; }
+.tt-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-top: 18px; }
+.tt-card.product-card { min-width: 0; display: grid; grid-template-rows: auto 1fr; overflow: hidden; border: 1px solid #2c4050; background: #111c29; border-radius: 12px; }
+.tt-card-image { display: block; aspect-ratio: 4/3; overflow: hidden; background: #203141; }
+.tt-card-image img, .tt-detail-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tt-card-body { display: grid; align-content: start; padding: 14px; gap: 8px; }
+.tt-card h3 { font-size: 1.02rem; }
+.tt-card h3 a { color: #eef7ff; }
+.tt-card-body p { margin: 0; }
+.tt-etiquetas span { background: #23364a; color: #d4e3ed; border-radius: 5px; padding: 3px 7px; font-size: .75rem; }
+.tt-etiquetas .tt-condicion { background: #163b46; color: #a2f1fb; }
+.tt-card-footer { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.tt-card-footer strong, .tt-detail-price { color: #88eaff; font-size: 1.12rem; }
+.tt-paginas { margin: 22px 0; justify-content: center; }
+.tt-vacio, .tt-aviso { padding: 14px; border: 1px solid #416175; background: #162633; border-radius: 8px; }
+.tt-aviso[role="alert"] { border-color: #e99898; }
+.tt-skeleton { height: 270px; border-radius: 12px; background: #26384b; animation: tt-carga 1.5s alternate infinite; }
+@keyframes tt-carga { to { opacity: .48; } }
+@media (prefers-reduced-motion: reduce) { .tt-skeleton { animation: none; } }
+.tt-detail { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(16px, 4vw, 50px); margin-top: 20px; }
+.tt-detail-image { height: auto; max-height: 560px; object-fit: contain; border-radius: 12px; background: #162332; }
+.tt-detail h1 { margin-top: 10px; }
+.tt-detail-price { display: block; font-size: 2rem; }
+.tt-info-compra { margin: .65rem 0 1rem; color: #c9dce8; font-size: .9rem; line-height: 1.5; }
+.tt-info-compra small { display: block; color: #b0c5d3; margin-top: .2rem; }
+.tt-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+.tt-thumbs button { padding: 3px; background: #243648; border: 2px solid transparent; cursor: pointer; }
+.tt-thumbs button[aria-pressed="true"] { border-color: #69def3; }
+.tt-thumbs img { width: 65px; height: 56px; object-fit: cover; display: block; }
+.tt-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tt-specs dd { margin: 2px 0 0; }
+.tt-specs dt { color: #b0c5d3; font-size: .85rem; }
+.tt-sell-form { grid-template-columns: repeat(2,minmax(0,1fr)); max-width: 880px; }
+.tt-largo { grid-column: 1/-1; }
+.tt-publicaciones { display: grid; gap: 12px; padding: 0; }
+.tt-publicaciones li { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 12px; border: 1px solid #2d475a; border-radius: 8px; }
+.tt-publicaciones img { width: 85px; height: 64px; object-fit: cover; }
+.tt-publicaciones p { margin: 4px 0 0; }
+.tt-publicaciones button { margin-left: auto; }
+@media (max-width: 1100px) { .tt-filtros { grid-template-columns: repeat(4,minmax(0,1fr)); } .tt-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media (max-width: 740px) { .tt-grid, .tt-filtros { grid-template-columns: repeat(2,minmax(0,1fr)); } .tt-detail { grid-template-columns: 1fr; } .tt-hero img { width: 100%; opacity: .62; } .tt-hero::before { background: linear-gradient(90deg,#101e2d 4%,rgba(16,30,45,.77) 72%,rgba(16,30,45,.46)); } }
+@media (max-width: 480px) { .tt-shell { width: calc(100% - 24px); } .tt-grid, .tt-sell-form { grid-template-columns: 1fr; } .tt-hero { padding: 21px; min-height: 390px; } }
+
+.tt-spec-table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: .93rem; }
+.tt-spec-table caption { text-align: left; font-weight: 700; padding-bottom: 5px; }
+.tt-spec-table th, .tt-spec-table td { text-align: left; border-bottom: 1px solid #30485b; padding: 8px 9px; }
+.tt-footer { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; padding: 20px max(18px, calc((100% - 1320px)/2)); color: #c3d9e7; border-top: 1px solid #2d4457; background: #101a26; margin-top: 32px; }
+

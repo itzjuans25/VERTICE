@@ -1,0 +1,23 @@
+[
+  {
+    "servicio": "Auth",
+    "cubiertas": 365,
+    "total": 428,
+    "porcentaje": 85.2803738317757,
+    "pruebas": 23
+  },
+  {
+    "servicio": "Catálogo",
+    "cubiertas": 792,
+    "total": 895,
+    "porcentaje": 88.49162011173185,
+    "pruebas": 32
+  },
+  {
+    "servicio": "Notificaciones",
+    "cubiertas": 214,
+    "total": 258,
+    "porcentaje": 82.94573643410853,
+    "pruebas": 21
+  }
+]

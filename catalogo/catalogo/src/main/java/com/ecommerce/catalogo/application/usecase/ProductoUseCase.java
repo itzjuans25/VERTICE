@@ -20,8 +20,12 @@ public class ProductoUseCase implements ProductoService {
     @Override
     @Transactional
     public Producto guardarProducto(Producto producto) {
-        validar(producto);
+        if (producto == null) {
+            throw new DatosInvalidosException("Los datos del producto son obligatorios");
+        }
         producto.setId(null);
+        completarDatos(producto, new Producto());
+        validar(producto);
         return productoGateway.guardar(producto);
     }
 
@@ -50,15 +54,40 @@ public class ProductoUseCase implements ProductoService {
         if (producto == null || producto.getId() == null) {
             throw new DatosInvalidosException("El id del producto es obligatorio");
         }
-        obtenerProducto(producto.getId());
+        Producto anterior = obtenerProducto(producto.getId());
+        if (producto.getCategoria() == null) {
+            producto.setCategoria(anterior.getCategoria());
+        }
+        completarDatos(producto, anterior);
         validar(producto);
         return productoGateway.guardar(producto);
+    }
+
+    private static void completarDatos(Producto producto, Producto base) {
+        producto.setCondicion(java.util.Objects.requireNonNullElse(producto.getCondicion(), base.getCondicion()));
+        producto.setMarca(java.util.Objects.requireNonNullElse(producto.getMarca(), base.getMarca()));
+        producto.setGarantiaDias(java.util.Objects.requireNonNullElse(producto.getGarantiaDias(), base.getGarantiaDias()));
+        if ("NUEVO".equals(producto.getCondicion())) {
+            if (producto.getGrado() != null) {
+                throw new DatosInvalidosException("El grado solo se asigna a artículos usados");
+            }
+            producto.setNotaEstado("");
+        } else if (producto.getGrado() == null) {
+            producto.setGrado(base.getGrado());
+        }
+        producto.setModelo(producto.getModelo() == null ? base.getModelo() : producto.getModelo());
+        producto.setDescripcionLarga(producto.getDescripcionLarga() == null ? base.getDescripcionLarga() : producto.getDescripcionLarga());
+        producto.setIncluye(producto.getIncluye() == null ? base.getIncluye() : producto.getIncluye());
+        producto.setCompatibilidad(producto.getCompatibilidad() == null ? base.getCompatibilidad() : producto.getCompatibilidad());
+        producto.setNotaEstado(producto.getNotaEstado() == null ? base.getNotaEstado() : producto.getNotaEstado());
+        producto.setImagenSecundariaUrl(producto.getImagenSecundariaUrl() == null ? base.getImagenSecundariaUrl() : producto.getImagenSecundariaUrl());
+        producto.setEspecificaciones(producto.getEspecificaciones() == null ? base.getEspecificaciones() : producto.getEspecificaciones());
+        producto.setEstadoPublicacion(base.getEstadoPublicacion());
     }
 
     @Override
     @Transactional
     public void eliminarProducto(Long id) {
-        obtenerProducto(id);
         productoGateway.eliminar(id);
     }
 
@@ -77,6 +106,10 @@ public class ProductoUseCase implements ProductoService {
     private void validar(Producto producto) {
         if (producto == null) {
             throw new DatosInvalidosException("Los datos del producto son obligatorios");
+        }
+        if ("USADO".equals(producto.getCondicion()) &&
+                (producto.getGrado() == null || producto.getNotaEstado() == null || producto.getNotaEstado().isBlank())) {
+            throw new DatosInvalidosException("Los artículos usados requieren grado A, B o C y una nota de estado");
         }
         if (producto.getNombre() == null || producto.getNombre().isBlank()) {
             throw new DatosInvalidosException("El nombre del producto es obligatorio");

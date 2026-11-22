@@ -1,0 +1,222 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs,tabularx,graphicx,url}
+\input{metricas-techstore.tex}
+\title{TechStore: diseño y evaluación de un tienda colombiana con microservicios}
+\author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
+\newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+TechStore combina una tienda colombiana de tecnología con un catálogo de productos nuevos y usados. Tres microservicios separan identidad, transacciones y avisos mediante PostgreSQL, RabbitMQ y Mailpit. Se evaluaron el catálogo filtrado, el descuento de inventario, la entrega de correos, la cobertura Java y la latencia de 36 rutas mediante k6 y Newman con 3, 6 y 8 usuarios virtuales. El análisis incluye el cambio de contraseña y el alcance del objetivo de 500 ms en Windows.
+\end{abstract}
+\begin{IEEEkeywords}
+comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
+\end{IEEEkeywords}
+
+\section{Introducción}
+Una tienda que vende tecnología nueva y usada administra mercancía, cantidades y condiciones. En artículos usados, la ficha debe comunicar el grado, la garantía y la compatibilidad sin ocultar la diferencia entre un anuncio y una unidad física. Se adoptó como alcance una tienda con inventario propio y gestión centralizada de pedidos.
+
+TechStore amplía una aplicación académica con registro, sesión, carrito e historial. El catálogo muestra computadores ensamblados, componentes, periféricos, teléfonos, consolas y artículos de segunda mano. Los precios se expresan en pesos colombianos. La operación de compra registra un pedido y descuenta inventario. El pago y el despacho físico quedan fuera del recorrido académico.
+
+La evaluación se organizó en tres preguntas. La primera comprueba si se puede filtrar, comprar, consultar el pedido y recibir correo en un entorno persistente. La segunda verifica el objetivo de cobertura de líneas superior al 80\,\% en cada servicio. La tercera revisa qué rutas rompen el umbral de 500\,ms y presta atención al costo de autenticar el cambio de clave.
+
+Se conservan los registros históricos y nuevos por perfil. El repositorio incorpora el código de la prueba, los resultados de operación y capturas de los pasos ejecutados. Así se pueden reproducir los escenarios al cambiar de equipo, JVM o red.
+
+\section{Trabajos relacionados}
+Lewis y Fowler describen una organización de servicios alrededor de capacidades de negocio \cite{micro}. TechStore aplica esa separación a identidad, compra y avisos. Una sola instalación PostgreSQL simplifica la demostración. Cada servicio conserva un proceso y artefacto de despliegue propios.
+
+El patrón de bandeja transaccional descrito por Richardson persiste el evento antes de publicarlo \cite{outbox}. TechStore emplea una bandeja para las solicitudes aceptadas por la API de Notificaciones. Catálogo emite sus avisos tras confirmar su propia transacción. La ventana entre confirmar los datos y publicar un evento del dominio sigue siendo un punto para evolucionar.
+
+PostgreSQL proporciona operadores e índices por trigramas para apoyar búsquedas por patrón \cite{trgm}. Argon2id permite configurar costo de CPU y memoria para derivar un hash de contraseña \cite{argon}. OWASP documenta una configuración de referencia de 19 MiB, dos iteraciones y paralelismo uno \cite{owasp}. Se usa ese perfil para las contraseñas nuevas y se sigue verificando BCrypt para las cuentas existentes.
+
+\section{Arquitectura del sistema}
+\begin{center}
+\small
+\begin{tabular}{c}
+\fbox{React: catálogo y flujo de compra}\\[2pt]
+$\downarrow$ REST y JWT\\[2pt]
+\fbox{Auth}\quad$\leftrightarrow$\quad\fbox{Catálogo}\\[2pt]
+$\downarrow$ eventos de negocio\\[2pt]
+\fbox{RabbitMQ}\ $\longrightarrow$\ \fbox{Notificaciones}\\[2pt]
+\hfill$\downarrow$ SMTP/SMS\hspace{25pt}\\
+\hfill\fbox{Mailpit / proveedor externo}\\[4pt]
+Los tres servicios $\rightarrow$ PostgreSQL\\
+Catálogo $\rightarrow$ Frankfurter y Nager.Date
+\end{tabular}\\[4pt]
+\footnotesize Fig. 1. Servicios, almacenamiento y dependencias.
+\end{center}
+
+Auth se ocupa del registro, las credenciales y el JWT. Catálogo aplica filtros y reglas de inventario y administra productos y pedidos. Notificaciones valida destinos, renderiza vistas previas y entrega avisos. Los tres usan Java y Spring Boot \cite{spring}. Swagger describe los contratos y Actuator expone el estado de las aplicaciones.
+
+Los controladores traducen solicitudes y respuestas. Los adaptadores implementan persistencia JPA, mensajería y llamadas HTTP. La tienda React consume el catálogo paginado y usa el contexto de autenticación para habilitar carrito e historial. El servidor verifica los permisos sin depender de qué botones haya mostrado la interfaz.
+
+\clearpage
+\section{Implementación}
+\subsection{Catálogo y datos}
+El seed contiene 45 artículos y once categorías. Cada fila usa una clave estable. La restricción única y la cláusula de conflicto permiten repetir la carga sin duplicar filas ni reiniciar stock consumido. La migración inicial rellena metadatos faltantes y añade índices para consultas. Los precios son representativos de una demostración en COP. Las imágenes generadas corresponden al tipo de artículo y se sirven localmente sin depender de proveedores de imágenes.
+
+\begin{table}[!ht]
+\caption{Almacenamiento del recorrido}
+\centering\footnotesize
+\begin{tabularx}{\columnwidth}{@{}lX@{}}
+\toprule
+Entidad & Datos y relaciones\\\midrule
+Cuenta & Identidad, rol y hash de contraseña.\\
+Producto & Precio, stock, condición, grado, marca, modelo y garantía.\\
+Imagen & Ruta de recurso local. Los artículos con segunda vista la guardan en \texttt{products}.\\
+Carrito e ítem & Carrito de un usuario y cantidades por producto.\\
+Compra e ítem & Pedido con nombre y precio unitario al confirmar.\\
+Aviso pendiente & Estado de publicación en el broker e intentos.\\
+SMS simulado & Registro de entrega simulada en PostgreSQL.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La consulta combina texto, categoría, condición, marca y rango de precios. Los comodines escritos por el usuario se tratan como caracteres literales. La página se ordena por identificador reciente o por precio con desempate estable. Hay índices para estado, precio, categoría, condición y marca. Los índices GIN sobre nombre, descripción y modelo apoyan la búsqueda de subcadenas. PostgreSQL escoge el plan según cardinalidad y selectividad.
+
+\subsection{Fichas técnicas e inventario}
+La aplicación publica fichas con descripción corta y larga, marca, modelo, garantía, contenido del paquete y compatibilidad. Las especificaciones se guardan como un mapa clave-valor JSON. Esto permite usar claves distintas para procesador, memoria, monitor y red. Los artículos nuevos carecen de grado. Para usados se valida un grado A, B o C y una nota de estado. Las notas describen casos de demostración, con marcas de uso representativas y comprobaciones previstas.
+
+El stock se descuenta en una escritura condicionada a disponibilidad y existencia de una referencia activa. Se confirma el pedido y se conservan el nombre y precio de ese momento. La modificación posterior del precio no reemplaza los valores del historial. El carrito de dos clientes puede contener la misma unidad. La revisión de inventario al confirmar evita vender esa unidad una segunda vez.
+
+Los seeds históricos de cosmética y compraventa quedan archivados. Las consultas operativas publican solo productos activos. El seed de tecnología conserva ediciones y stock, porque insertar una clave existente no sustituye la fila. Las imágenes se sirven como WebP desde el sitio. Los recursos de muestra tienen una proporción uniforme de 1:1 y son ilustrativos del tipo de artículo.
+
+\subsection{Identidad y cambio de contraseña}
+El login verifica el hash y entrega un JWT. Cambiar contraseña consulta el hash actual, verifica la clave anterior y calcula un hash nuevo con sal aleatoria. La escritura condiciona la operación al hash leído. Así se evita que dos cambios simultáneos se sobrescriban. El cómputo se hace fuera de la transacción de escritura. La identificación de cuenta usa clave primaria y el correo tiene restricción única.
+
+La capacidad del campo de contraseña creció para almacenar prefijo y parámetros de Argon2id. Las cuentas legadas pueden usar BCrypt al autenticarse. Las altas y rotaciones nuevas emplean Argon2id. El hash es trabajo deliberadamente costoso y el cambio tiene dos operaciones criptográficas. Las medidas HTTP incluyen también validación, acceso a PostgreSQL y espera de ejecución.
+
+La interfaz permite cambiar la contraseña desde la cuenta y solicita que el usuario vuelva a iniciar sesión. Auth limita intentos fallidos por correo y origen dentro de ventanas de un minuto. Render suministra una clave JWT privada e independiente de la instalación Windows.
+
+\subsection{Avisos y proveedores}
+Auth solicita el correo de registro. Catálogo solicita el correo de compra y de cambio de estado del pedido. RabbitMQ entrega los mensajes a Notificaciones \cite{rabbit} y Mailpit captura los correos SMTP en Windows \cite{mailpit}. Las fallas después del commit comercial no revierten el pedido.
+
+La bandeja de entrada persistente del servicio puede reintentar publicación. El consumidor tiene su propio plan de reintentos y cola de errores. El adaptador SMS de demostración guarda registros en PostgreSQL. La entrega por proveedor se habilita mediante variables privadas.
+
+Frankfurter suministra la tasa COP a USD \cite{fx}. Nager.Date entrega festivos de Colombia \cite{nager}. Catálogo refresca sus cachés fuera de la petición del usuario con límites de conexión y lectura. Sin tasa vigente, la consulta de conversión devuelve 503. Cuando falta un calendario, la estimación de entrega indica que es parcial.
+
+\subsection{Interfaz}
+Se puede explorar sin iniciar sesión. Cada tarjeta muestra condición y tipo de vendedor. Las vistas de carga, catálogo vacío y error se distinguen. La ficha muestra precio, ciudad, marca y garantía declarada. La cuenta autenticada puede comprar y consultar su historial. La confirmación muestra el pedido y comunica que el aviso se procesa de forma asíncrona.
+
+\clearpage
+\section{Metodología}
+\subsection{Entorno y cobertura}
+Se usó Windows con un Intel Core i5-12450H y aproximadamente 8 GB de memoria física. El entorno nativo reserva instancias del proyecto para PostgreSQL, RabbitMQ y Mailpit. El tráfico de prueba viaja por loopback. Las dependencias externas se consultan por Internet mediante el adaptador de Catálogo.
+
+Maven ejecuta la suite completa y JaCoCo instrumenta código Java \cite{jacoco}. Si $c$ son las líneas cubiertas y $m$ las omitidas, se publica $100c/(c+m)$. Se distinguen las pruebas unitarias y las pruebas de integración incluidas en la suite. El porcentaje por servicio usa ambas. Los casos React se reportan aparte. Actuator y Swagger se comprobaron fuera de los perfiles de carga.
+
+Las pruebas agregadas comprueban búsqueda literal, límites de paginación, filtro por marca, especificaciones técnicas y validación del grado. El navegador filtra un portátil usado, abre su segunda foto, agrega al carrito, confirma y revisa el historial. Newman automatiza Postman en local. Comprueba códigos HTTP, estructura y el umbral de 500 ms en cada petición, incluido el correo entregado en Mailpit.
+
+\subsection{Carga y estrés}
+El guion k6 tiene 36 rutas con el mismo contrato en los tres escenarios. El perfil de carga sostiene tres usuarios virtuales durante 24 segundos. Los perfiles de estrés suben de uno a tres y luego a seis u ocho. La etapa de máxima concurrencia dura 16 segundos. Hay preparación del administrador y registro de clientes, calentamiento, ejecución y limpieza. Los datos de preparación no entran en las muestras.
+
+Cada usuario realiza un recorrido con registro de cuenta, sesión, rotación de contraseña, catálogo, carrito y pedido. Se verifican los códigos HTTP esperados por operación. El guion confirma durante el calentamiento que Frankfurter y Nager.Date estén disponibles. Las consultas medidas aprovechan las cachés de las dependencias.
+
+Se reportan promedio, p95, p99, máximo, errores y peticiones por segundo \cite{k6}. El p95 describe la posición debajo de la cual se ubica aproximadamente el 95\,\% de las muestras. El máximo por ruta responde a la condición estricta de 500\,ms. Un máximo superior cuenta aunque el promedio sea menor. Las medidas por solicitud empiezan después del calentamiento y cubren los recorridos completados durante la ventana de prueba.
+
+\subsection{Diseño de comparación}
+Los registros históricos de 33 rutas son una referencia del estado anterior. Con tres usuarios se observó un máximo de 685,62 ms en cambio de clave. Con seis alcanzó 715,10 ms. El guion TechStore amplía el recorrido y tiene un catálogo diferente. Comparar esas cifras directamente no permite aislar un efecto del algoritmo. Las ejecuciones históricas difieren en recorrido, versión del catálogo y ventana de medición.
+
+Durante la revisión se priorizó mantener el costo de Argon2id y probar mayor margen de heap y procesadores visibles para Auth. Se conservan las series antes y después. Los perfiles se ejecutan secuencialmente, sin compilar ni ejecutar el recorrido del navegador en paralelo. Para atribuir diferencias a una sola causa se requieren repeticiones con una base clonada y trazas por fase.
+
+\section{Pruebas y resultados}
+\ResultadosCobertura
+
+\textbf{Recorrido completo.} \ResultadoCompra
+
+\textbf{Postman y Newman.} \ResultadoPostman
+
+\textbf{Perfiles sintéticos.} La Tabla~\ref{tab:perfiles} resume el tráfico medido. Los documentos de evidencia conservan cada ruta, con cantidad de muestras, errores y percentiles.
+
+\ResultadosCarga
+
+\clearpage
+\section{Análisis por ruta}
+\captura{latencia-techstore.png}{Fig. 2. Máximo, p95 y umbral de 500 ms en las corridas finales.}
+\ResultadoRutas
+
+El cambio de clave realiza una verificación y deriva otra contraseña. El login y la renovación realizan su comprobación de credenciales. Varias peticiones simultáneas de este tipo compiten por la CPU y la memoria reservadas para el mismo proceso. Los datos permiten localizar tiempos altos por ruta. No miden el reparto exacto entre espera, GC, motor de persistencia y computación del hash.
+
+El listado paginado de productos controla la cardinalidad de respuesta y aplica los filtros en la base de datos. El listado heredado de productos y el listado de compras administrativas se mantienen para compatibilidad. Si se desea comparar esos recorridos entre entornos, debe controlarse la cantidad acumulada de registros. Las compras de k6 se guardan en una base de desarrollo y no se reutilizan como evidencia comercial.
+
+\subsection{Evidencia del catálogo}
+\captura{../capturas/techstore-tienda.png}{Fig. 3. Catálogo TechStore con filtros en Windows.}
+La búsqueda en servidor permite comprobar marca, categoría y condición sin depender de la página que estaba visible. El recorrido abre una ficha de segunda mano y cambia a la vista secundaria. Antes de confirmar, el carrito consolida unidades y calcula el total en pesos colombianos.
+
+\subsection{Evidencia de correo}
+\captura{../capturas/techstore-correo.png}{Fig. 4. Correo de compra comprobado en Mailpit.}
+El asunto contiene el identificador del pedido. El tiempo HTTP de la compra y el de entrega del correo corresponden a etapas diferentes. Newman confirma el asunto mediante la API de Mailpit y el recorrido de navegador conserva una captura de la bandeja.
+
+\clearpage
+\section{Modelo de datos y despliegue}
+\captura{../pgadmin/er-techstore.png}{Fig. 5. Modelo ER generado desde el esquema operativo de PostgreSQL.}
+
+\subsection{Inspección con pgAdmin}
+PostgreSQL conserva la cuenta en \texttt{usuario} y el inventario en \texttt{products}. El esquema agrega claves foráneas entre líneas de pedido o carrito y su contenedor. Los identificadores de cuenta y producto usados en los flujos de negocio también sirven como referencias lógicas. Esto permite que el pedido preserve su significado si se retiran productos del catálogo. Las tablas de los avisos pendientes y de SMS simulado tienen un ciclo de vida propio.
+
+El diagrama se construyó consultando \texttt{information\_schema} en la base nativa. Se distinguen relaciones declaradas por el motor y referencias implementadas en la aplicación. Para reproducirlo, se puede abrir pgAdmin, importar las conexiones del proyecto y ejecutar \texttt{esquema.sql}. La consulta se limita a las tablas operativas de la tienda.
+
+La verificación de datos agrupa inventario por categoría y condición, detecta fichas sin imagen o descripción y marca stock bajo. También lista pedidos recientes y cuenta SMS simulados y mensajes pendientes. Mailpit registra los correos que recibe. PostgreSQL no conserva un historial de correos SMTP entregados. Mantener estas evidencias separadas permite interpretar con precisión lo que muestra cada herramienta.
+
+\subsection{Opcional: despliegue en Render}
+El Blueprint describe un frontend estático, tres servicios Docker y una base PostgreSQL administrada \cite{renderbp}. La migración y la carga inicial arrancan con Catálogo. Los microservicios reciben los parámetros de base desde el Blueprint. Se aplican orígenes permitidos para el navegador y URLs HTTPS para las llamadas entre la interfaz y los servicios. Los valores privados se completan en el panel de cada despliegue.
+
+CloudAMQP ofrece un plan RabbitMQ compartido para pequeñas aplicaciones \cite{cloudamqp}. Brevo recibe correos SMTP en el puerto 2525 \cite{brevo}. El Blueprint usa ese puerto por las restricciones de egress SMTP de Render Free. En Windows, Compose conserva RabbitMQ y Mailpit locales. Esta preparación no sustituye la prueba de entrega con credenciales reales.
+
+Render documenta suspensión de servicios Free tras 15 minutos sin tráfico y un arranque cercano a un minuto \cite{renderfree}. La base gratuita expira a los 30 días. Si se requiere un enlace público, el primer request en frío debe medirse aparte. El objetivo académico de latencia se evalúa aquí con procesos locales activos y los resultados tampoco caracterizan la red Render.
+
+\subsection{Reproducción de Postman}
+La colección agrupa tres servicios y conserva dos entornos de ejemplo. El registro genera un correo sintético. El login guarda temporalmente el token. La prueba filtra por condición, verifica la estructura de la ficha, prepara un producto de mantenimiento, compra y consulta el correo. Las rutas administrativas reciben una cuenta temporal para ejercer las operaciones protegidas. Los reportes públicos omiten cuerpos y encabezados sensibles.
+
+Las comprobaciones funcionales y las de rendimiento se reportan de manera independiente. Un código HTTP esperado indica que la operación respondió como está documentada. El tiempo puede incumplir el criterio con esa misma respuesta funcional. Esto se observó en el alta de un producto y en la validación de correo de la primera corrida de la revisión. Se conservan ambas ejecuciones para evitar descartar una observación desfavorable.
+
+\clearpage
+\section{Discusión}
+\subsection{Diseño y validez de la evidencia}
+La separación de servicios permite que una incidencia posterior a la compra afecte un aviso sin alterar el pedido ya registrado. Al mismo tiempo, PostgreSQL es una dependencia operativa común. La demo privilegia la facilidad de arranque y de inspección. En despliegues más exigentes se tendría que evaluar el efecto de aislar los almacenes y operar cada servicio de forma independiente.
+
+El checkout vuelca precio y nombre a elementos históricos. Esto conserva el significado del pedido cuando cambia el catálogo. El stock explícito permite distinguir el producto visible que está agotado del producto histórico archivado.
+
+La galería utiliza recursos estáticos reducidos para evitar una dependencia de imágenes externas. El contenido usado requiere fotos de la unidad concreta si se pasa de una demo a ventas reales. Un proceso de incorporación y revisión de imágenes sería parte de ese cambio operativo.
+
+\subsection{Interpretación de tiempos}
+El umbral del profesor se aplica al máximo y no al promedio. Un p95 aceptable de todas las solicitudes combinadas puede ocultar demoras de una operación de Auth. Las tablas por ruta sirven para identificar la excepción sin promediarla con consultas pequeñas. Las pruebas concurrentes necesitan registrar el equipo, el número de réplicas, el tamaño de datos y el tipo de peticiones para poder comparar resultados.
+
+Optimizar el cambio de clave requiere conservar la verificación del valor anterior y un costo de derivación adecuado. La instrumentación por fase permitiría medir cuánto corresponde a cada función. Se recomienda controlar además el número de operaciones costosas en vuelo antes de exponer un servicio público. El perfil guarda la cantidad de iteraciones completadas y errores, de modo que se pueda verificar que reducir latencia no redujo artificialmente la carga útil ni escondió fallos.
+
+\subsection{Confiabilidad y límites de entrega}
+La publicación después del commit evita anunciar una compra revertida. Sigue siendo posible que el proceso termine entre ambos pasos. La bandeja persistente protege la ruta de recepción por HTTP. Un evento del dominio puede aspirar a mayor durabilidad si se persiste junto a la compra y se utiliza un identificador de deduplicación en consumo. El broker permite reintentos y manejo de mensajes agotados.
+
+\section{Limitaciones}
+Se midió una sola ubicación Windows. La ejecución no representa tráfico público, pagos, logística ni latencia de Internet. Los perfiles son cortos y la primera visita tras un reinicio puede producir otros tiempos. La suite reporta cobertura de código ejercitado y no prueba por sí sola accesibilidad completa ni ausencia de defectos. Las cifras previas de 33 rutas no constituyen una réplica controlada de las corridas de 39.
+
+El despliegue en Render y el uso de SMTP fuera de Mailpit requieren cuentas y credenciales que no se usaron en este experimento. Mailpit captura el correo de prueba. El modo SMS registra simulaciones en la base. No se extrapolan resultados de entrega comercial a partir de esos entornos.
+
+\section{Conclusiones y trabajo futuro}
+TechStore ejecuta el recorrido de búsqueda, compra e historial con avisos al cliente. Los registros muestran qué perfiles y rutas satisfacen o exceden el objetivo temporal. Los principales elementos para reproducir la evaluación son el guion k6, las salidas JaCoCo, las imágenes del flujo real y las instrucciones Windows.
+
+Las siguientes tareas comprenden verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
+
+\begin{thebibliography}{00}
+\bibitem{micro} J. Lewis y M. Fowler, \emph{Microservices}, 2014. \url{https://martinfowler.com/articles/microservices.html}
+\bibitem{outbox} C. Richardson, \emph{Transactional outbox}. \url{https://microservices.io/patterns/data/transactional-outbox.html}
+\bibitem{trgm} PostgreSQL Global Development Group, \emph{pg\_trgm}. \url{https://www.postgresql.org/docs/current/pgtrgm.html}
+\bibitem{argon} A. Biryukov, D. Dinu, D. Khovratovich y S. Josefsson, \emph{Argon2 Memory-Hard Function for Password Hashing and Proof-of-Work Applications}, RFC 9106, 2021. \url{https://www.rfc-editor.org/rfc/rfc9106}
+\bibitem{owasp} OWASP Foundation, \emph{Password Storage Cheat Sheet}. \url{https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html}
+\bibitem{spring} Broadcom, \emph{Spring Boot Reference Documentation}. \url{https://docs.spring.io/spring-boot/}
+\bibitem{rabbit} Broadcom, \emph{RabbitMQ Documentation}. \url{https://www.rabbitmq.com/docs}
+\bibitem{mailpit} A. Sellier, \emph{Mailpit Documentation}. \url{https://mailpit.axllent.org/docs/}
+\bibitem{fx} Frankfurter, \emph{Exchange Rate and Currency API}. \url{https://frankfurter.dev/}
+\bibitem{nager} Nager.Date, \emph{Public Holiday API}. \url{https://date.nager.at/}
+\bibitem{jacoco} Mountainminds, \emph{JaCoCo Java Code Coverage Library}. \url{https://www.jacoco.org/jacoco/}
+\bibitem{k6} Grafana Labs, \emph{Built-in Metrics}. \url{https://grafana.com/docs/k6/latest/using-k6/metrics/reference/}
+\bibitem{renderbp} Render, \emph{Blueprint YAML Reference}. \url{https://render.com/docs/blueprint-spec}
+\bibitem{renderfree} Render, \emph{Deploy for Free}. \url{https://render.com/docs/free}
+\bibitem{cloudamqp} CloudAMQP, \emph{Plans and Pricing}. \url{https://www.cloudamqp.com/plans/}
+\bibitem{brevo} Brevo, \emph{Which SMTP Port Should I Use?} \url{https://help.brevo.com/hc/en-us/articles/10905415650322}
+\end{thebibliography}
+\end{document}
+

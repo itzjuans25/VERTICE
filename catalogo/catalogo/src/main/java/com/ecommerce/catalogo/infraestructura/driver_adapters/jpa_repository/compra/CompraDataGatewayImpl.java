@@ -41,4 +41,9 @@ public class CompraDataGatewayImpl implements CompraGateway {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public boolean cambiarEstado(Long id, String anterior, String nuevo) {
+        return repository.cambiarEstado(id, anterior, nuevo) == 1;
+    }
 }

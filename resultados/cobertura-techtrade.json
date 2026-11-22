@@ -1,0 +1,23 @@
+[
+  {
+    "servicio": "Auth",
+    "cubiertas": 334,
+    "omitidas": 63,
+    "porcentaje": 84.1309823677582,
+    "pruebas": 22
+  },
+  {
+    "servicio": "Catálogo",
+    "cubiertas": 842,
+    "omitidas": 113,
+    "porcentaje": 88.16753926701571,
+    "pruebas": 31
+  },
+  {
+    "servicio": "Notificaciones",
+    "cubiertas": 208,
+    "omitidas": 42,
+    "porcentaje": 83.2,
+    "pruebas": 21
+  }
+]

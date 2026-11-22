@@ -13,4 +13,5 @@ public interface CompraGateway {
     List<Compra> buscarPorUsuarioId(Long usuarioId);
 
     List<Compra> obtenerTodas();
+    boolean cambiarEstado(Long id, String anterior, String nuevo);
 }

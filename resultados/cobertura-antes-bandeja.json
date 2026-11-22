@@ -1,0 +1,23 @@
+[
+  {
+    "service": "Auth",
+    "covered": 330,
+    "total": 393,
+    "percentage": 83.97,
+    "tests": 22
+  },
+  {
+    "service": "Catálogo",
+    "covered": 654,
+    "total": 755,
+    "percentage": 86.62,
+    "tests": 29
+  },
+  {
+    "service": "Notificaciones",
+    "covered": 183,
+    "total": 220,
+    "percentage": 83.18,
+    "tests": 19
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "peticiones": 48,
+  "peticionesFallidas": 0,
+  "aserciones": 145,
+  "asercionesFallidas": 0,
+  "promedioMs": 33.77083333333333,
+  "maximoMs": 194.0,
+  "fallos": []
+}

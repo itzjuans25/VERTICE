@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -69,7 +70,6 @@ public class UsuarioUseCase implements UsuarioService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public LoginResult login(String email, String password) {
         String emailNormalizado = normalizarEmail(email);
         if (emailNormalizado == null || password == null || password.isBlank()) {
@@ -82,6 +82,37 @@ public class UsuarioUseCase implements UsuarioService {
             throw new CredencialesInvalidasException();
         }
 
+        return emitirToken(usuario);
+    }
+
+    @Override
+    public LoginResult renovarSesion(Long id, String password) {
+        Usuario usuario = buscarPorId(id);
+        exigirPasswordActual(usuario, password);
+        return emitirToken(usuario);
+    }
+
+    @Override
+    public void cambiarPassword(Long id, String actual, String nueva) {
+        Usuario usuario = buscarPorId(id);
+        exigirPasswordActual(usuario, actual);
+        validarPassword(nueva);
+        if (nueva.equals(actual)) {
+            throw new DatosInvalidosException("Elige una contrasena diferente");
+        }
+        // El hash corre fuera de la transaccion. La escritura exige que el hash no haya cambiado.
+        if (!usuarioGateway.cambiarPassword(id, usuario.getPassword(), encrypterGateway.encrypt(nueva))) {
+            throw new CredencialesInvalidasException();
+        }
+    }
+
+    private void exigirPasswordActual(Usuario usuario, String password) {
+        if (password == null || password.isBlank() || !encrypterGateway.checkPass(password, usuario.getPassword())) {
+            throw new CredencialesInvalidasException();
+        }
+    }
+
+    private LoginResult emitirToken(Usuario usuario) {
         return new LoginResult(
                 usuario,
                 tokenGateway.generarToken(usuario),
@@ -152,20 +183,31 @@ public class UsuarioUseCase implements UsuarioService {
     }
 
     private void validarPassword(String password) {
+        String problema = problemaDePassword(password);
+        if (problema != null) {
+            throw new DatosInvalidosException(problema);
+        }
+    }
+
+    @Override
+    public String problemaDePassword(String password) {
         if (password == null || password.isBlank()) {
-            throw new DatosInvalidosException("La contrasena es obligatoria");
+            return "La contrasena es obligatoria";
         }
         if (password.length() < PASSWORD_MIN_LENGTH) {
-            throw new DatosInvalidosException(
-                    "La contrasena debe tener al menos " + PASSWORD_MIN_LENGTH + " caracteres");
+            return "La contrasena debe tener al menos " + PASSWORD_MIN_LENGTH + " caracteres";
         }
+        if (password.getBytes(StandardCharsets.UTF_8).length > 72) {
+            return "La contrasena no debe exceder 72 bytes";
+        }
+        return null;
     }
 
     private void notificarBienvenida(Usuario usuario) {
         try {
             NotificacionEmail email = NotificacionEmail.builder()
                     .destinatario(usuario.getEmail())
-                    .asunto("Bienvenido a nuestro E-Commerce")
+                    .asunto("Bienvenido a nuestro TechStore")
                     .cuerpo("<h1>Hola " + usuario.getNombre() + "</h1>"
                             + "<p>Gracias por registrarte en nuestra plataforma.</p>"
                             + "<p>Tu cuenta ha sido creada exitosamente.</p>")
@@ -177,7 +219,7 @@ public class UsuarioUseCase implements UsuarioService {
                 sms = NotificacionSMS.builder()
                         .numeroTelefono(usuario.getTelefono())
                         .mensaje("Hola " + usuario.getNombre()
-                                + "! Bienvenido a nuestro E-Commerce. Tu registro fue exitoso.")
+                                + "! Bienvenido a nuestro TechStore. Tu registro fue exitoso.")
                         .build();
             }
 

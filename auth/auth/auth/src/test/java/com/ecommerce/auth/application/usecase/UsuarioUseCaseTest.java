@@ -44,6 +44,19 @@ class UsuarioUseCaseTest {
     private UsuarioUseCase useCase;
 
     @Test
+    void cambioConcurrenteDeClaveNoSobrescribeElHashNuevo() {
+        Usuario usuario = new Usuario(1L, "Ana", "ana@example.com", "HASH", null, "USER", 25);
+        when(usuarioGateway.buscarPorID(1L)).thenReturn(usuario);
+        when(encrypterGateway.checkPass("anterior123", "HASH")).thenReturn(true);
+        when(encrypterGateway.encrypt("siguiente123")).thenReturn("HASH-NUEVO");
+        when(usuarioGateway.cambiarPassword(1L, "HASH", "HASH-NUEVO")).thenReturn(false);
+
+        assertThrows(CredencialesInvalidasException.class,
+                () -> useCase.cambiarPassword(1L, "anterior123", "siguiente123"));
+        verify(usuarioGateway, never()).actualizarUsario(any());
+    }
+
+    @Test
     void registraUsuarioNormalizandoEmailYForzandoRolCliente() {
         Usuario entrada = new Usuario(null, "  Ana  ", "ANA@Example.COM ", "secret123",
                 " 3001234567 ", "ADMIN", 25);

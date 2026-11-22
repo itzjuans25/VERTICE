@@ -15,6 +15,7 @@ public interface UsuarioGateway {
     Usuario buscarPorID(Long id);
 
     Usuario actualizarUsario(Usuario usuario);
+    boolean cambiarPassword(Long id, String hashAnterior, String hashNuevo);
 
     /** Retorna {@code null} cuando no existe un usuario con ese email. */
     Usuario buscarPorEmail(String email);

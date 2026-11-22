@@ -30,33 +30,20 @@ public class ProcesarNotificacionUseCase implements ProcesarNotificacionService 
 
     @Override
     public void procesar(MensajeNotificacion mensaje) {
-        if (mensaje == null || mensaje.getTipo() == null) {
-            throw new DatosInvalidosException("La notificacion debe indicar su tipo");
-        }
-
+        List<String> canales = validar(mensaje);
         List<String> errores = new ArrayList<>();
-
-        // La validacion ocurre fuera del try: un mensaje mal formado no debe
-        // reintentarse, mientras que un fallo del proveedor si.
-        NotificacionEmail email = requiereEmail(mensaje.getTipo())
-                ? validarEmail(mensaje.getEmail())
-                : null;
-        NotificacionSMS sms = requiereSms(mensaje.getTipo())
-                ? validarSms(mensaje.getSms())
-                : null;
-
-        if (email != null) {
+        if (canales.contains("EMAIL")) {
             try {
-                enviarEmail(email);
+                enviarEmail(mensaje.getEmail());
             } catch (RuntimeException e) {
                 log.error("Fallo el envio de email: {}", e.getMessage());
                 errores.add("email: " + e.getMessage());
             }
         }
 
-        if (sms != null) {
+        if (canales.contains("SMS")) {
             try {
-                enviarSms(sms);
+                enviarSms(mensaje.getSms());
             } catch (RuntimeException e) {
                 log.error("Fallo el envio de SMS: {}", e.getMessage());
                 errores.add("sms: " + e.getMessage());
@@ -68,6 +55,22 @@ public class ProcesarNotificacionUseCase implements ProcesarNotificacionService 
                     "No se pudieron enviar todas las notificaciones: "
                             + String.join("; ", errores));
         }
+    }
+
+    public static List<String> validar(MensajeNotificacion mensaje) {
+        if (mensaje == null || mensaje.getTipo() == null) {
+            throw new DatosInvalidosException("La notificacion debe indicar su tipo");
+        }
+        List<String> canales = new ArrayList<>(2);
+        if (requiereEmail(mensaje.getTipo())) {
+            validarEmail(mensaje.getEmail());
+            canales.add("EMAIL");
+        }
+        if (requiereSms(mensaje.getTipo())) {
+            validarSms(mensaje.getSms());
+            canales.add("SMS");
+        }
+        return canales;
     }
 
     private void enviarEmail(NotificacionEmail email) {

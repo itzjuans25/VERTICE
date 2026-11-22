@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Auth.css';
 import { authApi } from '../api/authApi';
@@ -13,7 +13,10 @@ function Login({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const successMessage = location.state?.message || '';
+  const successMessage = new URLSearchParams(location.search).get('clave') === 'actualizada'
+    ? 'Contraseña actualizada. Inicia sesión con la nueva.'
+    : location.state?.message || '';
+  useEffect(() => { document.title = 'Iniciar sesión | TechStore'; }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -52,15 +55,16 @@ function Login({ onLogin }) {
         <p className="auth-subtitle">Bienvenido de nuevo</p>
 
         {successMessage && (
-          <div className="success-message">{successMessage}</div>
+          <div className="success-message" role="status">{successMessage}</div>
         )}
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message" role="alert">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="login-email">Correo electrónico</label>
             <input
               type="email"
+              id="login-email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -71,9 +75,10 @@ function Login({ onLogin }) {
           </div>
 
           <div className="form-group">
-            <label>Contraseña</label>
+            <label htmlFor="login-password">Contraseña</label>
             <input
               type="password"
+              id="login-password"
               name="password"
               value={formData.password}
               onChange={handleChange}

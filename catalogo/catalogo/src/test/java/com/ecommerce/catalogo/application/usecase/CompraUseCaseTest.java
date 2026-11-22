@@ -55,7 +55,7 @@ class CompraUseCaseTest {
         Carrito carrito = carritoConItem();
 
         when(usuarioGateway.buscarPorId(1L)).thenReturn(usuario);
-        when(carritoGateway.buscarPorUsuarioId(1L)).thenReturn(carrito);
+        when(carritoGateway.buscarPorUsuarioIdParaCompra(1L)).thenReturn(carrito);
         when(productoGateway.descontarStock(10L, 2)).thenReturn(true);
         when(compraGateway.guardar(any(Compra.class))).thenAnswer(invocation -> {
             Compra compra = invocation.getArgument(0);
@@ -78,7 +78,7 @@ class CompraUseCaseTest {
     void checkoutFallaYNoGuardaCompraSiNoHayStock() {
         when(usuarioGateway.buscarPorId(1L))
                 .thenReturn(new Usuario(1L, "Ana", "ana@example.com", "300", "USER"));
-        when(carritoGateway.buscarPorUsuarioId(1L)).thenReturn(carritoConItem());
+        when(carritoGateway.buscarPorUsuarioIdParaCompra(1L)).thenReturn(carritoConItem());
         when(productoGateway.descontarStock(10L, 2)).thenReturn(false);
 
         assertThrows(StockInsuficienteException.class, () -> useCase.realizarCompra(1L));
@@ -92,7 +92,7 @@ class CompraUseCaseTest {
     void checkoutConCarritoVacioFalla() {
         when(usuarioGateway.buscarPorId(1L))
                 .thenReturn(new Usuario(1L, "Ana", "ana@example.com", "300", "USER"));
-        when(carritoGateway.buscarPorUsuarioId(1L)).thenReturn(null);
+        when(carritoGateway.buscarPorUsuarioIdParaCompra(1L)).thenReturn(null);
 
         assertThrows(CarritoVacioException.class, () -> useCase.realizarCompra(1L));
     }

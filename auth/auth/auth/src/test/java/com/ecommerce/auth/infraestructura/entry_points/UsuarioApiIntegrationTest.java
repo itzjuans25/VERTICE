@@ -48,6 +48,58 @@ class UsuarioApiIntegrationTest {
     }
 
     @Test
+    void sesionRenovacionYCambioDeClave() throws Exception {
+        Sesion sesion = registrarYLogin("ana@example.com");
+        String bearer = "Bearer " + sesion.token();
+        String base = "/api/ecommerce/usuario";
+        mockMvc.perform(get(base + "/sesion").header("Authorization", bearer))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.estado").value("ACTIVA"));
+        mockMvc.perform(get(base + "/sesion")).andExpect(status().isUnauthorized());
+        mockMvc.perform(post(base + "/renovar").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"password\":\"secret123\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty());
+        mockMvc.perform(post(base + "/renovar").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"password\":\"incorrecta\"}"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post(base + "/cambiar-clave").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"actual\":\"secret123\",\"nueva\":\"secret123\"}"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post(base + "/cambiar-clave").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"actual\":\"secret123\",\"nueva\":\"nueva123\"}"))
+                .andExpect(status().isNoContent());
+        login("ana@example.com", "nueva123");
+    }
+
+    @Test
+    void bloqueaLosIntentosRepetidosDeLogin() throws Exception {
+        String cuerpo = "{\"email\":\"limite@example.test\",\"password\":\"clave-de-prueba\"}";
+        for (int i = 0; i < 10; i++) {
+            mockMvc.perform(post("/api/ecommerce/usuario/login")
+                            .contentType("application/json").content(cuerpo))
+                    .andExpect(status().isUnauthorized());
+        }
+        mockMvc.perform(post("/api/ecommerce/usuario/login").contentType("application/json").content(cuerpo))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                        .string("Retry-After", "60"));
+    }
+
+    @Test
+    void politicaSeEvaluaSinGuardarLaClave() throws Exception {
+        String ruta = "/api/ecommerce/usuario/evaluar-clave";
+        for (String clave : new String[]{"", "abc", "á".repeat(40)}) {
+            mockMvc.perform(post(ruta).contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(Map.of("password", clave))))
+                    .andExpect(status().isOk()).andExpect(jsonPath("$.valida").value(false))
+                    .andExpect(jsonPath("$.password").doesNotExist());
+        }
+        mockMvc.perform(post(ruta).contentType(MediaType.APPLICATION_JSON).content("{\"password\":\"ejemplo123\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.valida").value(true));
+    }
+
+    @Test
     void registroYLoginDevuelvenTokenSinExponerPassword() throws Exception {
         mockMvc.perform(post("/api/ecommerce/usuario/save")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -136,7 +137,7 @@ public class CarritoUseCase implements CarritoService {
 
         Carrito carrito = carritoGateway.buscarPorUsuarioId(usuarioId);
         if (carrito == null) {
-            throw new CarritoNoFoundException("El usuario no tiene un carrito");
+            return crearCarrito(usuarioId);
         }
 
         carrito.getItems().clear();
@@ -154,6 +155,12 @@ public class CarritoUseCase implements CarritoService {
             return crearCarrito(usuarioId);
         }
         return carrito;
+    }
+
+    @Override
+    public Map<Long, Integer> consultarStock(Carrito carrito) {
+        return productoGateway.consultarStock(carrito.getItems().stream()
+                .map(ItemCarrito::getProductoId).distinct().toList());
     }
 
     private void validarUsuario(Long usuarioId) {
@@ -189,7 +196,7 @@ public class CarritoUseCase implements CarritoService {
     }
 
     private static void validarStock(Producto producto, int cantidad) {
-        if (producto.getStock() == null || producto.getStock() <= 0) {
+        if (!"ACTIVA".equals(producto.getEstadoPublicacion()) || producto.getStock() == null || producto.getStock() <= 0) {
             throw new StockInsuficienteException(
                     "El producto " + producto.getNombre() + " no tiene stock disponible");
         }

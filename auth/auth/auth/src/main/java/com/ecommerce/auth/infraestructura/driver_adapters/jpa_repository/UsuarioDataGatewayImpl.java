@@ -48,6 +48,11 @@ public class UsuarioDataGatewayImpl implements UsuarioGateway {
     }
 
     @Override
+    public boolean cambiarPassword(Long id, String hashAnterior, String hashNuevo) {
+        return repository.cambiarPassword(id, hashAnterior, hashNuevo) == 1;
+    }
+
+    @Override
     public Usuario buscarPorEmail(String email) {
         return repository.findByEmailIgnoreCase(email)
                 .map(mapperUsuario::toUsuario)

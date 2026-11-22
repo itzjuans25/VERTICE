@@ -1,0 +1,15 @@
+{
+  "peticiones": 45,
+  "peticionesFallidas": 0,
+  "aserciones": 136,
+  "asercionesFallidas": 1,
+  "promedioMs": 126.51111111111113,
+  "maximoMs": 1135.0,
+  "fallos": [
+    {
+      "caso": "Crear producto temporal",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1135 to be below 500"
+    }
+  ]
+}

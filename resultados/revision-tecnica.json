@@ -1,0 +1,117 @@
+{
+  "health": [
+    {
+      "http": 200,
+      "puerto": 9090,
+      "estado": "UP"
+    },
+    {
+      "http": 200,
+      "puerto": 9092,
+      "estado": "UP"
+    },
+    {
+      "http": 200,
+      "puerto": 9093,
+      "estado": "UP"
+    },
+    {
+      "puerto": 3000,
+      "http": 200
+    },
+    {
+      "puerto": 8025,
+      "http": 200
+    }
+  ],
+  "cors": [
+    {
+      "permitido": true,
+      "origen": "http://localhost:3000",
+      "puerto": 9090,
+      "http": 200
+    },
+    {
+      "permitido": false,
+      "origen": "https://origen-ajeno.example",
+      "puerto": 9090,
+      "http": 403
+    },
+    {
+      "permitido": true,
+      "origen": "http://localhost:3000",
+      "puerto": 9092,
+      "http": 200
+    },
+    {
+      "permitido": false,
+      "origen": "https://origen-ajeno.example",
+      "puerto": 9092,
+      "http": 403
+    }
+  ],
+  "logs": [
+    {
+      "errores": 0,
+      "avisos": 3,
+      "servicio": "auth"
+    },
+    {
+      "errores": 0,
+      "avisos": 4,
+      "servicio": "catalogo"
+    },
+    {
+      "errores": 0,
+      "avisos": 2,
+      "servicio": "notificaciones"
+    },
+    {
+      "errores": 0,
+      "avisos": 0,
+      "servicio": "frontend"
+    },
+    {
+      "errores": 0,
+      "avisos": 0,
+      "servicio": "postgres"
+    },
+    {
+      "errores": 0,
+      "avisos": 0,
+      "servicio": "rabbitmq"
+    },
+    {
+      "errores": 0,
+      "avisos": 0,
+      "servicio": "mailpit"
+    }
+  ],
+  "npm": {
+    "revision-npm-runtime.json": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "techstore-npm-audit.json": {
+      "info": 0,
+      "low": 11,
+      "moderate": 13,
+      "high": 38,
+      "critical": 3,
+      "total": 65
+    },
+    "revision-npm-audit.json": {
+      "info": 0,
+      "low": 9,
+      "moderate": 4,
+      "high": 16,
+      "critical": 0,
+      "total": 29
+    }
+  },
+  "noSniff": true
+}

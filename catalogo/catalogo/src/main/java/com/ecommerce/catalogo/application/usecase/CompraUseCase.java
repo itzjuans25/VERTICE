@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -47,14 +48,16 @@ public class CompraUseCase implements CompraService {
             throw new UsuarioNoEncontradoException("Usuario no encontrado con ID: " + usuarioId);
         }
 
-        Carrito carrito = carritoGateway.buscarPorUsuarioId(usuarioId);
+        Carrito carrito = carritoGateway.buscarPorUsuarioIdParaCompra(usuarioId);
         if (carrito == null || carrito.getItems() == null || carrito.getItems().isEmpty()) {
             throw new CarritoVacioException(
                     "No hay items en el carrito para realizar la compra");
         }
 
         // Descuento atomico: si un item no tiene stock, la transaccion revierte todo.
-        for (ItemCarrito item : carrito.getItems()) {
+        var itemsPorProducto = carrito.getItems().stream()
+                .sorted(Comparator.comparing(ItemCarrito::getProductoId)).toList();
+        for (ItemCarrito item : itemsPorProducto) {
             if (!productoGateway.descontarStock(item.getProductoId(), item.getCantidad())) {
                 throw new StockInsuficienteException(
                         "Stock insuficiente para el producto " + item.getNombreProducto());
@@ -67,7 +70,7 @@ public class CompraUseCase implements CompraService {
         // El carrito ya no se necesita: el stock se desconto en el checkout.
         carritoGateway.eliminarPorUsuarioId(usuarioId);
 
-        enviarNotificacionDespuesDelCommit(compraGuardada, usuario);
+        despuesDelCommit(() -> enviarNotificacionCompra(compraGuardada, usuario));
         return compraGuardada;
     }
 
@@ -125,17 +128,57 @@ public class CompraUseCase implements CompraService {
         return compra;
     }
 
-    private void enviarNotificacionDespuesDelCommit(Compra compra, Usuario usuario) {
+    @Override
+    @Transactional
+    public Compra cambiarEstado(Long id, String estado) {
+        Compra compra = obtenerCompraPorId(id);
+        String anterior = compra.getEstado();
+        if (anterior.equals(estado)) {
+            return compra;
+        }
+        if (!(("COMPLETADA".equals(anterior) && "ENVIADA".equals(estado))
+                || ("ENVIADA".equals(anterior) && "ENTREGADA".equals(estado)))) {
+            throw new com.ecommerce.catalogo.domain.exception.DatosInvalidosException("Transicion de pedido invalida");
+        }
+        Usuario usuario = usuarioGateway.buscarPorId(compra.getUsuarioId());
+        if (!compraGateway.cambiarEstado(id, anterior, estado)) {
+            throw new com.ecommerce.catalogo.domain.exception.DatosInvalidosException("El estado cambio en otra solicitud");
+        }
+        compra.setEstado(estado);
+        despuesDelCommit(() -> notificarEstado(compra, usuario));
+        return compra;
+    }
+
+    private void notificarEstado(Compra compra, Usuario usuario) {
+        if (usuario == null) { return; }
+        String asunto = "Estado del pedido #" + compra.getId();
+        String texto = "Pedido #" + compra.getId() + ": " + compra.getEstado();
+        var mensaje = MensajeNotificacion.builder()
+                .tipo(MensajeNotificacion.TipoNotificacion.EMAIL)
+                .email(NotificacionEmail.builder().destinatario(usuario.getEmail()).asunto(asunto).cuerpo(texto).build())
+                .build();
+        if (usuario.getTelefono() != null && !usuario.getTelefono().isBlank()) {
+            mensaje.setTipo(MensajeNotificacion.TipoNotificacion.AMBOS);
+            mensaje.setSms(NotificacionSMS.builder().numeroTelefono(usuario.getTelefono()).mensaje(texto).build());
+        }
+        try {
+            notificacionGateway.enviarNotificacion(mensaje);
+        } catch (RuntimeException ex) {
+            log.warn("No se pudo publicar el cambio de estado del pedido {}", compra.getId(), ex);
+        }
+    }
+
+    private void despuesDelCommit(Runnable notificar) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(
                     new TransactionSynchronization() {
                         @Override
                         public void afterCommit() {
-                            enviarNotificacionCompra(compra, usuario);
+                            notificar.run();
                         }
                     });
         } else {
-            enviarNotificacionCompra(compra, usuario);
+            notificar.run();
         }
     }
 

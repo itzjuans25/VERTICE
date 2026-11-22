@@ -1,199 +1,116 @@
-# E-Commerce Microservices Platform
+# TechStore
 
-![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green?style=for-the-badge&logo=springboot)
-![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=for-the-badge&logo=postgresql)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.13-orange?style=for-the-badge&logo=rabbitmq)
-![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=for-the-badge&logo=docker)
+Tienda colombiana de computadores, componentes y electrónica nueva y usada. La tienda administra el inventario y atiende todos los pedidos. El nombre del repositorio sigue siendo ECOMMERCE_FRANK.
 
-Plataforma de comercio electrónico con microservicios Spring Boot, frontend React y un stack **100 % open source**. Ya no depende de AWS ni de Twilio.
-
-## Reemplazos respecto a la versión anterior
-
-| Antes | Ahora |
-| --- | --- |
-| AWS SQS | RabbitMQ (exchange topic + cola con reintentos y DLQ) |
-| AWS SES | SMTP: Mailpit en desarrollo, cualquier servidor SMTP en producción |
-| Twilio SMS | Adaptador SMS por webhook HTTP o modo `log` |
-| Rol enviado en `X-User-Role` | JWT firmado y validado con Spring Security |
-| `usuarioId` en la URL/query | Identidad derivada del JWT |
-| ModelMapper | Mappers explícitos por caso de uso |
-| Secretos en scripts `.bat` | Variables de entorno en `.env` (ignorado por Git) |
-
-## Inicio rápido con Docker
-
-Requisitos: Docker Desktop con Docker Compose v2.
-
-```bash
-git clone https://github.com/DIEGHOST64/ECOMMERCE.git
-cd ECOMMERCE
-
-cp .env.example .env
-# Windows: copy .env.example .env
-```
-
-Edita `.env` y cambia como mínimo:
-
-- `POSTGRES_PASSWORD`
-- `RABBITMQ_PASSWORD`
-- `JWT_SECRET` (mínimo 32 caracteres; genera uno con `openssl rand -base64 48`)
-
-```bash
-docker compose up -d --build
-docker compose ps
-```
-
-En Windows también puedes usar:
+## Arranque en Windows
 
 ```powershell
-.\setup.bat
-# edita .env
-powershell -ExecutionPolicy Bypass -File .\start-services.ps1
+powershell -ExecutionPolicy Bypass -File .\iniciar.ps1
+powershell -ExecutionPolicy Bypass -File .\detener.ps1
 ```
 
-Servicios disponibles:
+El inicio prepara la base, verifica la salud de las APIs y abre la tienda, Mailpit, Swagger y pgAdmin si está instalado. Para cerrar el entorno se usa el segundo comando. Los datos se conservan. Si falla un servicio, revisa sus archivos `.log` y `.err.log` en `%LOCALAPPDATA%\EcommerceDev`. [Instrucciones de arranque](Instrucciones%20de%20arranque.md)
 
-| Servicio | URL |
+| Componente | Puerto local | Abrir |
+| --- | ---: | --- |
+| React | 3000 | [Tienda](http://localhost:3000) |
+| Auth | 9090 | [Swagger](http://localhost:9090/swagger-ui.html) |
+| Catálogo | 9092 | [Swagger](http://localhost:9092/swagger-ui.html) |
+| Notificaciones | 9093 | [Swagger](http://localhost:9093/swagger-ui.html) |
+| PostgreSQL | 55432 | pgAdmin |
+| RabbitMQ | 5673 | Health de Notificaciones |
+| Mailpit | 8025 web / 1025 SMTP | [Bandeja](http://localhost:8025) |
+
+## Recorrido de compra
+
+Explora sin cuenta. Filtra por categoría, marca, condición o precio. La ficha reúne galería, compatibilidad, especificaciones, garantía y la nota de estado para usados. Regístrate, agrega un producto al carrito, confirma la compra y abre **Mis compras**. En Mailpit busca el correo con el número del pedido.
+
+El catálogo, la ficha y el carrito muestran el stock actual y lo consultan al volver a la pestaña. Si otra persona compra la última unidad, el artículo queda agotado y se bloquea la confirmación del carrito hasta ajustar sus cantidades. El servidor comprueba el stock y registra una sola compra por carrito, incluso con dos confirmaciones simultáneas.
+
+Los precios del seed se expresan en COP. Las imágenes locales son ilustrativas y las notas de usados describen ejemplos de grado y comprobaciones. Las fotografías no identifican unidades físicas. [Ejemplos de precios de periféricos en Colombia](https://www.alkosto.com/accesorios-electronica/accesorios-computadores/perifericos/webcam/c/BI_A46_ALKOS)
+
+## Arquitectura y datos
+
+```mermaid
+flowchart LR
+  UI[React] --> A[Auth]
+  UI --> C[Catálogo]
+  C --> A
+  A --> PG[(PostgreSQL)]
+  C --> PG
+  A --> MQ[RabbitMQ]
+  C --> MQ
+  MQ --> N[Notificaciones]
+  N --> PG
+  N --> SMTP[Mailpit o Brevo]
+  C --> FX[Frankfurter]
+  C --> F[Nager.Date]
+```
+
+Auth valida credenciales y emite JWT. Catálogo administra productos, carrito e inventario de pedidos. Notificaciones entrega correos de registro, compra y estado. El consumidor tiene reintentos y cola de errores. El envío después del commit evita revertir el pedido si falla el aviso.
+
+La migración y el seed se ejecutan al iniciar Catálogo. La clave única `sku_demo` evita duplicados. Los productos históricos retirados quedan archivados para conservar los pedidos ya registrados.
+
+![Diagrama ER del esquema PostgreSQL](docs/pgadmin/er-techstore.png)
+
+En pgAdmin usa host `127.0.0.1`, puerto `55432`, base `ecommerce` y usuario `ecommerce_dev`. Obtén la contraseña de `POSTGRES_PASSWORD` en `.env.native`. [Guía de pgAdmin y consultas SQL](docs/pgadmin/README.md)
+
+## Cinco APIs no CRUD por microservicio
+
+| Servicio | Operaciones |
 | --- | --- |
-| Frontend | http://localhost:3000 |
-| Auth API | http://localhost:9090 |
-| Catálogo API | http://localhost:9092 |
-| Mailpit (correo) | http://localhost:8025 |
-| RabbitMQ Management | http://localhost:15672 |
+| Auth | `POST /login` emite JWT, `GET /sesion` comprueba la cuenta activa, `POST /evaluar-clave` revisa la política, `POST /renovar` emite otro JWT y `POST /cambiar-clave` verifica y gira la credencial. Prefijo `/api/ecommerce/usuario`. |
+| Catálogo | `GET /producto/explorar` filtra y pagina, `GET /producto/{id}/precio-usd` convierte moneda, `GET /producto/entrega` estima días hábiles, `GET /carrito/resumen` calcula totales y `POST /compras/realizar` aplica inventario y registra el pedido. Prefijo `/api/ecommerce`. |
+| Notificaciones | `POST /validar` revisa el mensaje, `POST /previsualizar/bienvenida` y `POST /previsualizar/compra` renderizan correos, `GET /plan-reintentos` devuelve esperas y `POST /encolar` acepta y guarda el aviso con clave de servicio. Prefijo `/api/ecommerce/notificaciones`. |
 
-Para crear el primer administrador, registra un usuario desde el frontend y promuévelo:
+Frankfurter actualiza la tasa COP/USD en segundo plano. Sin una tasa vigente, la conversión devuelve 503. Nager.Date entrega festivos de Colombia. Si falta un año necesario, la fecha estimada indica que es parcial. Los dos adaptadores usan caché y límites de conexión y lectura de 2 s. [Frankfurter](https://frankfurter.dev/) · [Nager.Date](https://date.nager.at/)
 
-```bash
-docker compose exec postgres psql -U postgres -d ecommerce \
-  -c "UPDATE usuario SET role = 'ADMIN' WHERE email = 'tu@email.com';"
-```
+Para verlas en la tienda, abre cualquier ficha y mira la **referencia en USD** debajo del precio en pesos. Luego agrega un producto y abre el **carrito**. El resumen muestra la **fecha estimada** para tres días hábiles con el calendario colombiano. Si una consulta falla, el precio en COP y la confirmación de compra siguen disponibles.
 
-Cierra sesión y vuelve a entrar para que el nuevo JWT incluya el rol.
+## Seguridad y notificaciones
 
-Detener la plataforma:
+**Cambiar contraseña** está en el menú de la cuenta. Auth exige la clave anterior y limita los intentos repetidos de login. Las contraseñas nuevas usan Argon2id. El JWT se configura mediante `JWT_SECRET`. Render genera un secreto de entorno independiente y compartido entre Auth y Catálogo.
 
-```bash
-docker compose down          # conserva los datos
-docker compose down --volumes  # elimina PostgreSQL y RabbitMQ
-```
+El correo de Windows se puede verificar en Mailpit. Para Brevo se configuran `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM`, `MAIL_SMTP_AUTH` y `MAIL_STARTTLS`. Si faltan credenciales en modo autenticado, Notificaciones lo avisa y los correos pasan por el mecanismo de reintentos. Render Free usa el puerto alternativo 2525 con STARTTLS. [Pasos de Render](docs/Render.md)
 
-## Arquitectura
+## Postman y rendimiento
 
-```text
-Navegador
-   |
-   v
-Frontend React (nginx)
-   |------------------------------+
-   v                              v
-Auth API :9090                 Catálogo API :9092
-   |      \                       |       \
-   |       \--> RabbitMQ <--------+        \--> Auth (validar usuario)
-   |              |
-   v              v
-PostgreSQL   Notificaciones :9093
-                 |        \
-                 v         v
-              SMTP      SMS webhook/log
-```
+Importa la colección y elige **Local**. Guarda credenciales administrativas y claves solo como valores locales del entorno. El script de Newman crea la cuenta administrativa temporal y conserva un reporte sin cuerpos ni cabeceras. [Colección, entornos e informe](postman/README.md)
 
-- **Auth** registra usuarios, autentica y emite JWT.
-- **Catálogo** administra productos, carrito y compras. Valida el JWT localmente y consulta a Auth cuando necesita datos del usuario.
-- **Notificaciones** consume RabbitMQ y envía email/SMS. Los fallos se reintentan y, agotados los intentos, van a una DLQ.
-- **Frontend** usa clientes API centralizados, guarda la sesión JWT y normaliza roles.
+<!-- RESULTADOS TECHSTORE -->
+Pasaron **76 pruebas Java** y **12 React**. JaCoCo de líneas en la suite Java completa: **Auth 85,28 %, Catálogo 88,49 %, Notificaciones 82,95 %**.
 
-Más detalles en [ARCHITECTURE.md](./ARCHITECTURE.md).
+El pedido #2151 de Portátil ThinkPad T480 por 850.000 COP se confirmó en el navegador y se encontró el correo correspondiente en Mailpit.
 
-## Clean Architecture
+Newman ejecutó 48 peticiones y 145 aserciones. Hubo 0 aserciones fallidas en la corrida de revisión, con máximo 194,00 ms. En la primera corrida de la revisión hubo 2 fallos de tiempo y un máximo de 1354,00 ms.
 
-Cada servicio respeta la regla de dependencia: `domain` no conoce frameworks; `application` implementa los casos de uso; `infraestructura` contiene los adaptadores.
+| Usuarios | Promedio ms | p95 ms | p99 ms | Máximo ms | Errores | Peticiones | req/s |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 3 | 29,01 | 124,80 | 218,55 | 344,08 | 0 | 1665 | 61,16 |
+| 6 | 23,84 | 114,04 | 211,19 | 284,96 | 0 | 3996 | 104,42 |
+| 8 | 38,78 | 192,45 | 463,72 | 1086,76 | 0 | 3700 | 96,00 |
 
-```text
-servicio/src/main/java/com/ecommerce/<servicio>/
-├── domain/
-│   ├── model/          Entidades y objetos de valor
-│   ├── port/in/        Casos de uso (interfaces)
-│   ├── port/out/       Puertos hacia infraestructura
-│   └── exception/      Excepciones de negocio
-├── application/
-│   └── usecase/        Implementación de casos de uso
-└── infraestructura/
-    ├── config/         Spring, seguridad, RabbitMQ
-    ├── entry_points/   Controllers REST + DTOs
-    ├── driver_adapters/ JPA, SMTP, SMS, clientes HTTP
-    ├── messaging/      Productores/consumidores RabbitMQ
-    ├── security/       JWT
-    └── mapper/         Traducción dominio <-> persistencia/DTO
-```
+- **3 usuarios.** Rutas por encima de 500 ms: ninguna. Cambio de contraseña: máximo 257,77 ms y p95 247,55 ms.
+- **6 usuarios.** Rutas por encima de 500 ms: ninguna. Cambio de contraseña: máximo 284,96 ms y p95 244,85 ms.
+- **8 usuarios.** Rutas por encima de 500 ms: POST /save (861,08 ms), POST /login (591,87 ms), POST /renovar (629,82 ms), POST /cambiar-clave (1086,76 ms). Cambio de contraseña: máximo 1086,76 ms y p95 826,43 ms.
+<!-- FIN RESULTADOS TECHSTORE -->
 
-## Desarrollo local sin contenedores para los servicios
+Para reproducir los perfiles usa `pruebas/ejecutar-k6.ps1` con modos carga y estrés. Cada perfil mide la aplicación en Windows. El máximo por ruta es el criterio para los 500 ms. [Informe por ruta](resultados/latencias-techstore.md)
 
-Levanta solo la infraestructura:
+## Render opcional
 
-```bash
-docker compose up -d postgres rabbitmq mailpit
-```
+La sustentación funciona en Windows. Si necesitas un enlace público, Render ofrece un frontend estático, tres servicios web y PostgreSQL en el Blueprint. Configura RabbitMQ con CloudAMQP y el remitente con Brevo SMTP. La primera visita en frío no comparte las latencias medidas en Windows. [Pasos de Render](docs/Render.md)
 
-Ejecuta un servicio con Maven y las variables del `.env` raíz:
+## Guion de sustentación
 
-```powershell
-.\run-local.ps1 auth
-.\run-local.ps1 catalogo
-.\run-local.ps1 notificaciones
-```
+1. Abre la tienda. Busca un portátil usado por marca. Explica condición, grado, garantía y paginación.
+2. Haz un registro y un pedido. Enseña carrito, historial, correo en Mailpit y tablas en pgAdmin.
+3. Ejecuta Postman o abre el reporte HTML. Enseña Swagger, JaCoCo y una ruta que supere 500 ms.
 
-En otra terminal:
+**¿Qué hace RabbitMQ?** Entrega el aviso por separado. El pedido se confirma en PostgreSQL y el correo se comprueba en Mailpit.
 
-```bash
-cd frontend
-npm ci
-npm start
-```
+**¿Cómo evitas vender más unidades de las que hay?** La actualización de stock comprueba la cantidad en la misma escritura. Si algún artículo falla, el pedido completo se revierte.
 
-El frontend usa por defecto `http://localhost:9090` y `http://localhost:9092`. Puedes cambiarlo con:
+**¿Por qué tarda el cambio de contraseña?** Verifica la credencial anterior y deriva otro hash. Las dos operaciones compiten por recursos bajo concurrencia.
 
-```bash
-REACT_APP_AUTH_URL=http://localhost:9090
-REACT_APP_CATALOGO_URL=http://localhost:9092
-```
-
-## Pruebas
-
-```bash
-# Backend
-cd auth/auth/auth && ./mvnw clean verify
-cd catalogo/catalogo && ./mvnw clean verify
-cd notificaciones && ./mvnw clean verify
-
-# Frontend
-cd frontend
-npm test -- --watchAll=false
-npm run build
-```
-
-En Windows usa `mvnw.cmd` y `npm.cmd`. El workflow de GitHub Actions (`.github/workflows/ci.yml`) ejecuta las tres suites, las pruebas del frontend y valida `docker-compose.yml`.
-
-## Documentación
-
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — capas, flujos y mensajería.
-- [API.md](./API.md) — endpoints, roles y ejemplos.
-- [POSTMAN_GUIDE.md](./POSTMAN_GUIDE.md) — uso de la colección Postman.
-- [DEPLOYMENT.md](./DEPLOYMENT.md) — despliegue con Docker y consideraciones de producción.
-- [INSTALL.md](./INSTALL.md) — instalación detallada.
-- [DEPENDENCIES.md](./DEPENDENCIES.md) — dependencias y versiones.
-
-## Seguridad
-
-- Contraseñas con BCrypt; JWT firmado con HMAC-SHA256 y expiración configurable.
-- Roles `USER` y `ADMIN`; el backend fuerza `USER` en el registro.
-- El catálogo deriva el usuario del JWT: no acepta `usuarioId` ni `X-User-Role` del cliente.
-- Propiedad verificada en carrito, compras y datos de usuario.
-- El stock se descuenta de forma atómica solo al confirmar la compra; el carrito no reserva inventario.
-- Los secretos viven en `.env`, que está ignorado por Git.
-
-> **Importante:** versiones anteriores de este repositorio público incluyeron credenciales de AWS y Twilio. El historial público fue purgado el 2026-11-12 y el repositorio anterior quedó archivado como `ECOMMERCE-archive` (privado). Aun así, considera esas credenciales comprometidas y rótalas o revócalas: la purga no las invalida. Si clonaste antes de la purga, vuelve a clonar el repositorio.
-
-## Licencia
-
-MIT. Consulta [LICENSE](./LICENSE).
+[Guía PDF](output/pdf/guia-ecommerce-frank.pdf) · [Artículo IEEE](output/pdf/articulo-ieee.pdf) · [Auditoría](docs/Auditoria.md) · [Capturas](docs/capturas/)

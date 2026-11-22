@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './Orders.css';
 import { catalogoApi } from '../api/catalogoApi';
+import { Link } from 'react-router-dom';
+import { FaBoxOpen } from 'react-icons/fa';
 
 function Orders({ user }) {
+  useEffect(() => { document.title = 'Mis compras | TechStore'; }, []);
   const [compras, setCompras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -45,14 +48,15 @@ function Orders({ user }) {
   }
 
   return (
-    <div className="orders-container">
-      <h1 className="page-title">Mis Compras</h1>
+    <main className="orders-container">
+      <h1 className="page-title">Mis compras</h1>
 
       {compras.length === 0 ? (
         <div className="empty-orders">
-          <span className="empty-icon">📦</span>
+          <FaBoxOpen className="empty-icon" aria-hidden="true" />
           <h2>No tienes compras aún</h2>
           <p>Realiza tu primera compra y aparecerá aquí</p>
+          <Link to="/productos">Explorar el catálogo</Link>
         </div>
       ) : (
         <div className="orders-list">
@@ -104,7 +108,7 @@ function Orders({ user }) {
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }
 

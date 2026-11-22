@@ -26,4 +26,38 @@ public class ProductoData {
     
     @Column(columnDefinition = "TEXT")
     private String imagenUrl;
+    private String categoria;
+    private String grado;
+    private String modelo;
+    @Column(columnDefinition = "TEXT")
+    private String descripcionLarga;
+    @Column(columnDefinition = "TEXT")
+    private String incluye;
+    @Column(columnDefinition = "TEXT")
+    private String compatibilidad;
+    @Column(columnDefinition = "TEXT")
+    private String notaEstado;
+    @Column(columnDefinition = "TEXT")
+    private String imagenSecundariaUrl;
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    private java.util.Map<String, String> especificaciones;
+    private String condicion = "NUEVO";
+    private String tipoVendedor = "TIENDA";
+    private String marca = "Genérica";
+    private Integer garantiaDias = 0;
+    private String estadoPublicacion = "ACTIVA";
+
+    public ProductoData(Long id, String nombre, String descripcion, BigDecimal precio, Integer stock, String imagenUrl, String categoria) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.stock = stock;
+        this.imagenUrl = imagenUrl;
+        this.categoria = categoria;
+    }
+
+    public ProductoData(Long id, String nombre, String descripcion, BigDecimal precio, Integer stock, String imagenUrl) {
+        this(id, nombre, descripcion, precio, stock, imagenUrl, null);
+    }
 }

@@ -15,6 +15,7 @@ const FORMULARIO_VACIO = {
 };
 
 function AdminPanel() {
+  useEffect(() => { document.title = 'Administración | TechStore'; }, []);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -133,7 +134,7 @@ function AdminPanel() {
           onClick={() => (showForm ? resetFormulario() : setShowForm(true))}
           className="btn-new-product"
         >
-          {showForm ? '✕ Cancelar' : '+ Nuevo Producto'}
+          {showForm ? 'Cancelar' : 'Nuevo producto'}
         </button>
       </div>
 
@@ -142,9 +143,10 @@ function AdminPanel() {
           <h2>{editingProduct ? 'Editar Producto' : 'Nuevo Producto'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Nombre del Producto</label>
+              <label htmlFor="producto-nombre">Nombre del Producto</label>
               <input
                 type="text"
+                id="producto-nombre"
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
@@ -155,8 +157,9 @@ function AdminPanel() {
             </div>
 
             <div className="form-group">
-              <label>Descripción</label>
+              <label htmlFor="producto-descripcion">Descripción</label>
               <textarea
+                id="producto-descripcion"
                 name="descripcion"
                 value={formData.descripcion}
                 onChange={handleChange}
@@ -168,15 +171,16 @@ function AdminPanel() {
             </div>
 
             <div className="form-group">
-              <label>
+              <label htmlFor="producto-imagen">
                 <FaImage /> URL de Imagen del Producto
               </label>
               <input
-                type="url"
+                type="text"
+                id="producto-imagen"
                 name="imagenUrl"
                 value={formData.imagenUrl}
                 onChange={handleChange}
-                placeholder="https://ejemplo.com/imagen.jpg"
+                placeholder="/techtrade/torre.webp"
               />
               {formData.imagenUrl && (
                 <div className="image-preview">
@@ -204,11 +208,12 @@ function AdminPanel() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Precio ($)</label>
+                <label htmlFor="producto-precio">Precio ($)</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0.01"
+                  id="producto-precio"
                   name="precio"
                   value={formData.precio}
                   onChange={handleChange}
@@ -218,10 +223,11 @@ function AdminPanel() {
               </div>
 
               <div className="form-group">
-                <label>Stock</label>
+                <label htmlFor="producto-stock">Stock</label>
                 <input
                   type="number"
                   min="0"
+                  id="producto-stock"
                   name="stock"
                   value={formData.stock}
                   onChange={handleChange}
@@ -303,14 +309,14 @@ function AdminPanel() {
                       onClick={() => handleEdit(producto)}
                       className="btn-edit"
                     >
-                      ✎ Editar
+                      Editar
                     </button>
                     <button
                       onClick={() => handleDelete(producto.id)}
                       className="btn-delete"
                       disabled={eliminandoId === producto.id}
                     >
-                      🗑 {eliminandoId === producto.id ? 'Eliminando...' : 'Eliminar'}
+                      {eliminandoId === producto.id ? 'Eliminando...' : 'Eliminar'}
                     </button>
                   </td>
                 </tr>

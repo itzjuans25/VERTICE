@@ -12,6 +12,12 @@ public interface UsuarioService {
 
     LoginResult login(String email, String password);
 
+    LoginResult renovarSesion(Long id, String password);
+
+    void cambiarPassword(Long id, String actual, String nueva);
+
+    String problemaDePassword(String password);
+
     Usuario buscarPorId(Long id);
 
     boolean existePorId(Long id);

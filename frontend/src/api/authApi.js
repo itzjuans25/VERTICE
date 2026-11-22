@@ -23,4 +23,11 @@ export const authApi = {
   getUsuario(id) {
     return request(BASE, `/api/ecommerce/usuario/${id}`);
   },
+
+  cambiarClave(actual, nueva) {
+    return request(BASE, '/api/ecommerce/usuario/cambiar-clave', {
+      method: 'POST',
+      body: { actual, nueva },
+    });
+  },
 };

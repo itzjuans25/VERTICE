@@ -8,6 +8,8 @@ public interface CarritoGateway {
 
     Carrito buscarPorUsuarioId(Long usuarioId);
 
+    Carrito buscarPorUsuarioIdParaCompra(Long usuarioId);
+
     void eliminarCarrito(Long carritoId);
 
     void eliminarPorUsuarioId(Long usuarioId);

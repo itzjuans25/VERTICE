@@ -1,0 +1,20 @@
+[
+  {
+    "service": "auth",
+    "covered": 292,
+    "missed": 67,
+    "percentage": 81.34
+  },
+  {
+    "service": "catalogo",
+    "covered": 457,
+    "missed": 180,
+    "percentage": 71.74
+  },
+  {
+    "service": "notificaciones",
+    "covered": 136,
+    "missed": 13,
+    "percentage": 91.28
+  }
+]

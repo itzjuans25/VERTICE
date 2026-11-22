@@ -6,6 +6,10 @@ const PRODUCTOS = '/api/ecommerce/producto';
 const CARRITO = '/api/ecommerce/carrito';
 const COMPRAS = '/api/ecommerce/compras';
 
+export function imagenProducto(url) {
+  return url?.startsWith('/api/ecommerce/producto/') ? BASE + url : url || '/techtrade/torre.webp';
+}
+
 /**
  * Cantidad total de unidades del carrito, usada por el badge de la barra
  * de navegacion.
@@ -22,11 +26,26 @@ export function contarItems(carrito) {
 
 export const catalogoApi = {
   productos: {
+    explorar(query) {
+      return request(BASE, PRODUCTOS + '/explorar', { query });
+    },
+    categorias() {
+      return request(BASE, PRODUCTOS + '/categorias');
+    },
+    marcas() {
+      return request(BASE, PRODUCTOS + '/marcas');
+    },
     listar() {
       return request(BASE, PRODUCTOS);
     },
     obtener(id) {
       return request(BASE, `${PRODUCTOS}/${id}`);
+    },
+    precioUsd(id) {
+      return request(BASE, `${PRODUCTOS}/${id}/precio-usd`);
+    },
+    entrega(diasHabiles) {
+      return request(BASE, PRODUCTOS + '/entrega', { query: { diasHabiles } });
     },
     crear(producto) {
       return request(BASE, PRODUCTOS, { method: 'POST', body: producto });

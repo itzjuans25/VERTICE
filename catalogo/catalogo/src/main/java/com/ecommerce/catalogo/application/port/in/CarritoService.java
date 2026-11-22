@@ -1,6 +1,7 @@
 package com.ecommerce.catalogo.application.port.in;
 
 import com.ecommerce.catalogo.domain.model.Carrito;
+import java.util.Map;
 
 public interface CarritoService {
 
@@ -13,4 +14,6 @@ public interface CarritoService {
     Carrito vaciarCarrito(Long usuarioId);
 
     Carrito obtenerCarrito(Long usuarioId);
+
+    Map<Long, Integer> consultarStock(Carrito carrito);
 }

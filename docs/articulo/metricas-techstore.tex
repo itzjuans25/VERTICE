@@ -1,0 +1,36 @@
+\newcommand{\ResultadosCobertura}{
+\begin{table}[!ht]
+\caption{Cobertura Java de la suite completa}
+\centering\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Servicio & Pruebas & Líneas & Cobertura \\\midrule
+Auth & 23 & 365/428 & 85,28\% \\
+Catálogo & 32 & 792/895 & 88,49\% \\
+Notificaciones & 21 & 214/258 & 82,95\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+Pasaron 76 pruebas Java y 12 pruebas React.}
+\newcommand{\ResultadosCarga}{
+\begin{table}[!ht]
+\caption{Resultados globales k6. Tiempos en ms}
+\label{tab:perfiles}
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rrrrrrr}
+\toprule
+VU & Media & p95 & p99 & Máx. & Err. & req/s \\\midrule
+3 & 29,01 & 124,80 & 218,55 & 344,08 & 0 & 61,16 \\
+6 & 23,84 & 114,04 & 211,19 & 284,96 & 0 & 104,42 \\
+8 & 38,78 & 192,45 & 463,72 & 1086,76 & 0 & 96,00 \\
+\bottomrule
+\end{tabular}
+\end{table}}
+\newcommand{\ResultadoCompra}{El pedido \#2151 de Portátil ThinkPad T480 por 850.000 COP se confirmó en el navegador y se encontró el correo correspondiente en Mailpit.}
+\newcommand{\ResultadoPostman}{Newman ejecutó 48 peticiones y 145 aserciones. Hubo 0 aserciones fallidas en la corrida de revisión, con máximo 194,00 ms. En la primera corrida de la revisión hubo 2 fallos de tiempo y un máximo de 1354,00 ms.}
+\newcommand{\ResultadoRutas}{\textbf{3 usuarios.} Cambio de contraseña: máximo 257,77 ms y p95 247,55 ms. Las 36 rutas quedaron dentro del límite durante esta corrida.
+
+\textbf{6 usuarios.} Cambio de contraseña: máximo 284,96 ms y p95 244,85 ms. Las 36 rutas quedaron dentro del límite durante esta corrida.
+
+\textbf{8 usuarios.} Cambio de contraseña: máximo 1086,76 ms y p95 826,43 ms. El perfil superó el umbral en \texttt{auth\_registrar}, \texttt{auth\_login}, \texttt{auth\_renovar}, \texttt{auth\_cambiar}.}

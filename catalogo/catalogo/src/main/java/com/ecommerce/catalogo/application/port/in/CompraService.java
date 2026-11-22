@@ -13,4 +13,5 @@ public interface CompraService {
     Compra obtenerCompraPorId(Long compraId);
 
     List<Compra> obtenerTodasLasCompras();
+    Compra cambiarEstado(Long id, String estado);
 }

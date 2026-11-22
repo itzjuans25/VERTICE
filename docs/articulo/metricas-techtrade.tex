@@ -1,0 +1,35 @@
+\newcommand{\ResultadosCobertura}{
+\begin{table}[!ht]
+\caption{Cobertura Java de la suite completa}
+\centering\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Servicio & Pruebas & Líneas & Cobertura \\\midrule
+Auth & 22 & 334/397 & 84,13\% \\
+Catálogo & 31 & 842/955 & 88,17\% \\
+Notificaciones & 21 & 208/250 & 83,20\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+Pasaron 74 pruebas Java y 12 pruebas React.}
+\newcommand{\ResultadosCarga}{
+\begin{table}[!ht]
+\caption{Resultados globales de k6. Tiempos en ms}
+\label{tab:perfiles}
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rrrrrrr}
+\toprule
+VU & Media & p95 & p99 & Máx. & Err. & req/s \\\midrule
+3 & 60,60 & 306,42 & 593,15 & 648,51 & 0 & 28,18 \\
+6 & 58,64 & 360,45 & 687,38 & 1202,61 & 0 & 53,10 \\
+8 & 59,08 & 383,90 & 729,46 & 1095,08 & 0 & 67,85 \\
+\bottomrule
+\end{tabular}
+\end{table}}
+\newcommand{\ResultadoCompra}{La publicación 1775 pasó a vendida con stock cero al confirmar el pedido 1491 por 87000 COP. Mailpit registró el aviso de publicación y los correos al vendedor y al comprador.}
+\newcommand{\ResultadoRutas}{\textbf{3 usuarios.} Sobrepasaron 500 ms \texttt{auth\_login} (648,51 ms), \texttt{auth\_cambiar} (643,73 ms), \texttt{auth\_renovar} (550,17 ms), \texttt{cat\_compras} (532,18 ms), \texttt{auth\_registrar} (516,48 ms). El máximo del cambio de clave pasó de 713,04 a 643,73 ms. Su p95 final fue 631,31 ms.
+
+\textbf{6 usuarios.} Sobrepasaron 500 ms \texttt{auth\_cambiar} (1202,61 ms), \texttt{auth\_registrar} (777,78 ms), \texttt{auth\_renovar} (531,83 ms), \texttt{auth\_login} (511,15 ms). El máximo del cambio de clave pasó de 1223,93 a 1202,61 ms. Su p95 final fue 1069,00 ms.
+
+\textbf{8 usuarios.} Sobrepasaron 500 ms \texttt{auth\_cambiar} (1095,08 ms), \texttt{auth\_registrar} (718,04 ms), \texttt{auth\_renovar} (673,80 ms), \texttt{auth\_login} (577,47 ms). El máximo del cambio de clave pasó de 1045,63 a 1095,08 ms. Su p95 final fue 955,20 ms.}

@@ -11,11 +11,15 @@ import {
   FaCreditCard,
   FaExclamationTriangle,
 } from 'react-icons/fa';
-import { catalogoApi, contarItems } from '../api/catalogoApi';
+import { catalogoApi, contarItems, imagenProducto } from '../api/catalogoApi';
+import { observarDisponibilidad, textoStock } from '../api/observarDisponibilidad';
+import { EntregaEstimada } from './InformacionCompra';
+import { Link } from 'react-router-dom';
 
 let toastSequence = 0;
 
 function Cart({ setCartCount }) {
+  useEffect(() => { document.title = 'Mi carrito | TechStore'; }, []);
   const [carrito, setCarrito] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,6 +27,7 @@ function Cart({ setCartCount }) {
   const [itemProcesando, setItemProcesando] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [compraConfirmada, setCompraConfirmada] = useState(null);
 
   const showToast = (message, type = 'success') => {
     toastSequence += 1;
@@ -57,6 +62,25 @@ function Cart({ setCartCount }) {
     fetchCarrito();
   }, [fetchCarrito]);
 
+  useEffect(() => {
+    if (loading || procesando || itemProcesando !== null || compraConfirmada) return undefined;
+    let vigente = true;
+    let consultando = false;
+    const dejarDeObservar = observarDisponibilidad(async () => {
+      if (consultando) return;
+      consultando = true;
+      try {
+        const actualizado = await catalogoApi.carrito.obtener();
+        if (vigente) updateCarrito(actualizado);
+      } catch {
+        // Conserva el último carrito si falla la actualización en segundo plano.
+      } finally {
+        consultando = false;
+      }
+    });
+    return () => { vigente = false; dejarDeObservar(); };
+  }, [loading, procesando, itemProcesando, compraConfirmada, updateCarrito]);
+
   const eliminarItem = async (productoId) => {
     setItemProcesando(productoId);
     try {
@@ -81,6 +105,7 @@ function Cart({ setCartCount }) {
       );
     } catch (err) {
       showToast(err.message || 'No se pudo actualizar la cantidad', 'error');
+      await fetchCarrito();
     } finally {
       setItemProcesando(null);
     }
@@ -101,13 +126,15 @@ function Cart({ setCartCount }) {
   };
 
   const realizarCompra = async () => {
+    if (!window.confirm('¿Confirmas la compra de los productos del carrito?')) return;
     setProcesando(true);
     try {
       const compra = await catalogoApi.compras.realizar();
       updateCarrito({ ...carrito, items: [], precioTotal: 0 });
-      showToast(`¡Compra #${compra.id} realizada con éxito!`);
+      setCompraConfirmada(compra.id);
     } catch (err) {
       showToast(err.message || 'No se pudo realizar la compra', 'error');
+      await fetchCarrito();
     } finally {
       setProcesando(false);
     }
@@ -133,7 +160,19 @@ function Cart({ setCartCount }) {
     );
   }
 
+  if (compraConfirmada) {
+    return <main className="tt-shell tt-section">
+      <h1>Compra #{compraConfirmada} confirmada</h1>
+      <p role="status">El aviso de compra se procesa en segundo plano.</p>
+      <div className="tt-acciones">
+        <Link className="tt-button" to="/compras">Ver mis compras</Link>
+        <Link className="tt-button tt-secondary" to="/productos">Seguir explorando</Link>
+      </div>
+    </main>;
+  }
+
   const items = carrito?.items || [];
+  const stockInsuficiente = items.some(item => item.stockDisponible < item.cantidad);
   const total = Number(
     carrito?.precioTotal ??
       items.reduce(
@@ -152,7 +191,7 @@ function Cart({ setCartCount }) {
           <button
             onClick={() => setShowConfirmModal(true)}
             className="btn-clear-cart"
-            disabled={procesando}
+            disabled={procesando || itemProcesando !== null}
           >
             <FaTrashAlt /> Vaciar Carrito
           </button>
@@ -169,26 +208,32 @@ function Cart({ setCartCount }) {
         <div className="cart-content">
           <div className="cart-items">
             {items.map((item) => {
-              const ocupado = itemProcesando === item.productoId;
               return (
                 <div key={item.id} className="cart-item">
                   <div className="item-image">
                     {item.imagenUrl ? (
-                      <img src={item.imagenUrl} alt={item.nombreProducto} />
+                      <img src={imagenProducto(item.imagenUrl)} alt={item.nombreProducto} />
                     ) : (
                       <FaBox />
                     )}
                   </div>
                   <div className="item-info">
                     <h3>{item.nombreProducto}</h3>
+                    {Number.isInteger(item.stockDisponible) && (
+                      <p className={item.stockDisponible < item.cantidad ? 'cart-stock-alert' : 'cart-stock'}>
+                        {textoStock(item.stockDisponible)}
+                      </p>
+                    )}
                     <div className="quantity-controls">
                       <button
                         onClick={() =>
-                          actualizarCantidad(item.productoId, item.cantidad - 1)
+                          actualizarCantidad(item.productoId,
+                            Math.min(item.cantidad - 1, item.stockDisponible ?? item.cantidad - 1))
                         }
                         className="btn-quantity"
-                        disabled={ocupado || item.cantidad <= 1}
-                        aria-label="Quitar una unidad"
+                        disabled={procesando || itemProcesando !== null || item.cantidad <= 1 || item.stockDisponible === 0}
+                        aria-label={item.stockDisponible < item.cantidad
+                          ? 'Ajustar a las unidades disponibles' : 'Quitar una unidad'}
                       >
                         <FaMinus />
                       </button>
@@ -198,7 +243,7 @@ function Cart({ setCartCount }) {
                           actualizarCantidad(item.productoId, item.cantidad + 1)
                         }
                         className="btn-quantity"
-                        disabled={ocupado}
+                        disabled={procesando || itemProcesando !== null || item.cantidad >= 10 || item.cantidad >= item.stockDisponible}
                         aria-label="Agregar una unidad"
                       >
                         <FaPlus />
@@ -214,7 +259,7 @@ function Cart({ setCartCount }) {
                   <button
                     onClick={() => eliminarItem(item.productoId)}
                     className="btn-remove"
-                    disabled={ocupado}
+                    disabled={procesando || itemProcesando !== null}
                     aria-label={`Eliminar ${item.nombreProducto}`}
                   >
                     <FaTimes />
@@ -234,14 +279,18 @@ function Cart({ setCartCount }) {
               <span>Envío:</span>
               <span>Gratis</span>
             </div>
+            <EntregaEstimada />
             <div className="summary-total">
               <span>Total:</span>
               <span>{total.toLocaleString('es-CO')} COP</span>
             </div>
+            {stockInsuficiente && (
+              <p className="cart-stock-alert" role="status">Ajusta la cantidad o elimina los artículos sin stock para continuar.</p>
+            )}
             <button
               onClick={realizarCompra}
               className="btn-checkout"
-              disabled={procesando}
+              disabled={procesando || itemProcesando !== null || stockInsuficiente}
             >
               <FaCreditCard />{' '}
               {procesando ? 'Procesando...' : 'Realizar Compra'}

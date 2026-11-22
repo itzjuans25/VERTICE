@@ -12,5 +12,7 @@ WORKDIR /app
 COPY --from=build /workspace/target/*.jar app.jar
 
 USER spring:spring
+ENV PORT=9090
 EXPOSE 9090
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "/app/app.jar"]
+HEALTHCHECK --interval=15s --timeout=5s --start-period=90s CMD wget -q --spider "http://127.0.0.1:$PORT/health" || exit 1
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=55", "-jar", "/app/app.jar"]

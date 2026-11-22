@@ -41,6 +41,18 @@ class CarritoUseCaseTest {
     private CarritoUseCase useCase;
 
     @Test
+    void vaciarCarritoQueYaEstaVacioNoCreaRegistros() {
+        when(usuarioGateway.buscarPorId(1L))
+                .thenReturn(new Usuario(1L, "Ana", "ana@example.com", null, "USER"));
+
+        Carrito carrito = useCase.vaciarCarrito(1L);
+
+        assertEquals(0, carrito.getItems().size());
+        assertEquals(BigDecimal.ZERO, carrito.getPrecioTotal());
+        verify(carritoGateway, never()).guardar(any());
+    }
+
+    @Test
     void agregarAlCarritoNoReservaStock() {
         when(usuarioGateway.buscarPorId(1L))
                 .thenReturn(new Usuario(1L, "Ana", "ana@example.com", "300", "USER"));

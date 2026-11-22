@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 import { authApi } from '../api/authApi';
 
 function Register() {
+  useEffect(() => { document.title = 'Registrarse | TechStore'; }, []);
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -69,9 +70,10 @@ function Register() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Nombre</label>
+            <label htmlFor="registro-nombre">Nombre</label>
             <input
               type="text"
+              id="registro-nombre"
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
@@ -83,9 +85,10 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="registro-email">Correo electrónico</label>
             <input
               type="email"
+              id="registro-email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -97,11 +100,12 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>Teléfono</label>
+            <label htmlFor="registro-telefono">Teléfono</label>
             <div className="phone-input">
               <span className="phone-prefix">+57</span>
               <input
                 type="tel"
+                id="registro-telefono"
                 name="telefono"
                 value={formData.telefono}
                 onChange={handleChange}
@@ -115,9 +119,10 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>Edad</label>
+            <label htmlFor="registro-edad">Edad</label>
             <input
               type="number"
+              id="registro-edad"
               name="edad"
               value={formData.edad}
               onChange={handleChange}
@@ -129,9 +134,10 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>Contraseña</label>
+            <label htmlFor="registro-password">Contraseña</label>
             <input
               type="password"
+              id="registro-password"
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -144,9 +150,10 @@ function Register() {
           </div>
 
           <div className="form-group">
-            <label>Confirmar Contraseña</label>
+            <label htmlFor="registro-confirm-password">Confirmar Contraseña</label>
             <input
               type="password"
+              id="registro-confirm-password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}

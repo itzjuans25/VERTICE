@@ -7,25 +7,51 @@ import org.springframework.stereotype.Component;
 @Component
 public class MapperProducto {
     public Producto toProducto(ProductoData data) {
-        return new Producto(
+        Producto producto = new Producto(
                 data.getId(),
                 data.getNombre(),
                 data.getDescripcion(),
                 data.getPrecio(),
                 data.getStock(),
-                data.getImagenUrl()
+                data.getImagenUrl(), data.getCategoria()
         );
+        producto.setCondicion(data.getCondicion());
+        producto.setMarca(data.getMarca());
+        producto.setGarantiaDias(data.getGarantiaDias());
+        producto.setEstadoPublicacion(data.getEstadoPublicacion());
+        producto.setGrado(data.getGrado());
+        producto.setModelo(data.getModelo());
+        producto.setDescripcionLarga(data.getDescripcionLarga());
+        producto.setIncluye(data.getIncluye());
+        producto.setCompatibilidad(data.getCompatibilidad());
+        producto.setNotaEstado(data.getNotaEstado());
+        producto.setImagenSecundariaUrl(data.getImagenSecundariaUrl());
+        producto.setEspecificaciones(data.getEspecificaciones());
+        return producto;
     }
 
 
     public ProductoData toData(Producto producto) {
-        return new ProductoData(
+        ProductoData data = new ProductoData(
                 producto.getId(),
                 producto.getNombre(),
                 producto.getDescripcion(),
                 producto.getPrecio(),
                 producto.getStock(),
-                producto.getImagenUrl()
+                producto.getImagenUrl(), producto.getCategoria()
         );
+        data.setCondicion(producto.getCondicion());
+        data.setMarca(producto.getMarca());
+        data.setGarantiaDias(producto.getGarantiaDias());
+        data.setEstadoPublicacion(producto.getEstadoPublicacion());
+        data.setGrado(producto.getGrado());
+        data.setModelo(producto.getModelo());
+        data.setDescripcionLarga(producto.getDescripcionLarga());
+        data.setIncluye(producto.getIncluye());
+        data.setCompatibilidad(producto.getCompatibilidad());
+        data.setNotaEstado(producto.getNotaEstado());
+        data.setImagenSecundariaUrl(producto.getImagenSecundariaUrl());
+        data.setEspecificaciones(producto.getEspecificaciones());
+        return data;
     }
 }

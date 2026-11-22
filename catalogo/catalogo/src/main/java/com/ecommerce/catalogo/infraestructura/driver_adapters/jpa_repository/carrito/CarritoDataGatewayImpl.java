@@ -34,6 +34,12 @@ public class CarritoDataGatewayImpl implements CarritoGateway {
 
     @Override
     @Transactional
+    public Carrito buscarPorUsuarioIdParaCompra(Long usuarioId) {
+        return repository.buscarParaCompra(usuarioId).map(mapper::toDomain).orElse(null);
+    }
+
+    @Override
+    @Transactional
     public void eliminarCarrito(Long carritoId) {
         repository.deleteById(carritoId);
     }

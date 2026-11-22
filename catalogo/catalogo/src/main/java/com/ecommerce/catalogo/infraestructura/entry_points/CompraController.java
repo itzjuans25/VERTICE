@@ -24,6 +24,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CompraController {
 
+    @org.springframework.web.bind.annotation.PatchMapping("/{compraId}/estado")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public CompraResponse cambiarEstado(@PathVariable Long compraId,
+            @org.springframework.web.bind.annotation.RequestBody CambioEstado solicitud) {
+        return mapper.toResponse(compraService.cambiarEstado(compraId, solicitud.estado()));
+    }
+
+    public record CambioEstado(String estado) {}
+
     private final CompraService compraService;
     private final TiendaDtoMapper mapper;
 

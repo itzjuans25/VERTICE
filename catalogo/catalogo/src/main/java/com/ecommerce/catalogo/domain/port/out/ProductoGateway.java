@@ -3,6 +3,7 @@ package com.ecommerce.catalogo.domain.port.out;
 import com.ecommerce.catalogo.domain.model.Producto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductoGateway {
 
@@ -12,6 +13,8 @@ public interface ProductoGateway {
     Producto buscarPorId(Long id);
 
     List<Producto> obtenerTodos();
+
+    Map<Long, Integer> consultarStock(List<Long> ids);
 
     void eliminar(Long id);
 

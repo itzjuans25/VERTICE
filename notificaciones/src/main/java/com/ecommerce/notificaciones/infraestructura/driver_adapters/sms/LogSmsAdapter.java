@@ -3,6 +3,8 @@ package com.ecommerce.notificaciones.infraestructura.driver_adapters.sms;
 import com.ecommerce.notificaciones.domain.model.NotificacionSMS;
 import com.ecommerce.notificaciones.domain.port.out.SmsGateway;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +14,15 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 @ConditionalOnProperty(name = "app.sms.provider", havingValue = "log", matchIfMissing = true)
 public class LogSmsAdapter implements SmsGateway {
+    private final JdbcTemplate jdbc;
 
     @Override
     public void enviarSms(NotificacionSMS notificacion) {
-        log.info("SMS simulado (SMS_PROVIDER=log) para {}: {}",
+        jdbc.update("INSERT INTO sms_simulado (destinatario, mensaje) VALUES (?, ?)",
                 notificacion.getNumeroTelefono(), notificacion.getMensaje());
+        log.info("SMS simulado registrado en sms_simulado");
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class TiendaDtoMapper {
@@ -24,6 +25,18 @@ public class TiendaDtoMapper {
         producto.setPrecio(request.precio());
         producto.setStock(request.stock());
         producto.setImagenUrl(request.imagenUrl());
+        producto.setCategoria(request.categoria());
+        producto.setCondicion(request.condicion());
+        producto.setMarca(request.marca());
+        producto.setGarantiaDias(request.garantiaDias());
+        producto.setGrado(request.grado());
+        producto.setModelo(request.modelo());
+        producto.setDescripcionLarga(request.descripcionLarga());
+        producto.setIncluye(request.incluye());
+        producto.setCompatibilidad(request.compatibilidad());
+        producto.setNotaEstado(request.notaEstado());
+        producto.setImagenSecundariaUrl(request.imagenSecundariaUrl());
+        producto.setEspecificaciones(request.especificaciones());
         return producto;
     }
 
@@ -34,14 +47,20 @@ public class TiendaDtoMapper {
                 producto.getDescripcion(),
                 producto.getPrecio(),
                 producto.getStock(),
-                producto.getImagenUrl());
+                producto.getImagenUrl(),
+                producto.getCategoria(), producto.getCondicion(), producto.getGrado(), producto.getMarca(), producto.getModelo(),
+                producto.getGarantiaDias(), producto.getStock() != null && producto.getStock() > 0 ? "DISPONIBLE" : "AGOTADO",
+                producto.getDescripcionLarga(), producto.getIncluye(), producto.getCompatibilidad(),
+                producto.getNotaEstado(), producto.getImagenSecundariaUrl(),
+                producto.getEspecificaciones() == null ? java.util.Map.of() : producto.getEspecificaciones());
     }
 
-    public CarritoResponse toResponse(Carrito carrito) {
+    public CarritoResponse toResponse(Carrito carrito, Map<Long, Integer> stock) {
         return new CarritoResponse(
                 carrito.getId(),
                 carrito.getUsuarioId(),
-                toItemResponses(carrito.getItems()),
+                carrito.getItems().stream()
+                        .map(item -> toItemResponse(item, stock.getOrDefault(item.getProductoId(), 0))).toList(),
                 carrito.getPrecioTotal());
     }
 
@@ -59,10 +78,10 @@ public class TiendaDtoMapper {
         if (items == null) {
             return Collections.emptyList();
         }
-        return items.stream().map(TiendaDtoMapper::toItemResponse).toList();
+        return items.stream().map(item -> toItemResponse(item, null)).toList();
     }
 
-    private static ItemCarritoResponse toItemResponse(ItemCarrito item) {
+    private static ItemCarritoResponse toItemResponse(ItemCarrito item, Integer stockDisponible) {
         return new ItemCarritoResponse(
                 item.getId(),
                 item.getProductoId(),
@@ -70,6 +89,7 @@ public class TiendaDtoMapper {
                 item.getPrecioUnitario(),
                 item.getCantidad(),
                 item.getSubtotal(),
-                item.getImagenUrl());
+                item.getImagenUrl(),
+                stockDisponible);
     }
 }
