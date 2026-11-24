@@ -18,3 +18,8 @@
 Las relaciones físicas del diagrama proceden del catálogo de PostgreSQL. `usuario_id` y `id_producto` son referencias lógicas de la aplicación cuando el motor carece de clave foránea. La base previa puede conservar tablas de funciones archivadas.
 
 [Salida de la verificación local](../../resultados/pgadmin-local.txt) · [Consulta del esquema](esquema.sql)
+
+## Separación futura por servicio
+
+Los POM y la configuración no declaran Flyway ni Liquibase. La inicialización usa Hibernate y scripts SQL, con datos históricos en `public`. Se conserva el esquema actual para proteger inventario, pedidos y conexiones locales. Separar Auth, Catálogo y Notificaciones requiere migraciones versionadas, copia de seguridad, transferencia explícita de filas, restricciones y secuencias, y validación desde PostgreSQL vacío y desde una copia con datos.
+
