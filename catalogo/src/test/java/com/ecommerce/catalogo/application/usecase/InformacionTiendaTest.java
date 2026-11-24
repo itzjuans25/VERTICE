@@ -1,7 +1,7 @@
 package com.ecommerce.catalogo.application.usecase;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
+import com.ecommerce.catalogo.domain.exception.TasaNoDisponibleException;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -29,8 +29,7 @@ class InformacionTiendaTest {
     @Test
     void sinTasaNoDevuelveUnPrecioInventado() {
         tienda.actualizarTasa(BigDecimal.ZERO, tienda.hoy());
-        assertEquals(503, assertThrows(ResponseStatusException.class,
-                () -> tienda.cotizar(BigDecimal.TEN)).getStatusCode().value());
+        assertThrows(TasaNoDisponibleException.class, () -> tienda.cotizar(BigDecimal.TEN));
         tienda.actualizarTasa(new BigDecimal("0.0003"), tienda.hoy());
         assertEquals(new BigDecimal("3.00"), tienda.cotizar(new BigDecimal("10000")).precioUsd());
     }

@@ -1,6 +1,7 @@
 package com.ecommerce.catalogo.application.usecase;
 
 import com.ecommerce.catalogo.application.port.in.CompraService;
+import com.ecommerce.catalogo.application.port.out.DespuesDeConfirmar;
 import com.ecommerce.catalogo.domain.exception.CarritoVacioException;
 import com.ecommerce.catalogo.domain.exception.CompraNoEncontradaException;
 import com.ecommerce.catalogo.domain.exception.StockInsuficienteException;
@@ -19,9 +20,6 @@ import com.ecommerce.catalogo.domain.port.out.ProductoGateway;
 import com.ecommerce.catalogo.domain.port.out.UsuarioGateway;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,9 +37,9 @@ public class CompraUseCase implements CompraService {
     private final ProductoGateway productoGateway;
     private final UsuarioGateway usuarioGateway;
     private final NotificacionGateway notificacionGateway;
+    private final DespuesDeConfirmar despuesDeConfirmar;
 
     @Override
-    @Transactional
     public Compra realizarCompra(Long usuarioId) {
         Usuario usuario = usuarioGateway.buscarPorId(usuarioId);
         if (usuario == null) {
@@ -70,12 +68,11 @@ public class CompraUseCase implements CompraService {
         // El carrito ya no se necesita: el stock se desconto en el checkout.
         carritoGateway.eliminarPorUsuarioId(usuarioId);
 
-        despuesDelCommit(() -> enviarNotificacionCompra(compraGuardada, usuario));
+        despuesDeConfirmar.ejecutar(() -> enviarNotificacionCompra(compraGuardada, usuario));
         return compraGuardada;
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Compra> obtenerComprasPorUsuario(Long usuarioId) {
         if (usuarioGateway.buscarPorId(usuarioId) == null) {
             throw new UsuarioNoEncontradoException(
@@ -85,7 +82,6 @@ public class CompraUseCase implements CompraService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Compra obtenerCompraPorId(Long compraId) {
         Compra compra = compraGateway.buscarPorId(compraId);
         if (compra == null) {
@@ -95,7 +91,6 @@ public class CompraUseCase implements CompraService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Compra> obtenerTodasLasCompras() {
         return compraGateway.obtenerTodas();
     }
@@ -129,7 +124,6 @@ public class CompraUseCase implements CompraService {
     }
 
     @Override
-    @Transactional
     public Compra cambiarEstado(Long id, String estado) {
         Compra compra = obtenerCompraPorId(id);
         String anterior = compra.getEstado();
@@ -145,7 +139,7 @@ public class CompraUseCase implements CompraService {
             throw new com.ecommerce.catalogo.domain.exception.DatosInvalidosException("El estado cambio en otra solicitud");
         }
         compra.setEstado(estado);
-        despuesDelCommit(() -> notificarEstado(compra, usuario));
+        despuesDeConfirmar.ejecutar(() -> notificarEstado(compra, usuario));
         return compra;
     }
 
@@ -165,20 +159,6 @@ public class CompraUseCase implements CompraService {
             notificacionGateway.enviarNotificacion(mensaje);
         } catch (RuntimeException ex) {
             log.warn("No se pudo publicar el cambio de estado del pedido {}", compra.getId(), ex);
-        }
-    }
-
-    private void despuesDelCommit(Runnable notificar) {
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(
-                    new TransactionSynchronization() {
-                        @Override
-                        public void afterCommit() {
-                            notificar.run();
-                        }
-                    });
-        } else {
-            notificar.run();
         }
     }
 

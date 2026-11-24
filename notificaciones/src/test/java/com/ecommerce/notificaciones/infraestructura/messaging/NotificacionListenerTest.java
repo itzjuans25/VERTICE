@@ -3,7 +3,7 @@ package com.ecommerce.notificaciones.infraestructura.messaging;
 import com.ecommerce.notificaciones.domain.exception.EnvioNotificacionException;
 import com.ecommerce.notificaciones.domain.model.MensajeNotificacion;
 import com.ecommerce.notificaciones.domain.model.NotificacionEmail;
-import com.ecommerce.notificaciones.domain.port.in.ProcesarNotificacionService;
+import com.ecommerce.notificaciones.application.port.in.ProcesarNotificacionService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

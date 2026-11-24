@@ -17,7 +17,6 @@ import com.ecommerce.catalogo.domain.port.out.CarritoGateway;
 import com.ecommerce.catalogo.domain.port.out.ProductoGateway;
 import com.ecommerce.catalogo.domain.port.out.UsuarioGateway;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ public class CarritoUseCase implements CarritoService {
     private final UsuarioGateway usuarioGateway;
 
     @Override
-    @Transactional
     public Carrito agregarProductoAlCarrito(Long usuarioId, Long productoId, int cantidad) {
         validarUsuario(usuarioId);
         validarCantidad(cantidad);
@@ -82,7 +80,6 @@ public class CarritoUseCase implements CarritoService {
     }
 
     @Override
-    @Transactional
     public Carrito actualizarCantidadProducto(Long usuarioId, Long productoId, int nuevaCantidad) {
         validarUsuario(usuarioId);
         validarCantidad(nuevaCantidad);
@@ -111,7 +108,6 @@ public class CarritoUseCase implements CarritoService {
     }
 
     @Override
-    @Transactional
     public Carrito eliminarProducto(Long usuarioId, Long productoId) {
         validarUsuario(usuarioId);
 
@@ -131,7 +127,6 @@ public class CarritoUseCase implements CarritoService {
     }
 
     @Override
-    @Transactional
     public Carrito vaciarCarrito(Long usuarioId) {
         validarUsuario(usuarioId);
 
@@ -146,7 +141,6 @@ public class CarritoUseCase implements CarritoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Carrito obtenerCarrito(Long usuarioId) {
         validarUsuario(usuarioId);
 

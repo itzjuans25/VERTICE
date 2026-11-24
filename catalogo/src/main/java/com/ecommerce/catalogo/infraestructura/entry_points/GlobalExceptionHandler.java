@@ -9,6 +9,7 @@ import com.ecommerce.catalogo.domain.exception.ItemCarritoNoEncontradoException;
 import com.ecommerce.catalogo.domain.exception.ProductoNoEncontradoException;
 import com.ecommerce.catalogo.domain.exception.ServicioUsuariosNoDisponibleException;
 import com.ecommerce.catalogo.domain.exception.StockInsuficienteException;
+import com.ecommerce.catalogo.domain.exception.TasaNoDisponibleException;
 import com.ecommerce.catalogo.domain.exception.UsuarioNoAutenticadoException;
 import com.ecommerce.catalogo.domain.exception.UsuarioNoEncontradoException;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.ApiError;
@@ -56,6 +57,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleUnauthorized(UsuarioNoAutenticadoException ex,
                                                        HttpServletRequest request) {
         return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(TasaNoDisponibleException.class)
+    public ResponseEntity<ApiError> handleTasaNoDisponible(TasaNoDisponibleException ex, HttpServletRequest request) {
+        return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), request);
     }
 
     @ExceptionHandler(ServicioUsuariosNoDisponibleException.class)

@@ -7,7 +7,6 @@ import com.ecommerce.catalogo.domain.exception.StockInsuficienteException;
 import com.ecommerce.catalogo.domain.model.Producto;
 import com.ecommerce.catalogo.domain.port.out.ProductoGateway;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,7 +17,6 @@ public class ProductoUseCase implements ProductoService {
     private final ProductoGateway productoGateway;
 
     @Override
-    @Transactional
     public Producto guardarProducto(Producto producto) {
         if (producto == null) {
             throw new DatosInvalidosException("Los datos del producto son obligatorios");
@@ -30,7 +28,6 @@ public class ProductoUseCase implements ProductoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Producto obtenerProducto(Long id) {
         if (id == null) {
             throw new DatosInvalidosException("El id del producto es obligatorio");
@@ -43,13 +40,11 @@ public class ProductoUseCase implements ProductoService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Producto> obtenerTodos() {
         return productoGateway.obtenerTodos();
     }
 
     @Override
-    @Transactional
     public Producto actualizarProducto(Producto producto) {
         if (producto == null || producto.getId() == null) {
             throw new DatosInvalidosException("El id del producto es obligatorio");
@@ -86,13 +81,11 @@ public class ProductoUseCase implements ProductoService {
     }
 
     @Override
-    @Transactional
     public void eliminarProducto(Long id) {
         productoGateway.eliminar(id);
     }
 
     @Override
-    @Transactional
     public void descontarStock(Long productoId, int cantidad) {
         if (productoId == null || cantidad <= 0) {
             throw new DatosInvalidosException("Producto y cantidad son obligatorios");

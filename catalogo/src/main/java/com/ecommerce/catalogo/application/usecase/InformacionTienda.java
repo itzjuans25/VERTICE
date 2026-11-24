@@ -1,7 +1,7 @@
 package com.ecommerce.catalogo.application.usecase;
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.ecommerce.catalogo.domain.exception.TasaNoDisponibleException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
-@Component
 public class InformacionTienda {
     private final Clock reloj;
     private volatile Tasa tasa;
@@ -48,7 +46,7 @@ public class InformacionTienda {
     public Cotizacion cotizar(BigDecimal precioCop) {
         Tasa actual = tasa;
         if (actual == null || actual.consultada().plusSeconds(259200).isBefore(reloj.instant())) {
-            throw new ResponseStatusException(SERVICE_UNAVAILABLE, "No hay una tasa COP/USD disponible");
+            throw new TasaNoDisponibleException();
         }
         return new Cotizacion(precioCop, precioCop.multiply(actual.valor()).setScale(2, RoundingMode.HALF_UP),
                 actual.valor(), actual.fecha(), "Frankfurter", actual.consultada());

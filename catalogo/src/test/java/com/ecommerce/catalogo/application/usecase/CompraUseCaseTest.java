@@ -11,9 +11,9 @@ import com.ecommerce.catalogo.domain.port.out.CompraGateway;
 import com.ecommerce.catalogo.domain.port.out.NotificacionGateway;
 import com.ecommerce.catalogo.domain.port.out.ProductoGateway;
 import com.ecommerce.catalogo.domain.port.out.UsuarioGateway;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -46,8 +46,13 @@ class CompraUseCaseTest {
     @Mock
     private NotificacionGateway notificacionGateway;
 
-    @InjectMocks
     private CompraUseCase useCase;
+
+    @BeforeEach
+    void prepararCaso() {
+        useCase = new CompraUseCase(compraGateway, carritoGateway, productoGateway, usuarioGateway,
+                notificacionGateway, Runnable::run);
+    }
 
     @Test
     void checkoutDescuentaStockGuardaCompraYEliminaCarrito() {

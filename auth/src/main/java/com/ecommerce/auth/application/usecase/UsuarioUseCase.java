@@ -16,7 +16,6 @@ import com.ecommerce.auth.domain.port.out.TokenGateway;
 import com.ecommerce.auth.domain.port.out.UsuarioGateway;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +33,6 @@ public class UsuarioUseCase implements UsuarioService {
     private final TokenGateway tokenGateway;
 
     @Override
-    @Transactional
     public Usuario registrar(Usuario usuario) {
         if (usuario == null) {
             throw new DatosInvalidosException("Los datos del usuario son obligatorios");
@@ -120,7 +118,6 @@ public class UsuarioUseCase implements UsuarioService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Usuario buscarPorId(Long id) {
         if (id == null) {
             throw new DatosInvalidosException("El id es obligatorio");
@@ -133,13 +130,11 @@ public class UsuarioUseCase implements UsuarioService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public boolean existePorId(Long id) {
         return id != null && usuarioGateway.buscarPorID(id) != null;
     }
 
     @Override
-    @Transactional
     public Usuario actualizar(Usuario cambios) {
         if (cambios == null || cambios.getId() == null) {
             throw new DatosInvalidosException("El id es obligatorio para actualizar");
@@ -176,7 +171,6 @@ public class UsuarioUseCase implements UsuarioService {
     }
 
     @Override
-    @Transactional
     public void eliminarPorId(Long id) {
         Usuario usuario = buscarPorId(id);
         usuarioGateway.eliminarPorID(usuario.getId());

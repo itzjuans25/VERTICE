@@ -5,7 +5,7 @@ import com.ecommerce.notificaciones.domain.exception.EnvioNotificacionException;
 import com.ecommerce.notificaciones.domain.model.MensajeNotificacion;
 import com.ecommerce.notificaciones.domain.model.NotificacionEmail;
 import com.ecommerce.notificaciones.domain.model.NotificacionSMS;
-import com.ecommerce.notificaciones.domain.port.in.ProcesarNotificacionService;
+import com.ecommerce.notificaciones.application.port.in.ProcesarNotificacionService;
 import com.ecommerce.notificaciones.domain.port.out.EmailGateway;
 import com.ecommerce.notificaciones.domain.port.out.SmsGateway;
 import lombok.RequiredArgsConstructor;

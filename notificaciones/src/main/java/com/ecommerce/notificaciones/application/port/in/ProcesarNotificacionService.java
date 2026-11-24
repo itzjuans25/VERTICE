@@ -1,4 +1,4 @@
-package com.ecommerce.notificaciones.domain.port.in;
+package com.ecommerce.notificaciones.application.port.in;
 
 import com.ecommerce.notificaciones.domain.model.MensajeNotificacion;
 
