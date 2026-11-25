@@ -1,0 +1,28 @@
+{
+  "Web": {
+    "Galeria": 200,
+    "Mailpit": 200
+  },
+  "Servicios": {
+    "Auth": {
+      "puerto": 9090,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Auth"
+    },
+    "Catalogo": {
+      "puerto": 9092,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Catálogo"
+    },
+    "Notificaciones": {
+      "puerto": 9093,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Notificaciones"
+    },
+    "Subastas": {
+      "puerto": 9094,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Subastas"
+    }
+  }
+}

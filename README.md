@@ -2,7 +2,7 @@
 
 Casa de subastas editorial con 18 piezas ilustrativas. Las vitrinas reúnen moda de autor, relojería, joyería, arte y colección, y vehículos de exhibición. Cada lote tiene fotografía propia, atributos y un motivo curatorial. Los pagos, las entregas, las procedencias y los traspasos son simulados.
 
-La compra directa conserva el catálogo de Tecnología y el inventario general. Auth, Catálogo y pedidos, Subastas y Notificaciones continúan como cuatro servicios hexagonales. El POM de la raíz permite importar los cuatro en IntelliJ IDEA.
+Subastas encabeza la navegación, la portada y la búsqueda. El menú Catálogo conserva el acceso a la compra directa, Tecnología y carrito. Auth, Catálogo y pedidos, Subastas y Notificaciones mantienen cuatro servicios hexagonales. El POM de la raíz permite importar los cuatro en IntelliJ IDEA.
 
 [Guion y pasos de sustentación](docs/Sustentacion-Vertice.md) · [Modelo entidad-relación](docs/pgadmin/vertice-mer.md) · [Evidencias de la corrida](REVISION_FINAL.md)
 
@@ -78,7 +78,7 @@ Bajo concurrencia, PostgreSQL bloquea la fila del lote y el `UPDATE` comprueba l
 
 [Captura del listado](docs/capturas/subastas-lista-1440.png) · [Adjudicación local](docs/capturas/subastas-adjudicada.png) · [Correo en Mailpit](docs/capturas/subastas-correo-ganada.png) · [Guía de Neon y pgAdmin](docs/pgadmin/README.md)
 
-La [revisión de entrega](REVISION_FINAL.md) reúne cobertura, Newman, k6 y capturas. La [guía PDF](output/pdf/guia-ecommerce-frank.pdf) resume la explicación y el arranque. Las dos ediciones IEEE se pueden recompilar desde [docs/articulo](docs/articulo).
+La [revisión de entrega](REVISION_FINAL.md) reúne cobertura, Newman, k6 y capturas. La [guía PDF](output/pdf/galeria/guia-vertice.pdf) resume la explicación y el arranque. Las dos ediciones IEEE se pueden recompilar desde [docs/articulo](docs/articulo).
 
 Auth valida credenciales y emite JWT. Catálogo administra productos, carrito e inventario de pedidos. Notificaciones entrega correos de registro, compra y estado. El consumidor tiene reintentos y cola de errores. El envío después del commit evita revertir el pedido si falla el aviso.
 
@@ -117,6 +117,10 @@ El correo de Windows se puede verificar en Mailpit. Para Brevo se configuran `MA
 ## Postman y rendimiento
 
 Importa la colección y elige **Local**. Guarda credenciales administrativas y claves solo como valores locales del entorno. El script de Newman crea la cuenta administrativa temporal y conserva un reporte sin cuerpos ni cabeceras. [Colección, entornos e informe](postman/README.md)
+
+La galería editorial verificó la compra 2938 y la adjudicación 41 del lote 661, con confirmaciones en Mailpit. Newman midió 88 peticiones, 0 aserciones fallidas de 263 y máximo 266,00 ms. En k6, los máximos fueron 3 VU 417,65 ms, 6 VU 2404,86 ms, 8 VU 2494,37 ms. La cobertura de líneas unitarias fue 20,04 / 34,56 / 68,61 / 16,90 % y con integración 82,44 / 86,97 / 81,88 / 92,14 %, en orden Auth, Catálogo, Notificaciones y Subastas. [Medición actual por ruta](resultados/vertice-galeria-rendimiento.md) · [Auditoría](docs/Auditoria.md)
+
+### Mediciones anteriores a la galería
 
 La corrida VÉRTICE ejercitó 50 rutas con 3, 6 y 8 usuarios virtuales. Los máximos fueron 878,79, 944,28 y 918,93 ms. Newman ejecutó 87 peticiones y 259 aserciones con seis fallos de latencia. JaCoCo superó el 80 % en los cuatro servicios al sumar integración. En unitarias aisladas el mejor resultado fue 68,61 %. [Latencias por ruta](resultados/vertice-rendimiento.md) · [Cobertura por servicio](resultados/vertice-cobertura.json) · [Auditoría](docs/Auditoria.md)
 
@@ -158,4 +162,4 @@ La demo de Windows incluye cuatro servicios. Para publicar, conecta Vercel a Rea
 
 **¿Por qué tarda el cambio de contraseña?** Verifica la credencial anterior y deriva otro hash. Las dos operaciones compiten por recursos bajo concurrencia.
 
-[Guía PDF](output/pdf/guia-ecommerce-frank.pdf) · [Artículo IEEE](output/pdf/articulo-ieee.pdf) · [Auditoría](docs/Auditoria.md) · [Capturas](docs/capturas/)
+[Guía PDF](output/pdf/galeria/guia-vertice.pdf) · [IEEE corto](output/pdf/galeria/articulo-ieee-4p.pdf) · [IEEE extendido](output/pdf/galeria/articulo-ieee.pdf) · [Auditoría](docs/Auditoria.md) · [Capturas](docs/capturas/)

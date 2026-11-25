@@ -7,7 +7,7 @@ La tienda React se aloja en Vercel Hobby. Render ejecuta los cuatro JAR, Neon gu
 1. Sube la rama `subastas` a un repositorio propio en GitHub. Conserva la etiqueta `version-estable` como respaldo.
 2. En Neon crea un proyecto PostgreSQL. En **Connect**, desactiva **Connection pooling** y copia el host directo, el nombre de la base y el rol. Guarda la contraseña en el panel, con SSL obligatorio.
 3. En CloudAMQP crea una instancia RabbitMQ de demostración y obtiene el URI TLS completo que comienza por `amqps://`, incluido su vhost.
-4. En Brevo configura un remitente verificado, obtén el usuario y la clave SMTP en **SMTP & API**. El proyecto usa `smtp-relay.brevo.com:2525` con STARTTLS.
+4. En Brevo configura un remitente verificado y obtén el usuario y la clave SMTP en **SMTP & API**. El Blueprint usa `smtp-relay.brevo.com:2525` con STARTTLS. Verifica la entrega después de publicar. [Configuración SMTP de Brevo](https://developers.brevo.com/docs/smtp-integration) · [Puertos restringidos en Render Free](https://render.com/docs/free)
 
 ## 2. Backend en Render
 

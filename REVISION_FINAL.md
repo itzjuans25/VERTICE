@@ -1,5 +1,12 @@
 # Revisión final de VÉRTICE
 
+## Galería editorial
+
+- Portada, navegación, buscador y cuenta dan prioridad a las subastas. Los lotes internos quedan fuera de vitrinas y búsquedas públicas. Los enlaces e historiales siguen disponibles.
+- La galería comprobó 18 lotes y 75 productos, con cero SHA-256 duplicados en el conjunto auditado. [Imágenes](resultados/vertice-galeria-imagenes.json) · [Dispositivos y axe](resultados/vertice-galeria-experiencia.json)
+- La compra 2938 agotó la última unidad. La puja de dos clientes en el lote 661 verificó el plazo y los correos. La adjudicación 41 mantuvo el pago simulado idempotente. Usuarios distintos recibieron avisos distintos y las consultas de avisos y perfil sin JWT devolvieron 401. [Compra](resultados/vertice-galeria-compra.json) · [Puja](resultados/vertice-galeria-puja.json) · [Cuenta](resultados/vertice-galeria-cuentas.json)
+- Newman midió 88 peticiones, 263 aserciones y máximo 266,00 ms. k6 ejecutó 50 rutas y registró máximos de 3 VU 417,65 ms, 6 VU 2404,86 ms, 8 VU 2494,37 ms. [Rendimiento](resultados/vertice-galeria-rendimiento.md) · [JaCoCo por servicio](resultados/vertice-galeria-cobertura.json)
+
 ## VÉRTICE · 25 de noviembre de 2026
 
 - PostgreSQL confirmó 18 piezas curadas, la huella histórica de los 45 productos de Tecnología y tres lotes anteriores con pujas. Al ejecutar nuevamente el seed, PostgreSQL devolvió `UPDATE 0` e `INSERT 0 0`. [Datos locales](resultados/vertice-datos.json)

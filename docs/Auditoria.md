@@ -1,5 +1,23 @@
 # Auditoría VÉRTICE
 
+## Galería editorial · ejecución local
+
+| Requisito | Estado | Evidencia |
+| --- | --- | --- |
+| Núcleo de comercio | Cumple | Compra 2938 descontó la última unidad. Lote 661 verificó extensión, adjudicación 41 y pago idempotente. |
+| Mínimo 3 microservicios | Cumple | Cuatro servicios Spring Boot con ArchUnit, contratos Swagger y health local. |
+| Base de datos | Cumple | PostgreSQL conserva 45 productos del seed original, 18 lotes curados y la muestra de compras, pujas y adjudicaciones previas. |
+| Sistema de notificación | Cumple | RabbitMQ y Mailpit entregaron los correos del lote y la compra. Dos JWT vieron avisos separados. |
+| 5 APIs propias por servicio | Cumple | [Endpoints de cada servicio](../README.md#cinco-apis-no-crud-por-microservicio). |
+| 80 % de cobertura unitaria | Parcial | Unidad 20,04 / 34,56 / 68,61 / 16,90 %. Con integración 82,44 / 86,97 / 81,88 / 92,14 %. Orden Auth, Catálogo, Notificaciones y Subastas. |
+| 2 APIs externas | Cumple | Frankfurter, Nager.Date y Open-Meteo devolvieron datos en la corrida. |
+| Despliegue completo | Parcial | Windows nativo en ejecución. Compose válido. El motor de Docker Desktop está apagado y las URLs públicas siguen pendientes. |
+| Carga y estrés | Cumple | 50 rutas con k6 y 88 peticiones en Newman. |
+| Máximo 500 ms | No cumple | 3 VU 417,65 ms, 6 VU 2404,86 ms, 8 VU 2494,37 ms. Newman registró 266,00 ms. |
+| Artículo IEEE de hasta 4 páginas | Cumple | Versión corta de 4 páginas y versión extendida de 8, compiladas. |
+
+[Resultados por ruta](../resultados/vertice-galeria-rendimiento.md) · [Cobertura](../resultados/vertice-galeria-cobertura.json) · [Conservación de datos](../resultados/vertice-galeria-datos.json) · [Capturas](capturas/)
+
 ## Corrida VÉRTICE · 25 de noviembre de 2026
 
 | Requisito del profesor | Estado | Evidencia de esta corrida |

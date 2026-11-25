@@ -4,10 +4,11 @@
 \usepackage{booktabs,tabularx,graphicx,url}
 \title{VÉRTICE: una casa editorial de subastas curadas}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
+\input{metricas-galeria.tex}
 \begin{document}
 \maketitle
 \begin{abstract}
-VÉRTICE ofrece subastas curadas con un canal de compra directa. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 43 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales devolvieron los códigos esperados y excedieron el máximo académico de 500 ms.
+VÉRTICE ofrece subastas curadas con un canal de compra directa. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 50 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales midieron errores funcionales y el umbral académico de 500 ms por ruta.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, subastas, microservicios, concurrencia, PostgreSQL
@@ -33,49 +34,33 @@ PostgreSQL conserva cuenta, producto, carrito, compra, lote, puja, adjudicación
 
 \clearpage
 \section{Reglas y concurrencia}
-La tienda publica y cancela lotes. Las personas autenticadas pueden pujar. Una oferta debe alcanzar el precio vigente más el incremento y no puede superar la oferta propia cuando ya lidera. En los últimos dos minutos, una oferta aceptada prolonga el plazo dos minutos. La consulta pública devuelve precios y alias. Las órdenes se revelan únicamente al ganador.
+El administrador publica y cancela lotes. Las personas autenticadas pueden pujar. Una oferta debe alcanzar el precio vigente más el incremento y no puede superar la oferta propia cuando ya lidera. En los últimos dos minutos, una oferta aceptada prolonga el plazo dos minutos. La consulta pública devuelve precios y alias. Las órdenes se revelan únicamente al ganador.
 
 El repositorio bloquea la fila del lote y comprueba la versión al modificarla. En una prueba con dos hilos y el mismo monto se registró una sola puja. La máquina de estados admite programada, activa, cerrada, adjudicada y cancelada. El cierre sin postores permanece cerrado. Si hay ganador, el proceso crea su orden y conserva el precio final. Confirmar nuevamente el pago simulado devuelve el mismo resultado.
 
 El aviso de puja superada, salida próxima, ganadora o cierre sin ganador nace en la misma transacción que el cambio. El proceso de publicación espera confirmación de RabbitMQ y reintenta con espera creciente. La entrega al menos una vez admite duplicados si el proceso cae tras la confirmación del broker. Notificaciones consume la cola compartida y envía el correo.
 
 \section{Metodología}
-La evaluación usó una instalación Windows con PostgreSQL, RabbitMQ y Mailpit en ejecución. JaCoCo comprobó líneas ejecutadas por pruebas unitarias y de integración. Newman cubrió validación de contrato, tiempos y el flujo de dos postores. La prueba de navegador aceleró solo el reloj de un lote sintético para observar la tarea programada. Axe analizó el listado de lotes en tres anchos. k6 ejecutó carga con 3 usuarios y rampas a 6 y 8, con 43 rutas. El máximo por ruta evalúa el umbral académico.
+La evaluación usó una instalación Windows con PostgreSQL, RabbitMQ y Mailpit en ejecución. JaCoCo comprobó líneas ejecutadas por pruebas unitarias y de integración. Newman cubrió validación de contrato, tiempos y el flujo de dos postores. La prueba de navegador aceleró solo el reloj de un lote sintético para observar la tarea programada. Axe analizó el listado de lotes en tres anchos. k6 ejecutó carga con 3 usuarios y rampas a 6 y 8, con 50 rutas. El máximo por ruta evalúa el umbral académico.
 
 
 \clearpage
 \section{Resultados}
-\begin{table}[!ht]
-\caption{Latencia local en milisegundos}
-\centering\footnotesize
-\begin{tabular}{rrrrrr}
-\toprule
-VU & Media & p95 & p99 & Máximo & req/s\\\midrule
-3 & 98,82 & 309,94 & 873,52 & 5616,10 & 15,07\\
-6 & 49,45 & 241,46 & 469,38 & 1064,97 & 61,03\\
-8 & 58,21 & 275,16 & 739,62 & 1701,67 & 69,22\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-En las tres corridas hubo cero errores según el código HTTP esperado. Subastas registró máximos de 509,93, 221,31 y 196,47 ms. A 8 usuarios, el cambio de contraseña alcanzó 1701,67 ms. Micrometer midió medias de 269,47 ms por hash, 30,73 ms de espera por hash, 2,51 ms en consulta y 21,45 ms en escritura por cambio. Estos valores son agregados. Las fases conservan Argon2id de 19 MiB, dos iteraciones y paralelismo uno.
-
-Newman reportó 80 peticiones, 238 aserciones y nueve fallos de tiempo, con un máximo de 3087 ms. El lote de navegador recibió dos pujas, fue adjudicado y se pagó en modo simulado. Mailpit recibió los correos de puja superada y de subasta ganada. Axe pasó 21 reglas sin infracciones detectadas en el listado a 390, 768 y 1440 píxeles.
-
-La suite final ejecutó 86 pruebas Java y 12 React sin fallos. La cobertura JaCoCo de líneas fue 84,00\,\% en Auth, 88,39\,\% en Catálogo, 82,95\,\% en Notificaciones y 98,97\,\% en Subastas. Las cifras incluyen pruebas unitarias y de integración.
+\GaleriaLatencia
+\GaleriaFlujos
+\GaleriaNewman
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=\columnwidth]{../capturas/vertice-subastas-adjudicada.png}
-\caption{Página del lote adjudicado después del pago simulado.}
+\includegraphics[width=.90\columnwidth]{../capturas/vertice-galeria-inicio-1440.png}
+\caption{Portada editorial dedicada a lotes de subasta.}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=\columnwidth]{../capturas/vertice-subastas-correo-ganada.png}
-\caption{Confirmación de adjudicación recibida en Mailpit.}
+\includegraphics[width=.90\columnwidth]{../capturas/vertice-galeria-puja-adjudicada.png}
+\caption{Lote adjudicado, con pago simulado comprobado.}
 \end{figure}
-
 
 \clearpage
 \section{Despliegue y conclusiones}
@@ -84,13 +69,13 @@ La implementación local usa un script Windows. El Blueprint define cuatro servi
 Los resultados verifican las transacciones, los avisos y la separación de responsabilidades. El umbral de 500 ms sigue pendiente en los perfiles medidos. La validación local tampoco mide la primera visita tras suspender los procesos en la nube. El siguiente paso consiste en separar las latencias de las consultas, la escritura, los hashes y la espera para localizar los picos y repetir perfiles comparables.
 
 \subsection{Curaduría editorial y procedencia ilustrativa}
-VÉRTICE presenta 18 piezas en cinco vitrinas curatoriales. Cada ficha declara por qué se subasta y distingue los datos ilustrativos de la transacción de demostración. El seed conserva lotes con pujas y adjudicaciones. Un mismo buscador separa los resultados por modalidad; las fichas proponen hasta tres artículos del mismo grupo en la otra modalidad. Los vehículos completos permanecen como lotes simulados. Los accesorios de moto se venden por precio fijo. Mi cuenta agrupa compras, pujas, adjudicaciones y avisos de la identidad autenticada.
+VÉRTICE ofrece 18 piezas en cinco vitrinas. Las pruebas internas conservan sus datos y queda fuera de la galería cualquier ficha de ensayo. El catálogo de precio fijo sigue disponible en un menú secundario. Las referencias de entrega y conservación se muestran fuera del panel de puja.
 
-La comprobación en PostgreSQL conservó la huella de las 45 filas de Tecnología y añadió 30 fichas generales. La medición anterior verificó 75 productos y 21 lotes activos. En esta edición se generaron 18 fotos de estudio, con cero SHA-256 repetidos entre esas imágenes. Las variantes ilustrativas de Tecnología se resuelven en la presentación sin editar las filas. Los destacados rotan y limitan a dos la representación de un grupo.
+Frankfurter ofrece COP/USD, Nager.Date estima días hábiles y Open-Meteo contextualiza temperatura y humedad. La actualización usa caché, timeout, reintento acotado y cortacircuito. Los pagos, entregas, procedencias y traspasos se simulan.
 
-Identidad emite el JWT; Catálogo y pedidos mantiene la unidad transaccional de inventario y compra; Subastas protege la puja y ordena el cierre; Notificaciones entrega los avisos. RabbitMQ desacopla los productores. Los adaptadores externos de Catálogo y Subastas consultan de forma asíncrona a Frankfurter y Nager.Date. La tasa vence a las seis horas y los festivos a las 24 horas. Open-Meteo añade temperatura y humedad de Bogotá en un caché de 45 minutos. Los clientes tienen tiempo de conexión de un segundo, lectura de dos segundos, un reintento y un cortacircuito. El flujo monetario sigue expresándose en COP.
+\GaleriaCobertura
+\GaleriaDiagnostico
 
-\IfFileExists{metricas-vertice.tex}{\input{metricas-vertice.tex}}{}
 \begin{thebibliography}{00}
 \bibitem{argon} A. Biryukov et al., RFC 9106, 2021. \url{https://www.rfc-editor.org/rfc/rfc9106}
 \bibitem{render} Render, \emph{Deploy for Free}. \url{https://render.com/docs/free}
