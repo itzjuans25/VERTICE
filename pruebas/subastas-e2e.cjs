@@ -8,7 +8,7 @@ const tienda = 'http://localhost:3000';
 const auth = 'http://127.0.0.1:9090/api/ecommerce/usuario';
 const subastas = 'http://127.0.0.1:9094/api/ecommerce/subastas';
 const mailpit = 'http://127.0.0.1:8025';
-const marca = 'Ensayo curado · Cronógrafo de archivo ' + Date.now();
+const marca = 'Cronógrafo de archivo · Serie Boreal';
 const prefijo = 'e2e-subasta-' + Date.now();
 const captura = (page, nombre) => page.screenshot({ path: 'docs/capturas/' + (process.env.TECHSTORE_SUBASTAS_PREFIJO || 'subastas-') + nombre + '.png', animations: 'disabled' });
 const estado = { prueba: marca, vistas: [], correos: [] };
@@ -82,18 +82,17 @@ async function main() {
     const ahora = Date.now();
     const lote = await pedir(subastas, { method: 'POST', token, body: {
       titulo: marca, descripcion: 'Cronógrafo ilustrativo de cuerda manual. Pago y entrega simulados.', categoria: 'RELOJES',
-      condicion: 'USADO', atributos: { 'Por qué se subasta': 'Caso ficticio de un calibre de archivo con diseño bicompax.' },
+      condicion: 'USADO', atributos: { 'Por qué se subasta': 'Caso ficticio de un calibre de archivo con diseño bicompax.', Visibilidad: 'Interna' },
       imagenes: ['/mercado/vertice-06.webp'],
       precioInicial: 100000, incremento: 5000, inicio: new Date(ahora - 4000), fin: new Date(ahora + 600000),
     } });
     assert.ok(Number.isInteger(lote.id));
     estado.lote = lote.id;
-    sql("UPDATE subasta_lotes SET fin=now()+interval '90 seconds' WHERE id=" + lote.id);
-    const finInicial = (await pedir(subastas + '/' + lote.id)).lote.fin;
     for (const ancho of [390, 768, 1440]) {
       const page = await browser.newPage({ viewport: { width: ancho, height: 920 }, reducedMotion: 'reduce' });
       await abrir(page, '/subastas');
-      await page.getByRole('link', { name: marca, exact: false }).waitFor();
+      await page.locator('main .mercado-card').first().waitFor();
+      assert.equal(await page.getByRole('link', {name: marca, exact: true}).count(), 0);
       const dimensiones = await page.evaluate(() => ({
         viewport: innerWidth, documento: document.documentElement.scrollWidth,
         imagenes: [...document.images].every(i => i.alt !== undefined),
@@ -104,7 +103,7 @@ async function main() {
       if (axe) {
         await page.addScriptTag({ path: axe });
         const auditoria = await page.evaluate(() => window.axe.run({ runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } }));
-        accesibilidad = { pasa: auditoria.passes.length, fallos: auditoria.violations.map(v => ({ regla: v.id, elementos: v.nodes.length })) };
+        accesibilidad = { pasa: auditoria.passes.length, fallos: auditoria.violations.map(v => ({ regla: v.id, elementos: v.nodes.map(n => n.target) })) };
       }
       await captura(page, 'lista-' + ancho);
       estado.vistas.push({ ancho, ...dimensiones, accesibilidad });
@@ -116,6 +115,8 @@ async function main() {
     await iniciar(ana, await obtenerLogin(uno));
     await iniciar(luis, await obtenerLogin(dos));
     const ruta = '/subastas/' + lote.id;
+    sql("UPDATE subasta_lotes SET fin=now()+interval '110 seconds' WHERE id=" + lote.id);
+    const finInicial = (await pedir(subastas + '/' + lote.id)).lote.fin;
     await abrir(ana, ruta);
     await ana.getByRole('button', { name: 'Revisar oferta' }).click();
     await ana.getByRole('button', { name: 'Confirmar puja' }).click();

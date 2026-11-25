@@ -8,7 +8,7 @@ const url = 'http://localhost:3000';
 const auth = 'http://localhost:9090/api/ecommerce/usuario';
 const catalogo = 'http://localhost:9092/api/ecommerce/producto';
 const subastas = 'http://localhost:9094/api/ecommerce/subastas';
-const archivo = 'resultados/vertice-experiencia.json';
+const archivo = process.env.VERTICE_EXPERIENCIA_JSON || 'resultados/vertice-experiencia.json';
 const salida = { marca: marca.nombre, vistas: [], integracion: {}, contraste: {} };
 const soloIntegracion = process.env.REMATA_SOLO_INTEGRACION === 'true';
 if (soloIntegracion) salida.vistas = JSON.parse(readFileSync(archivo,'utf8')).vistas;
@@ -23,7 +23,7 @@ async function abrir(page, ruta) {
   await page.locator('main h1').first().waitFor();
 }
 async function captura(page, nombre) {
-  await page.screenshot({ path: 'docs/capturas/vertice-' + nombre + '.png', animations:'disabled' });
+  await page.screenshot({ path: 'docs/capturas/' + (process.env.VERTICE_EXPERIENCIA_CAPTURAS || 'vertice-') + nombre + '.png', animations:'disabled' });
 }
 function luminancia(hex) {
   return hex.slice(1).match(/../g).map(h=>parseInt(h,16)/255)
@@ -54,44 +54,50 @@ async function main() {
       const page = await browser.newPage({viewport:{width:ancho,height:950},reducedMotion:'reduce'});
       await abrir(page,'/');
       await page.getByRole('heading',{name:marca.lema,exact:true}).waitFor();
+      assert.equal(await page.locator('main a[href^="/productos"]').count(), 0);
+      assert.equal(await page.locator('#mercado-navigation .nav-link').first().textContent(), 'Subastas');
       assert.ok(await page.getByRole('link',{name:'Explorar subastas'}).isVisible());
       const anchoDoc = await page.evaluate(()=>document.documentElement.scrollWidth);
       assert.equal(anchoDoc,ancho);
-      const registro = { ancho,documento:anchoDoc };
-      if ([390,768,1440].includes(ancho)) {
-        const pantallas = [['inicio','/'],['tienda','/productos'],['categoria','/categoria/relojes'],['subastas','/subastas'],['lote',ficha]];
-        registro.axe = [];
+      const registro = { ancho,documento:anchoDoc,desbordes:[],axe:[] };
+      const pantallas = [['inicio','/'],['tienda','/productos'],['categoria','/categoria/relojes?ver=subastas'],['subastas','/subastas'],['lote',ficha]];
+      const probarAxe = [390,768,1440].includes(ancho);
         for(const [pantalla,ruta] of pantallas) {
           await abrir(page,ruta);
           await page.locator('.mercado-layout img').first().waitFor({timeout:4000}).catch(()=>{});
-          if (process.env.TECHSTORE_AXE_JS) {
+          const anchoPantalla = await page.evaluate(()=>document.documentElement.scrollWidth);
+          if (anchoPantalla > ancho) registro.desbordes.push({ pantalla, anchoPantalla });
+          if (probarAxe && process.env.TECHSTORE_AXE_JS) {
             await page.addScriptTag({path:process.env.TECHSTORE_AXE_JS});
             const a=await page.evaluate(()=>window.axe.run({runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));
             registro.axe.push({pantalla,reglas:a.passes.length,fallos:a.violations.map(x=>({id:x.id,nodos:x.nodes.length}))});
           }
           if (ancho === 1440 || ancho === 390 && ['inicio','subastas'].includes(pantalla)) await captura(page,pantalla+'-'+ancho);
         }
-      }
+      assert.deepEqual(registro.desbordes, [], 'Desborde horizontal a ' + ancho + ' px');
       salida.vistas.push(registro);
       await page.close();
     }
 
     await abrir(escritorio,'/');
     await escritorio.evaluate(()=>window.comprobacionSPA=27);
-    const buscador = escritorio.getByLabel('Buscar en tienda y subastas');
-    await buscador.fill('Reloj');
+    const buscador = escritorio.getByLabel('Buscar lotes de subasta');
+    await buscador.fill('Cronógrafo');
     await buscador.press('Enter');
     await escritorio.waitForURL('**/buscar?**');
-    await escritorio.getByRole('heading',{ name:/Productos · [1-9]/ }).waitFor();
-    await escritorio.getByRole('heading',{ name:/Subastas · [1-9]/ }).waitFor();
+    await escritorio.getByRole('heading',{ name:/Lotes · [1-9]/ }).waitFor();
+    assert.equal(await escritorio.getByRole('heading',{name:/Catálogo ·/}).count(), 0);
+    assert.equal(await escritorio.getByRole('link',{name:/Ensayo curado|Serie Boreal/}).count(), 0);
     assert.equal(await escritorio.evaluate(()=>window.comprobacionSPA),27);
     salida.integracion.busquedaSinRecarga = true;
     await captura(escritorio,'busqueda-1440');
     await abrir(escritorio,'/productos/'+producto.id);
     await escritorio.getByRole('heading',{name:'También en subasta'}).waitFor();
     await abrir(escritorio,ficha);
-    await escritorio.getByRole('heading',{name:'También en tienda'}).waitFor();
-    salida.integracion.recomendacionesCruzadas = true;
+    await escritorio.getByRole('button',{name:'Ficha técnica'}).click();
+    await escritorio.getByRole('button',{name:'Historial de pujas'}).click();
+    await escritorio.getByRole('heading',{name:'Entrega simulada'}).waitFor();
+    salida.integracion.fichaSeparada = true;
     assert.equal(await escritorio.title(),lote.titulo+' | '+marca.nombre);
     const vehiculos = await json(subastas+'?grupo=CARROS%2CMOTOS&tamano=24');
     assert.ok(vehiculos.items.some(l => l.categoria === 'CARROS'));
@@ -116,9 +122,10 @@ async function main() {
     await escritorio.locator('#login-email').fill(cliente.email);
     await escritorio.locator('#login-password').fill(cliente.password);
     await escritorio.getByRole('button',{name:/Iniciar sesión/i}).click();
-    await escritorio.waitForURL('**/productos');
+    await escritorio.waitForURL('**/subastas');
     await escritorio.locator('.mercado-cuenta summary').click();
     await escritorio.getByRole('link',{name:'Mi cuenta',exact:true}).click();
+    await escritorio.getByRole('heading',{name:'Mis pujas',exact:true}).waitFor();
     await escritorio.getByRole('link',{name:'Avisos',exact:true}).click();
     await escritorio.getByText(/^Bienvenido a VÉRTICE$/).waitFor();
     await captura(escritorio,'avisos');

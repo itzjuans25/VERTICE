@@ -12,7 +12,7 @@
 .auction-muted { color: var(--tech-muted); }
 .auction-page section + section { margin-top: 24px; }
 .auction-hero { display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 24px; color: var(--tech-text); padding: clamp(16px, 4vw, 56px); background: var(--tech-surface); border: 1px solid var(--tech-border); border-radius: var(--tech-radius-lg); }
-.auction-hero p { color: var(--tech-muted); font-size: 18px; max-width: 38ch; }
+.auction-hero p { color: var(--tech-muted); font-size: 18px; max-width: 38ch; margin-bottom: 16px; }
 .auction-hero img, .auction-photo { display: block; width: 100%; height: auto; max-height: 520px; object-fit: cover; aspect-ratio: 4/3; border-radius: var(--tech-radius); background: var(--tech-raised); }
 .auction-layout, .auction-detail { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; margin: 24px 0; align-items: start; }
 .auction-detail { grid-template-columns: minmax(0, 1fr) minmax(300px, .6fr); }
@@ -61,7 +61,7 @@
 .auction-tarjeta-datos > p strong { color: var(--tech-text); }
 .auction-bid .auction-valores { border-block: 1px solid var(--tech-border); padding-block: 12px; grid-template-columns: minmax(0, 1fr) auto; }
 .auction-valores dd { font-variant-numeric: tabular-nums; }
-.auction-regla { font-size: 13px; }
+.auction-regla { font-size: 13px; margin-block: 8px 12px; }
 .auction-referencias { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; }
 .auction-referencias h2 { font-size: 18px; margin: 0; }
 .auction-referencias p { margin: 8px 0 0; }

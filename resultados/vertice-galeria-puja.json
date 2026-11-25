@@ -1,0 +1,102 @@
+{
+  "prueba": "Cronógrafo de archivo · Serie Boreal",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": [
+              [
+                "footer > a[href$=\"productos\"][data-discover=\"true\"]"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": [
+              [
+                "footer > a[href$=\"productos\"][data-discover=\"true\"]"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": [
+              [
+                "footer > a[href$=\"productos\"][data-discover=\"true\"]"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "0RzyRcb1dOhI9TSIg47DNe"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "6wH1NhH2gCaiRmI18nvD8O"
+    }
+  ],
+  "postores": [
+    3347,
+    3348
+  ],
+  "lote": 661,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "pagoIdempotente": true,
+  "adjudicacion": 41,
+  "lotesActivos": [
+    {
+      "id": 388,
+      "titulo": "Bolso de taller Pliegue",
+      "precio": 800000,
+      "pujas": 1
+    },
+    {
+      "id": 389,
+      "titulo": "Gafas de acetato Prisma",
+      "precio": 515000,
+      "pujas": 1
+    },
+    {
+      "id": 390,
+      "titulo": "Cronógrafo mecánico Meridiano",
+      "precio": 4400000,
+      "pujas": 1
+    }
+  ],
+  "ok": true
+}

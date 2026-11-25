@@ -100,6 +100,29 @@ class FlujoSubastasTest {
                 .param("k","superada:"+id+":%").param("g","ganada:"+id).query(Long.class).single()).isEqualTo(2);
     }
 
+    @Test void vitrinasOmitenLotesInternosSinModificarSusFichas() throws Exception {
+        var ahora = Instant.now();
+        var coleccion = UUID.randomUUID().toString();
+        var publico = app.crear(ADMIN, altaCurada("Pieza " + coleccion, Map.of("Por qué se subasta", "Tirada corta"), ahora));
+        var interno = app.crear(ADMIN, altaCurada("Registro " + coleccion,
+                Map.of("Por qué se subasta", "Recorrido de demostración", "Visibilidad", "Interna"), ahora));
+        var historico = app.crear(ADMIN, altaCurada("Ensayo curado · " + coleccion,
+                Map.of("Por qué se subasta", "Registro previo"), ahora));
+        http.perform(get(API).param("curados", "true").param("q", coleccion))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.items[0].id").value(publico.id()));
+        http.perform(get(API).param("q", coleccion))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(3));
+        assertThat(app.detalle(interno.id()).lote().atributos()).containsEntry("Visibilidad", "Interna");
+        assertThat(app.detalle(historico.id()).lote().titulo()).startsWith("Ensayo curado");
+    }
+
+    private Alta altaCurada(String titulo, Map<String, String> atributos, Instant ahora) {
+        return new Alta(titulo, "Objeto de archivo", Lote.Categoria.RELOJES, Lote.Condicion.USADO,
+                atributos, List.of("/mercado/vertice-06.webp"), monto(100), monto(10),
+                ahora.minusSeconds(2), ahora.plusSeconds(600));
+    }
+
     @Test void accionesCronometroYReintentoDePublicacion() throws Exception {
         var ahora = Instant.now();
         assertThatThrownBy(() -> crear(ahora,ahora)).isInstanceOf(ReglaSubasta.class);

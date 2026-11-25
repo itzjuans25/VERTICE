@@ -226,7 +226,7 @@ export function Detalle({ user }) {
         </section>
         <section id="ofertar" className="auction-panel auction-bid">
           <span className="auction-muted">{categorias[lote.categoria]} · {lote.condicion === 'NUEVO' ? 'Nuevo' : 'Usado'}</span>
-          <div className="auction-bid-head"><span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]}</span><Cierre lote={lote} /></div>
+          <div className="auction-bid-head"><span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]} · COP</span><Cierre lote={lote} /></div>
           <strong className="auction-price">{cop.format(lote.precioActual)}</strong>
           {!consultaUsd.cargando && <p className="auction-muted">{consultaUsd.datos?.disponible ? '≈ ' + usd.format(lote.precioActual * consultaUsd.datos.tasa) + ' · Frankfurter' : 'Referencia USD no disponible'}</p>}
           <dl className="auction-valores"><dt>Incremento</dt><dd>{cop.format(lote.incremento)}</dd>

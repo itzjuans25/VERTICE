@@ -34,3 +34,4 @@
 .App .mercado-footer { padding-inline:max(var(--espacio-4), calc((100% - var(--mercado-ancho))/2)); }
 @media (max-width:950px) { .tt-filtros.mercado-filtros-lote { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:630px) { .tt-filtros.mercado-filtros-lote { grid-template-columns:repeat(2,minmax(0,1fr)); } .mercado-pasos { grid-template-columns:1fr; } .mercado-inicio section[id] { scroll-margin-top:calc(var(--mercado-cabecera) + 112px); } }
+.mercado-footer > a { color: var(--tech-accent); }

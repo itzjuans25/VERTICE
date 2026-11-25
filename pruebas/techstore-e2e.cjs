@@ -83,8 +83,9 @@ async function main() {
     await page.locator('#login-email').fill(email);
     await page.locator('#login-password').fill(password);
     await page.getByRole('button', { name: /Iniciar Sesión/i }).click();
-    await page.waitForURL('**/productos');
+    await page.waitForURL('**/subastas');
 
+    await page.goto(tienda + '/productos');
     await page.locator('select[name="marca"]').selectOption(candidato.marca);
     await page.getByLabel('Condición').selectOption('USADO');
     await page.getByLabel('Buscar productos').fill(candidato.nombre);
@@ -100,6 +101,7 @@ async function main() {
 
     await page.getByRole('button', { name: 'Agregar al carrito' }).click();
     await page.getByRole('status').filter({ hasText: 'Producto agregado' }).waitFor();
+    await page.locator('.nav-archivo summary').click();
     await page.getByRole('link', { name: /Carrito/ }).click();
     await page.getByRole('button', { name: 'Realizar Compra' }).waitFor();
     const entrega = page.getByText(/\d+ días hábiles\./);
@@ -138,7 +140,7 @@ async function main() {
     await page.getByRole('alert').waitFor();
     await page.locator('#login-password').fill(nueva);
     await page.getByRole('button', { name: /Iniciar Sesión/i }).click();
-    await page.waitForURL('**/productos');
+    await page.waitForURL('**/subastas');
     await page.locator('.mercado-cuenta summary').click();
     await page.getByRole('button', { name: /Cerrar sesión/i }).click();
     await page.goto(tienda + '/compras');

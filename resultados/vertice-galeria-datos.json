@@ -1,0 +1,18 @@
+{
+  "productosTecnologia": 45,
+  "piezasConSemilla": 18,
+  "comprasPreviasConservadas": [
+    2550,
+    2772
+  ],
+  "lotesPreviosConservados": [
+    385,
+    386,
+    387,
+    421
+  ],
+  "ordenesPreviasConservadas": [
+    39
+  ],
+  "pujasPreviasConservadas": 5
+}

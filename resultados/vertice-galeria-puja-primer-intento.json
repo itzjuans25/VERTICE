@@ -1,0 +1,56 @@
+{
+  "prueba": "Cronógrafo de archivo · Serie Boreal",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": 1
+          }
+        ]
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": 1
+          }
+        ]
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": 1
+          }
+        ]
+      }
+    }
+  ],
+  "correos": [],
+  "postores": [
+    3299,
+    3300
+  ],
+  "lote": 623
+}
