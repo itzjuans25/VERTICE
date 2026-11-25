@@ -11,7 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Remata | Notificaciones", version = "1"), security = @SecurityRequirement(name = "notificationKey"))
+@OpenAPIDefinition(info = @Info(title = "VÉRTICE | Notificaciones", version = "1"), security = @SecurityRequirement(name = "notificationKey"))
 @SecurityScheme(name = "notificationKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER, paramName = "X-Notification-Key")
 public class NotificacionesApplication {
 

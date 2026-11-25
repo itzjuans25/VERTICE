@@ -50,9 +50,9 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="auth-container">
+    <main className="auth-container">
       <div className="auth-card">
-        <h2>Iniciar Sesión</h2>
+        <h1>Iniciar sesión</h1>
         <p className="auth-subtitle">Bienvenido de nuevo</p>
 
         {successMessage && (
@@ -98,7 +98,7 @@ function Login({ onLogin }) {
           ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
 

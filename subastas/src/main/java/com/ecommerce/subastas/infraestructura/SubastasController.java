@@ -33,12 +33,13 @@ class SubastasController {
                          @RequestParam(required=false) @Size(max=100) String q,
                          @RequestParam(required=false) Lote.Categoria categoria,
                          @RequestParam(required=false) @Size(max=12) List<Lote.Categoria> grupo,
+                         @RequestParam(defaultValue="false") boolean curados,
                          @RequestParam(required=false) Lote.Condicion condicion,
                          @RequestParam(required=false) @DecimalMin("0") BigDecimal minimo,
                          @RequestParam(required=false) @DecimalMin("0") BigDecimal maximo,
                          @RequestParam(defaultValue="0") @Min(0) int pagina,
                          @RequestParam(defaultValue="12") @Min(1) @Max(48) int tamano) {
-        var resultado=subastas.listar(new Filtro(q,categoria,condicion,minimo,maximo,pagina,tamano,grupo == null ? List.of() : grupo));
+        var resultado=subastas.listar(new Filtro(q,categoria,condicion,minimo,maximo,pagina,tamano,grupo == null ? List.of() : grupo,curados));
         return new PaginaPublica(resultado.items().stream().map(l->Publico.de(l,actor)).toList(),pagina,tamano,resultado.total());
     }
 

@@ -51,7 +51,7 @@ public class RabbitNotificacionAdapter implements NotificacionGateway {
         if (email == null) {
             return null;
         }
-        return new EmailPayload(email.getDestinatario(), email.getAsunto(),
+        return new EmailPayload(email.getUsuarioId(), email.getDestinatario(), email.getAsunto(),
                 email.getCuerpo(), email.isHtml());
     }
 
@@ -75,7 +75,7 @@ public class RabbitNotificacionAdapter implements NotificacionGateway {
         }
     }
 
-    public record EmailPayload(String destinatario, String asunto, String cuerpo, boolean html) {
+    public record EmailPayload(Long usuarioId, String destinatario, String asunto, String cuerpo, boolean html) {
     }
 
     public record SmsPayload(String numeroTelefono, String mensaje) {

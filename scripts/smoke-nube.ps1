@@ -21,7 +21,7 @@ function Esperar($url, $api) {
         try {
             if ($api) {
                 if ((Invoke-RestMethod $url -TimeoutSec $timeout).status -eq 'UP') { return }
-            } elseif ((Invoke-WebRequest $url -UseBasicParsing -TimeoutSec $timeout).Content -match 'Remata') { return }
+            } elseif ((Invoke-WebRequest $url -UseBasicParsing -TimeoutSec $timeout).Content -match 'VÉRTICE') { return }
         } catch {}
         if ($reloj.Elapsed.TotalSeconds -lt 58) { Start-Sleep -Seconds 2 }
     }
@@ -40,7 +40,7 @@ try {
     $id=[Guid]::NewGuid().ToString('N')
     $cuenta=@{email="smoke-$id@example.test";password="Smoke-!$id"}
     $authApi="$Auth/api/ecommerce/usuario"; $catApi="$Catalogo/api/ecommerce"
-    $paso='Registro'; $u=Consultar "$authApi/save" ($cuenta+@{nombre='Smoke Remata'})
+    $paso='Registro'; $u=Consultar "$authApi/save" ($cuenta+@{nombre='Smoke VÉRTICE'})
     if (-not $u.id) { throw 'Registro inválido' }; Write-Host "OK  $paso"
     $paso='Login'; $login=Consultar "$authApi/login" $cuenta
     if (-not $login.token) { throw 'Login inválido' }; Write-Host "OK  $paso"

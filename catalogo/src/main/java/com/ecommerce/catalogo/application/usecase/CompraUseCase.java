@@ -145,7 +145,7 @@ public class CompraUseCase implements CompraService {
 
     private void notificarEstado(Compra compra, Usuario usuario) {
         if (usuario == null) { return; }
-        String asunto = "Estado del pedido #" + compra.getId() + " · Remata";
+        String asunto = "Estado del pedido #" + compra.getId() + " · VÉRTICE";
         String texto = "Pedido #" + compra.getId() + ": " + compra.getEstado();
         var mensaje = MensajeNotificacion.builder()
                 .tipo(MensajeNotificacion.TipoNotificacion.EMAIL)
@@ -168,7 +168,7 @@ public class CompraUseCase implements CompraService {
 
             NotificacionEmail email = NotificacionEmail.builder()
                     .usuarioId(usuario.getId()).destinatario(usuario.getEmail())
-                    .asunto("Confirmacion de Compra #" + compra.getId() + " · Remata")
+                    .asunto("Confirmacion de Compra #" + compra.getId() + " · VÉRTICE")
                     .cuerpo("<h1>Compra confirmada</h1>"
                             + "<p>Hola " + usuario.getNombre() + ",</p>"
                             + "<p>Tu compra ha sido procesada exitosamente.</p>"

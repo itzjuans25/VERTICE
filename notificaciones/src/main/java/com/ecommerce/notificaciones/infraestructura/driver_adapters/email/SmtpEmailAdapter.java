@@ -38,7 +38,7 @@ public class SmtpEmailAdapter implements EmailGateway {
 
     public SmtpEmailAdapter(JavaMailSender mailSender,
                             @Value("${app.mail.from:no-reply@ecommerce.local}") String from,
-                            @Value("${app.mail.from-name:Remata}") String fromName) {
+                            @Value("${app.mail.from-name:VÉRTICE}") String fromName) {
         this.mailSender = mailSender;
         this.from = from;
         this.fromName = fromName;
@@ -66,7 +66,15 @@ public class SmtpEmailAdapter implements EmailGateway {
             helper.setFrom(new InternetAddress(from, fromName, StandardCharsets.UTF_8.name()));
             helper.setTo(notificacion.getDestinatario());
             helper.setSubject(notificacion.getAsunto());
-            helper.setText(notificacion.getCuerpo(), notificacion.isHtml());
+            String cuerpo = notificacion.isHtml() ? """
+                    <div style="padding:16px;background:#0b0c0e;color:#f4f1ea;font-family:Arial,sans-serif">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+                        <path d="M4 6h7l5 12 5-12h7L16 27 4 6Zm7 0 5 21 5-21" fill="none" stroke="#c8a96e" stroke-width="1.75"/>
+                      </svg>
+                      <strong style="letter-spacing:.2em">VÉRTICE</strong>
+                    </div>
+                    """ + notificacion.getCuerpo() : notificacion.getCuerpo();
+            helper.setText(cuerpo, notificacion.isHtml());
 
             mailSender.send(message);
             log.info("Email SMTP enviado a {}", notificacion.getDestinatario());

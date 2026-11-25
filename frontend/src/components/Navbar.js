@@ -23,9 +23,9 @@ export default function Navbar({ user, onLogout, cartCount }) {
     <div className="nav-container mercado-nav" onKeyDown={e => { if (e.key === 'Escape') abrir(false); }}>
       <Link to="/" className="nav-logo"><Logo /></Link>
       <form className="mercado-busqueda" onSubmit={buscar} role="search">
-        <input type="search" aria-label="Buscar en tienda y subastas" placeholder="Buscar en todo Remata"
+        <input type="search" aria-label="Buscar en tienda y subastas" placeholder="Buscar piezas o productos"
           value={busqueda} onChange={e => setBusqueda(e.target.value)} maxLength={120} />
-        <button type="submit" aria-label="Buscar en todo Remata"><FaSearch aria-hidden="true" /></button>
+        <button type="submit" aria-label="Buscar en VÉRTICE"><FaSearch aria-hidden="true" /></button>
       </form>
       <button className="tech-nav-toggle" type="button" aria-controls="mercado-navigation" aria-expanded={abierto} onClick={() => abrir(!abierto)}>{abierto ? 'Cerrar menú' : 'Menú'}</button>
       <nav id="mercado-navigation" aria-label="Navegación principal" className={'nav-menu' + (abierto ? ' tech-open' : '')}>

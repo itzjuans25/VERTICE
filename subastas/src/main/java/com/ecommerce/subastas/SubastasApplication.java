@@ -19,7 +19,7 @@ import java.time.ZoneId;
 
 @SpringBootApplication(exclude = org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration.class)
 @EnableScheduling
-@io.swagger.v3.oas.annotations.OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title = "Remata | Subastas", version = "1"))
+@io.swagger.v3.oas.annotations.OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title = "VÉRTICE | Subastas", version = "1"))
 @SecurityScheme(name="jwt", type=SecuritySchemeType.HTTP, scheme="bearer", bearerFormat="JWT")
 public class SubastasApplication {
     public static void main(String[] args) { SpringApplication.run(SubastasApplication.class,args); }

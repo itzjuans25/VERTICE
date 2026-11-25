@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Remata | Demostración completa",
+    "name": "VÉRTICE | Demostración completa",
     "description": "Prueba funcional de la tienda y sus microservicios. Ejecutar en orden. Usa cuentas y productos sintéticos.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -248,7 +248,7 @@
             "url": "{{authUrl}}/api/ecommerce/usuario/save",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Comprador Remata\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{demoPassword}}\",\n  \"telefono\": \"+573001010101\",\n  \"edad\": 30\n}",
+              "raw": "{\n  \"nombre\": \"Comprador VÉRTICE\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{demoPassword}}\",\n  \"telefono\": \"+573001010101\",\n  \"edad\": 30\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -517,7 +517,7 @@
             "url": "{{authUrl}}/api/ecommerce/usuario/update",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"{{usuarioId}}\",\n  \"nombre\": \"Cliente Remata\"\n}",
+              "raw": "{\n  \"id\": \"{{usuarioId}}\",\n  \"nombre\": \"Cliente VÉRTICE\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -755,7 +755,7 @@
             "url": "{{catalogoUrl}}/api/ecommerce/producto",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Monitor de prueba {{marcaPrueba}}\",\n  \"descripcion\": \"Monitor de 24 pulgadas para oficina\",\n  \"precio\": 99000,\n  \"stock\": 5,\n  \"categoria\": \"Periféricos\",\n  \"marca\": \"Remata\",\n  \"modelo\": \"Demo 24\",\n  \"condicion\": \"NUEVO\",\n  \"garantiaDias\": 90,\n  \"imagenUrl\": \"/techtrade/monitor.webp\",\n  \"especificaciones\": {\n    \"Tamaño\": \"24 pulgadas\",\n    \"Resolución\": \"1920 × 1080\"\n  }\n}",
+              "raw": "{\n  \"nombre\": \"Monitor de prueba {{marcaPrueba}}\",\n  \"descripcion\": \"Monitor de 24 pulgadas para oficina\",\n  \"precio\": 99000,\n  \"stock\": 5,\n  \"categoria\": \"Periféricos\",\n  \"marca\": \"VÉRTICE\",\n  \"modelo\": \"Demo 24\",\n  \"condicion\": \"NUEVO\",\n  \"garantiaDias\": 90,\n  \"imagenUrl\": \"/techtrade/monitor.webp\",\n  \"especificaciones\": {\n    \"Tamaño\": \"24 pulgadas\",\n    \"Resolución\": \"1920 × 1080\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -795,7 +795,7 @@
             "url": "{{catalogoUrl}}/api/ecommerce/producto/{{productoId}}",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Monitor de prueba {{marcaPrueba}}\",\n  \"descripcion\": \"Monitor de 24 pulgadas para oficina\",\n  \"precio\": 109000,\n  \"stock\": 5,\n  \"categoria\": \"Periféricos\",\n  \"marca\": \"Remata\",\n  \"modelo\": \"Demo 24\",\n  \"condicion\": \"NUEVO\",\n  \"garantiaDias\": 90,\n  \"imagenUrl\": \"/techtrade/monitor.webp\",\n  \"especificaciones\": {\n    \"Tamaño\": \"24 pulgadas\",\n    \"Resolución\": \"1920 × 1080\"\n  }\n}",
+              "raw": "{\n  \"nombre\": \"Monitor de prueba {{marcaPrueba}}\",\n  \"descripcion\": \"Monitor de 24 pulgadas para oficina\",\n  \"precio\": 109000,\n  \"stock\": 5,\n  \"categoria\": \"Periféricos\",\n  \"marca\": \"VÉRTICE\",\n  \"modelo\": \"Demo 24\",\n  \"condicion\": \"NUEVO\",\n  \"garantiaDias\": 90,\n  \"imagenUrl\": \"/techtrade/monitor.webp\",\n  \"especificaciones\": {\n    \"Tamaño\": \"24 pulgadas\",\n    \"Resolución\": \"1920 × 1080\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1225,7 +1225,7 @@
             "url": "{{notificacionesUrl}}/api/ecommerce/notificaciones/validar",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tipo\": \"EMAIL\",\n  \"email\": {\n    \"destinatario\": \"{{email}}\",\n    \"asunto\": \"Aviso Remata Postman\",\n    \"cuerpo\": \"Correo de ejemplo de la prueba de API\"\n  }\n}",
+              "raw": "{\n  \"tipo\": \"EMAIL\",\n  \"email\": {\n    \"destinatario\": \"{{email}}\",\n    \"asunto\": \"Aviso VÉRTICE Postman\",\n    \"cuerpo\": \"Correo de ejemplo de la prueba de API\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1261,7 +1261,7 @@
             "url": "{{notificacionesUrl}}/api/ecommerce/notificaciones/previsualizar/bienvenida",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Comprador Remata\"\n}",
+              "raw": "{\n  \"nombre\": \"Comprador VÉRTICE\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1297,7 +1297,7 @@
             "url": "{{notificacionesUrl}}/api/ecommerce/notificaciones/previsualizar/compra",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Comprador Remata\",\n  \"orden\": \"{{compraId}}\",\n  \"totalCop\": \"{{compraTotal}}\"\n}",
+              "raw": "{\n  \"nombre\": \"Comprador VÉRTICE\",\n  \"orden\": \"{{compraId}}\",\n  \"totalCop\": \"{{compraTotal}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1359,7 +1359,7 @@
             "url": "{{notificacionesUrl}}/api/ecommerce/notificaciones/encolar",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tipo\": \"EMAIL\",\n  \"email\": {\n    \"destinatario\": \"{{email}}\",\n    \"asunto\": \"Aviso Remata Postman\",\n    \"cuerpo\": \"Correo de ejemplo de la prueba de API\"\n  }\n}",
+              "raw": "{\n  \"tipo\": \"EMAIL\",\n  \"email\": {\n    \"destinatario\": \"{{email}}\",\n    \"asunto\": \"Aviso VÉRTICE Postman\",\n    \"cuerpo\": \"Correo de ejemplo de la prueba de API\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1389,7 +1389,7 @@
                   "pm.test(\"Tiempo menor de 500 ms\", () => pm.expect(pm.response.responseTime).to.be.below(500));",
                   "const datos = pm.response.json();",
                   "pm.test(\"Estructura esperada\", () => { pm.expect(datos.messages).to.be.an(\"array\"); });",
-                  "if (pm.response.code === 200) { const asunto = \"Confirmacion de Compra #\" + pm.environment.get(\"compraId\") + \" · Remata\"; pm.test(\"Correo de compra recibido\", () => pm.expect(datos.messages.some(m => m.Subject === asunto)).to.be.true); }"
+                  "if (pm.response.code === 200) { const asunto = \"Confirmacion de Compra #\" + pm.environment.get(\"compraId\") + \" · VÉRTICE\"; pm.test(\"Correo de compra recibido\", () => pm.expect(datos.messages.some(m => m.Subject === asunto)).to.be.true); }"
                 ]
               }
             }
@@ -1939,7 +1939,7 @@
       ]
     },
     {
-      "name": "Inicio, cuenta y referencias Remata",
+      "name": "Inicio, cuenta y referencias VÉRTICE",
       "item": [
         {
           "name": "Inicio de tienda",
@@ -2076,6 +2076,31 @@
             "header": [],
             "url": "{{subastasUrl}}/api/subastas/entrega?diasHabiles=3"
           }
+        }
+      ]
+    },
+    {
+      "name": "Clima de despacho VÉRTICE",
+      "item": [
+        {
+          "name": "Bogotá · Open-Meteo",
+          "request": {
+            "method": "GET",
+            "url": "{{subastasUrl}}/api/subastas/clima"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Indica si hay datos de clima', () => pm.expect(pm.response.json().disponible).to.be.a('boolean'));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },

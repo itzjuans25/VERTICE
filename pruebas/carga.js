@@ -58,6 +58,7 @@ const operaciones = {
   'sub_inicio': ['GET', '/api/subastas/inicio', 200],
   'sub_precio': ['GET', '/api/subastas/lote/:id/precio-usd', 200],
   'sub_entrega': ['GET', '/api/subastas/entrega?diasHabiles=3', 200],
+  'sub_clima': ['GET', '/api/subastas/clima', 200],
   'sub_listar': ['GET', '?categoria=HOGAR&minimo=100&maximo=500&tamano=4', 200],
   'sub_detalle': ['GET', '/:id', 200],
   'sub_pujar': ['POST', '/:id/pujas', 201],
@@ -91,7 +92,7 @@ export const options = {
 function base(nombre) {
   if (nombre === 'auth_pantalla_perfil') return auth.replace('/api/ecommerce/usuario','');
   if (nombre === 'notif_avisos') return notificaciones.replace('/api/ecommerce/notificaciones','');
-  if (['sub_inicio','sub_precio','sub_entrega'].includes(nombre)) return subastas.replace('/api/ecommerce/subastas','');
+  if (['sub_inicio','sub_precio','sub_entrega','sub_clima'].includes(nombre)) return subastas.replace('/api/ecommerce/subastas','');
   if (nombre.startsWith('auth_')) return auth;
   if (nombre.startsWith('cat_')) return catalogo;
   if (nombre.startsWith('sub_')) return subastas;
@@ -215,6 +216,7 @@ function recorrer(admin, cliente, nombre, mitad) {
     enviar('sub_detalle', { id: lote.id });
     enviar('sub_precio', { id:lote.id });
     enviar('sub_entrega');
+    enviar('sub_clima');
     enviar('sub_pujar', { token, id: lote.id, body: { monto: lote.pujaMinima } });
     enviar('sub_mias', { token });
     enviar('sub_pago_sin_adjudicacion', { token, id: lote.id });

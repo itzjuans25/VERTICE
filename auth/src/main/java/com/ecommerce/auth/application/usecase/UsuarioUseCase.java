@@ -201,7 +201,7 @@ public class UsuarioUseCase implements UsuarioService {
         try {
             NotificacionEmail email = NotificacionEmail.builder()
                     .usuarioId(usuario.getId()).destinatario(usuario.getEmail())
-                    .asunto("Bienvenido a Remata")
+                    .asunto("Bienvenido a VÉRTICE")
                     .cuerpo("<h1>Hola " + usuario.getNombre() + "</h1>"
                             + "<p>Gracias por registrarte en nuestra plataforma.</p>"
                             + "<p>Tu cuenta ha sido creada exitosamente.</p>")
@@ -213,7 +213,7 @@ public class UsuarioUseCase implements UsuarioService {
                 sms = NotificacionSMS.builder()
                         .numeroTelefono(usuario.getTelefono())
                         .mensaje("Hola " + usuario.getNombre()
-                                + "! Bienvenido a Remata. Tu registro fue exitoso.")
+                                + "! Bienvenido a VÉRTICE. Tu registro fue exitoso.")
                         .build();
             }
 

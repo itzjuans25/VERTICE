@@ -1,6 +1,7 @@
 package com.ecommerce.subastas.infraestructura;
 
 import com.ecommerce.subastas.application.port.in.Subastas;
+import com.ecommerce.subastas.application.port.out.ClimaDespachoPort;
 import com.ecommerce.subastas.application.usecase.ReferenciasSubastas;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Max;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.*;
 class ReferenciasController {
     private final Subastas subastas;
     private final ReferenciasSubastas referencias;
+    private final ClimaDespachoPort clima;
 
-    ReferenciasController(Subastas subastas, ReferenciasSubastas referencias) {
+    ReferenciasController(Subastas subastas, ReferenciasSubastas referencias, ClimaDespachoPort clima) {
         this.subastas = subastas;
         this.referencias = referencias;
+        this.clima = clima;
     }
 
     @GetMapping("/lote/{id}/precio-usd")
@@ -29,4 +32,13 @@ class ReferenciasController {
     ReferenciasSubastas.Entrega entrega(@RequestParam(defaultValue="3") @Min(1) @Max(30) int diasHabiles) {
         return referencias.entrega(diasHabiles);
     }
+
+    @GetMapping("/clima")
+    @Operation(summary="Condiciones de referencia de la sede simulada de despacho, Bogotá")
+    Clima clima() {
+        var observacion = clima.bogota().orElse(null);
+        return new Clima(observacion != null,"Bogotá","Open-Meteo",observacion);
+    }
+
+    record Clima(boolean disponible,String ciudad,String fuente,ClimaDespachoPort.Observacion observacion) {}
 }
