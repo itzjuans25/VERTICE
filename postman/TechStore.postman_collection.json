@@ -1403,6 +1403,542 @@
       ]
     },
     {
+      "name": "Subastas",
+      "item": [
+        {
+          "name": "Subastas /health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Subastas disponible', () => pm.expect(pm.response.json().status).to.eql('UP'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{subastasUrl}}/health"
+          }
+        },
+        {
+          "name": "Subastas Swagger",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Documentación de pujas', () => pm.expect(pm.response.json().paths).to.have.property('/api/ecommerce/subastas/{id}/pujas'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{subastasUrl}}/v3/api-docs"
+          }
+        },
+        {
+          "name": "Subastas registrar Uno",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('subEmailUno', 'sub-postman-uno-' + Date.now() + '@example.test');",
+                  "pm.collectionVariables.set('subClave', 'Demo-Subastas-' + pm.variables.replaceIn('{{$guid}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.collectionVariables.set('subUsuarioUno', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"Postor Uno\",\"email\":\"{{subEmailUno}}\",\"password\":\"{{subClave}}\"}"
+            },
+            "url": "{{authUrl}}/api/ecommerce/usuario/save"
+          }
+        },
+        {
+          "name": "Subastas login Uno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.collectionVariables.set('tokenSubUno', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{subEmailUno}}\",\"password\":\"{{subClave}}\"}"
+            },
+            "url": "{{authUrl}}/api/ecommerce/usuario/login"
+          }
+        },
+        {
+          "name": "Subastas registrar Dos",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('subEmailDos', 'sub-postman-dos-' + Date.now() + '@example.test');",
+                  "pm.collectionVariables.set('subClave', 'Demo-Subastas-' + pm.variables.replaceIn('{{$guid}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.collectionVariables.set('subUsuarioDos', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"Postor Dos\",\"email\":\"{{subEmailDos}}\",\"password\":\"{{subClave}}\"}"
+            },
+            "url": "{{authUrl}}/api/ecommerce/usuario/save"
+          }
+        },
+        {
+          "name": "Subastas login Dos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.collectionVariables.set('tokenSubDos', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{subEmailDos}}\",\"password\":\"{{subClave}}\"}"
+            },
+            "url": "{{authUrl}}/api/ecommerce/usuario/login"
+          }
+        },
+        {
+          "name": "Crear lote de subasta",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const now = Date.now();",
+                  "pm.collectionVariables.set('subMarca', 'Subasta Newman ' + now);",
+                  "pm.collectionVariables.set('subInicio', new Date(now - 2000).toISOString());",
+                  "pm.collectionVariables.set('subFin', new Date(now + 25000).toISOString());",
+                  "pm.collectionVariables.set('subLimite', now + 240000);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "const lote = pm.response.json();",
+                  "pm.collectionVariables.set('subId', lote.id);",
+                  "pm.test('Inicio activo', () => pm.expect(lote.estado).to.eql('ACTIVA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"titulo\":\"{{subMarca}}\",\"descripcion\":\"Prueba Newman\",\"categoria\":\"COLECCIONABLES\",\"condicion\":\"NUEVO\",\"atributos\":{\"Material\":\"Resina\"},\"imagenes\":[\"/subastas/coleccionables.webp\"],\"precioInicial\":100,\"incremento\":10,\"inicio\":\"{{subInicio}}\",\"fin\":\"{{subFin}}\"}"
+            },
+            "url": "{{subastasUrl}}/api/ecommerce/subastas"
+          }
+        },
+        {
+          "name": "Filtrar lotes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Un resultado paginado', () => pm.expect(pm.response.json().total).to.eql(1));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{subastasUrl}}/api/ecommerce/subastas?q={{subMarca}}&categoria=COLECCIONABLES&condicion=NUEVO&minimo=100&maximo=120&tamano=1"
+          }
+        },
+        {
+          "name": "Pujar como Uno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "const lote = pm.response.json();",
+                  "pm.test('Monto y liderazgo', () => { pm.expect(lote.precioActual).to.eql(110); pm.expect(lote.voyGanando).to.eql(true); });",
+                  "pm.test('Cierre extendido', () => pm.expect(Date.parse(lote.fin)).to.be.greaterThan(Date.parse(pm.collectionVariables.get('subFin'))));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenSubUno}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"monto\":110}"
+            },
+            "url": "{{subastasUrl}}/api/ecommerce/subastas/{{subId}}/pujas"
+          }
+        },
+        {
+          "name": "Pujar como Dos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "const lote = pm.response.json();",
+                  "pm.test('Monto y liderazgo', () => { pm.expect(lote.precioActual).to.eql(120); pm.expect(lote.voyGanando).to.eql(true); });",
+                  "pm.test('Cierre extendido', () => pm.expect(Date.parse(lote.fin)).to.be.greaterThan(Date.parse(pm.collectionVariables.get('subFin'))));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenSubDos}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"monto\":120}"
+            },
+            "url": "{{subastasUrl}}/api/ecommerce/subastas/{{subId}}/pujas"
+          }
+        },
+        {
+          "name": "Esperar adjudicación",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get('subEnEspera') === 'true') setTimeout(() => {}, 10000);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "const detalle = pm.response.json();",
+                  "pm.test('Postores enmascarados', () => { pm.expect(detalle.historial).to.have.lengthOf(2); pm.expect(detalle.historial[0]).to.have.property('postor'); pm.expect(detalle.historial[0]).not.to.have.property('usuarioId'); });",
+                  "if (detalle.lote.estado !== 'ADJUDICADA' && Date.now() < Number(pm.collectionVariables.get('subLimite'))) {",
+                  "  pm.collectionVariables.set('subEnEspera', 'true');",
+                  "  pm.execution.setNextRequest(pm.info.requestName);",
+                  "} else {",
+                  "  pm.collectionVariables.unset('subEnEspera');",
+                  "  pm.test('Adjudicación para el ganador', () => { pm.expect(detalle.lote.estado).to.eql('ADJUDICADA'); pm.expect(detalle.adjudicacion).not.to.eql(null); });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenSubDos}}"
+              }
+            ],
+            "url": "{{subastasUrl}}/api/ecommerce/subastas/{{subId}}"
+          }
+        },
+        {
+          "name": "Mis adjudicaciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Adjudicación visible', () => pm.expect(pm.response.json().adjudicaciones.some(o => o.loteId === pm.collectionVariables.get('subId'))).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenSubDos}}"
+              }
+            ],
+            "url": "{{subastasUrl}}/api/ecommerce/subastas/mias"
+          }
+        },
+        {
+          "name": "Pago simulado de subasta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Pago registrado', () => pm.expect(pm.response.json().pagada).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenSubDos}}"
+              }
+            ],
+            "url": "{{subastasUrl}}/api/ecommerce/subastas/{{subId}}/pago"
+          }
+        },
+        {
+          "name": "Puja superada en Mailpit",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('mailpitUrl')) pm.execution.skipRequest();",
+                  "setTimeout(() => {}, 5000);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Correo recibido', () => pm.expect(pm.response.json().messages.some(m => m.Subject === 'Puja superada')).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{mailpitUrl}}/api/v1/search?query=to:{{subEmailUno}}"
+          }
+        },
+        {
+          "name": "Subasta ganada en Mailpit",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('mailpitUrl')) pm.execution.skipRequest();",
+                  "setTimeout(() => {}, 5000);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));",
+                  "pm.test('Correo recibido', () => pm.expect(pm.response.json().messages.some(m => m.Subject === 'Subasta ganada')).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{mailpitUrl}}/api/v1/search?query=to:{{subEmailDos}}"
+          }
+        },
+        {
+          "name": "Limpiar postor Uno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{authUrl}}/api/ecommerce/usuario/{{subUsuarioUno}}"
+          }
+        },
+        {
+          "name": "Limpiar postor Dos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                  "pm.test('Responde en máximo 500 ms', () => pm.expect(pm.response.responseTime).to.be.at.most(500));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{authUrl}}/api/ecommerce/usuario/{{subUsuarioDos}}"
+          }
+        }
+      ]
+    },
+    {
       "name": "Limpieza",
       "item": [
         {

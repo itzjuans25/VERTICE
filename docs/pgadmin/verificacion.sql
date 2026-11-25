@@ -31,3 +31,14 @@ SELECT count(*) FILTER (WHERE intentos < 5) AS en_bandeja,
        count(*) FILTER (WHERE intentos >= 5) AS agotados FROM notificaciones_pendientes;
 -- SMTP se comprueba en Mailpit o en la actividad transaccional de Brevo.
 -- Se elimina la fila de notificaciones_pendientes después de confirmar RabbitMQ.
+
+SELECT categoria, count(*) AS lotes, count(*) FILTER (WHERE estado = 'ACTIVA' AND fin > now()) AS abiertos
+FROM subasta_lotes WHERE semilla IS NOT NULL GROUP BY categoria ORDER BY categoria;
+
+SELECT l.id, l.titulo, l.estado, l.pujas, l.version, o.monto, o.pagada
+FROM subasta_lotes l LEFT JOIN subasta_ordenes o ON o.lote_id=l.id
+WHERE l.estado IN ('ADJUDICADA','CERRADA') ORDER BY l.id DESC LIMIT 10;
+
+SELECT count(*) FILTER(WHERE enviado IS NOT NULL) AS publicados,
+       count(*) FILTER(WHERE enviado IS NULL) AS pendientes
+FROM subasta_avisos;

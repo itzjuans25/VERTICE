@@ -11,11 +11,11 @@
       "ConnectionParameters": { "sslmode": "prefer", "connect_timeout": 10 }
     },
     "2": {
-      "Name": "TechStore Render",
+      "Name": "TechStore Neon",
       "Group": "TechStore",
-      "Host": "REEMPLAZAR_HOST_EXTERNO",
+      "Host": "REEMPLAZAR_HOST_DIRECTO_NEON",
       "Port": 5432,
-      "MaintenanceDB": "ecommerce",
+      "MaintenanceDB": "neondb",
       "Username": "REEMPLAZAR_USUARIO",
       "SSLMode": "require",
       "ConnectionParameters": { "sslmode": "require", "connect_timeout": 10 }

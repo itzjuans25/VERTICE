@@ -1,25 +1,44 @@
-# Abrir PostgreSQL con pgAdmin
+# Ver PostgreSQL y el diagrama de TechStore
 
-1. Ejecuta `iniciar.ps1`. Abre pgAdmin 4 desde Inicio si la ventana ya se cerró.
-2. En **Tools → Import/Export Servers → Import**, selecciona [servers.json](servers.json), marca Local y Render y finaliza.
-3. Abre **TechStore Local**. Conecta a `127.0.0.1`, puerto `55432`, base `ecommerce`, usuario `ecommerce_dev`. La contraseña local es `POSTGRES_PASSWORD` de tu `.env.native`.
-4. Expande **Databases → ecommerce → Schemas → public → Tables**. Abre **Query Tool**, carga [verificacion.sql](verificacion.sql) y ejecuta con F5.
-5. Para consultar correo SMTP, usa [Mailpit local](http://localhost:8025). PostgreSQL registra SMS simulados y el estado de avisos pendientes, sin conservar un historial de correo entregado.
+1. Ejecuta `iniciar.ps1`. Abre pgAdmin 4 e importa [servers.json](servers.json) en **Tools → Import/Export Servers → Import**.
+2. En **TechStore Local** conecta a `127.0.0.1:55432`, base `ecommerce` y usuario `ecommerce_dev`. La contraseña está en `POSTGRES_PASSWORD` de tu `.env.native`.
+3. Abre **Databases → ecommerce → Schemas → public → Tables**. Ejecuta [verificacion.sql](verificacion.sql) en **Query Tool** con F5.
+4. En **TechStore Neon → Properties → Connection**, usa el host directo de **Neon → Connect**, puerto 5432, base y rol del proyecto. Define **SSL mode = Require** y escribe la contraseña desde el panel Neon. Repite la consulta allí.
+5. Los correos locales aparecen en [Mailpit](http://localhost:8025). `subasta_avisos` indica si RabbitMQ confirmó la publicación. `sms_simulado` muestra el registro local de mensajes de los flujos de compra.
 
-## Render
+![Diagrama físico anterior de la tienda](er-techstore.png)
 
-1. En el panel de la base Render abre **Connect → External Database URL**. Copia el host externo, puerto, base y usuario. Mantén privados la URL completa y la contraseña.
-2. En **Networking → IP Allow List**, autoriza tu IP pública con sufijo `/32`. Quita la regla cuando ya no necesites acceso externo.
-3. Edita **TechStore Render → Properties → Connection** con esos datos. Define **SSL mode = Require** en las opciones avanzadas de conexión. Introduce la contraseña que muestra el panel al conectar.
-4. Repite la consulta local usando el servidor Render. Los servicios Render de la misma región usan la conexión interna por separado. [Conexiones de Render PostgreSQL](https://render.com/docs/postgresql-creating-connecting)
+```mermaid
+erDiagram
+    SUBASTA_LOTES ||--o{ SUBASTA_PUJAS : registra
+    SUBASTA_LOTES ||--o| SUBASTA_ORDENES : adjudica
+    USUARIO ||..o{ SUBASTA_PUJAS : referencia_logica
+    USUARIO ||..o{ SUBASTA_ORDENES : referencia_logica
+    SUBASTA_AVISOS {
+        text clave PK
+        text destino
+        int intentos
+        timestamp reintentar
+        timestamp enviado
+    }
+    SUBASTA_LOTES {
+        bigint id PK
+        text estado
+        numeric precio_actual
+        bigint version
+    }
+    SUBASTA_PUJAS {
+        bigint id PK
+        bigint lote_id FK
+        bigint usuario_id
+        numeric monto
+    }
+    SUBASTA_ORDENES {
+        bigint id PK
+        bigint lote_id FK
+        bigint usuario_id
+        timestamp pagada
+    }
+```
 
-![Diagrama de las tablas operativas](../../docs/pgadmin/er-techstore.png)
-
-Las relaciones físicas del diagrama proceden del catálogo de PostgreSQL. `usuario_id` y `id_producto` son referencias lógicas de la aplicación cuando el motor carece de clave foránea. La base previa puede conservar tablas de funciones archivadas.
-
-[Salida de la verificación local](../../resultados/pgadmin-local.txt) · [Consulta del esquema](esquema.sql)
-
-## Separación futura por servicio
-
-Los POM y la configuración no declaran Flyway ni Liquibase. La inicialización usa Hibernate y scripts SQL, con datos históricos en `public`. Se conserva el esquema actual para proteger inventario, pedidos y conexiones locales. Separar Auth, Catálogo y Notificaciones requiere migraciones versionadas, copia de seguridad, transferencia explícita de filas, restricciones y secuencias, y validación desde PostgreSQL vacío y desde una copia con datos.
-
+Las cuatro tablas usan la misma base, bajo `public`. Los identificadores de Auth son referencias lógicas. La bandeja conserva el contenido necesario para publicar incluso si el envío se retrasa. Hibernate y SQL inicializan el esquema. Se deja la adopción de Flyway y un esquema por servicio para una migración futura con respaldo.

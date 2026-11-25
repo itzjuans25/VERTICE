@@ -1,5 +1,9 @@
 [CmdletBinding()]
-param([string]$NewmanPath = '')
+param(
+    [string]$NewmanPath = '',
+    [string]$ReporteHtml = 'postman/reporte-local.html',
+    [string]$Resumen = 'resultados/postman-local.json'
+)
 
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path $PSScriptRoot)
@@ -28,7 +32,7 @@ try {
       --env-var "notificacionesUrl=http://localhost:$($c.NOTIFICACIONES_PORT)" --env-var "mailpitUrl=http://localhost:$($c.MAILPIT_UI_PORT)" `
       --env-var "adminEmail=$adminEmail" --env-var "adminPassword=$adminPassword" --env-var "notificationKey=$($c.NOTIFICACIONES_API_KEY)" `
       --delay-request 250 -r cli,htmlextra,json --reporter-cli-no-success-assertions `
-      --reporter-htmlextra-skipSensitiveData --reporter-htmlextra-export 'postman/reporte-local.html' `
+      --reporter-htmlextra-skipSensitiveData --reporter-htmlextra-export $ReporteHtml `
       --reporter-json-export "$ecommerceHome/newman-raw.json"
     $codigo = $LASTEXITCODE
     $reporte = Get-Content -LiteralPath "$ecommerceHome/newman-raw.json" -Raw | ConvertFrom-Json
@@ -37,7 +41,7 @@ try {
         maximoMs=($reporte.run.executions | ForEach-Object { $_.response.responseTime } | Measure-Object -Maximum).Maximum
         fallos=@($reporte.run.failures | ForEach-Object { [ordered]@{ caso=$_.source.name; comprobacion=$_.error.test; mensaje=$_.error.message } })
     }
-    $salida | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath 'resultados/postman-local.json' -Encoding UTF8
+    $salida | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $Resumen -Encoding UTF8
 } finally {
     & $psql @pgArgs -tAc "DELETE FROM usuario WHERE id=$id" | Out-Null
     Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue

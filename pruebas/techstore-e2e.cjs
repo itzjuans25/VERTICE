@@ -15,7 +15,8 @@ const carpeta = 'docs/capturas';
 async function main() {
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 940 }, reducedMotion: 'reduce' });
-  const captura = nombre => page.screenshot({ path: carpeta + '/techstore-' + nombre + '.png', animations: 'disabled' });
+  const prefijo = process.env.TECHSTORE_E2E_CAPTURAS || 'techstore-';
+  const captura = nombre => page.screenshot({ path: carpeta + '/' + prefijo + nombre + '.png', animations: 'disabled' });
   try {
     const primeraPagina = await (await fetch(catalogo + '/explorar?tamano=48')).json();
     const productos = [...primeraPagina.items];
@@ -36,10 +37,12 @@ async function main() {
         assert.ok(respuesta.ok && respuesta.headers.get('content-type')?.startsWith('image/'), foto);
       }
     }
-    const candidato = productos.find(p => p.modelo === 'ThinkPad T480' && p.stock > 0)
-      || productos.find(p => p.stock > 0 && p.condicion === 'USADO' && p.imagenSecundariaUrl);
+    const candidato = process.env.TECHSTORE_E2E_PRODUCTO
+      ? productos.find(p => String(p.id) === process.env.TECHSTORE_E2E_PRODUCTO)
+      : productos.find(p => p.modelo === 'ThinkPad T480' && p.stock > 0)
+        || productos.find(p => p.stock > 0 && p.condicion === 'USADO' && p.imagenSecundariaUrl);
     assert.ok(candidato);
-    await page.goto(tienda);
+    await page.goto(tienda + '/productos');
     await page.locator('.tt-card img').first().evaluate(img => img.decode());
     assert.equal(await page.getByRole('link', { name: 'Vender', exact: true }).count(), 0);
     await captura('tienda');
@@ -111,6 +114,8 @@ async function main() {
     const http = await respuesta;
     assert.equal(http.status(), 201);
     const pedido = await http.json();
+    const inventario = await (await fetch(catalogo + '/' + candidato.id)).json();
+    assert.equal(inventario.stock, candidato.stock - 1);
     await page.getByRole('heading', { name: 'Compra #' + pedido.id + ' confirmada' }).waitFor();
     await captura('compra');
     await page.getByRole('link', { name: 'Ver mis compras' }).click();
@@ -153,8 +158,10 @@ async function main() {
     const resultado = { pedido: pedido.id, totalCop: pedido.total, estado: pedido.estado, correo: mensaje.Subject,
       fechaCorreo: mensaje.Created, anchosVerificados: [390,768,1440], productosVerificados: productos.length,
       producto: pedido.items[0].nombreProducto, cambioClaveYReingreso: true, cierreYRutaProtegida: true,
-      calendario, contrasteBuscador: Number(contraste.toFixed(2)) };
-    fs.writeFileSync('resultados/e2e-techstore.json', JSON.stringify(resultado, null, 2) + '\n');
+      calendario, stockAntes: candidato.stock, stockDespues: inventario.stock,
+      contrasteBuscador: Number(contraste.toFixed(2)) };
+    fs.writeFileSync(process.env.TECHSTORE_E2E_RESULTADO || 'resultados/e2e-techstore.json',
+      JSON.stringify(resultado, null, 2) + '\n');
     console.log(JSON.stringify(resultado));
   } finally {
     await browser.close();

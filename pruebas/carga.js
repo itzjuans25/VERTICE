@@ -6,6 +6,7 @@ import exec from 'k6/execution';
 const auth = (__ENV.AUTH_URL || 'http://127.0.0.1:9090') + '/api/ecommerce/usuario';
 const catalogo = (__ENV.CATALOGO_URL || 'http://127.0.0.1:9092') + '/api/ecommerce';
 const notificaciones = (__ENV.NOTIFICACIONES_URL || 'http://127.0.0.1:9093') + '/api/ecommerce/notificaciones';
+const subastas = (__ENV.SUBASTAS_URL || 'http://127.0.0.1:9094') + '/api/ecommerce/subastas';
 const modo = __ENV.MODO || 'carga';
 const maxVus = modo === 'estres' ? Number(__ENV.K6_VUS_ESTRES || 8) : 3;
 const password = 'Solo-K6-Local-2026';
@@ -50,6 +51,13 @@ const operaciones = {
   'notif_compra': ['POST', '/previsualizar/compra', 200],
   'notif_reintentos': ['GET', '/plan-reintentos', 200],
   'notif_encolar': ['POST', '/encolar', 202],
+  'sub_crear': ['POST', '', 201],
+  'sub_listar': ['GET', '?categoria=HOGAR&minimo=100&maximo=500&tamano=4', 200],
+  'sub_detalle': ['GET', '/:id', 200],
+  'sub_pujar': ['POST', '/:id/pujas', 201],
+  'sub_mias': ['GET', '/mias', 200],
+  'sub_pago_sin_adjudicacion': ['POST', '/:id/pago', 409],
+  'sub_cancelar': ['POST', '/:id/cancelar', 200],
 };
 
 const latencias = new Trend('api_latencia', true);
@@ -77,6 +85,7 @@ export const options = {
 function base(nombre) {
   if (nombre.startsWith('auth_')) return auth;
   if (nombre.startsWith('cat_')) return catalogo;
+  if (nombre.startsWith('sub_')) return subastas;
   return notificaciones;
 }
 
@@ -182,6 +191,22 @@ function recorrer(admin, cliente, nombre, mitad) {
   enviar('cat_compras', { token: admin });
   enviar('cat_vaciar', { token });
   enviar('cat_eliminar', { token: admin, id: producto.id });
+
+  const ahora = Date.now();
+  const lote = enviar('sub_crear', { token: admin, body: {
+    titulo: nombre, descripcion: 'Lote de pruebas k6', categoria: 'HOGAR', condicion: 'NUEVO',
+    atributos: {}, imagenes: ['/subastas/hogar.webp'], precioInicial: 100,
+    incremento: 10, inicio: new Date(ahora - 1000), fin: new Date(ahora + 3600000),
+  } });
+  try {
+    enviar('sub_listar');
+    enviar('sub_detalle', { id: lote.id });
+    enviar('sub_pujar', { token, id: lote.id, body: { monto: lote.pujaMinima } });
+    enviar('sub_mias', { token });
+    enviar('sub_pago_sin_adjudicacion', { token, id: lote.id });
+  } finally {
+    enviar('sub_cancelar', { token: admin, id: lote.id });
+  }
 
   enviar('notif_validar', { body: correo });
   enviar('notif_bienvenida', { body: { nombre: 'Cliente k6' } });

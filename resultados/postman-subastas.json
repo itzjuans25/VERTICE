@@ -1,0 +1,55 @@
+{
+  "peticiones": 80,
+  "peticionesFallidas": 0,
+  "aserciones": 238,
+  "asercionesFallidas": 9,
+  "promedioMs": 241.75000000000006,
+  "maximoMs": 3087.0,
+  "fallos": [
+    {
+      "caso": "Registrar cliente",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1319 to be below 500"
+    },
+    {
+      "caso": "Iniciar sesión",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1867 to be below 500"
+    },
+    {
+      "caso": "Perfil",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 523 to be below 500"
+    },
+    {
+      "caso": "Cambiar contraseña",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 930 to be below 500"
+    },
+    {
+      "caso": "Crear producto temporal",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 3087 to be below 500"
+    },
+    {
+      "caso": "Carrito",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1261 to be below 500"
+    },
+    {
+      "caso": "Listado administrativo de pedidos",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 736 to be below 500"
+    },
+    {
+      "caso": "Crear lote de subasta",
+      "comprobacion": "Responde en máximo 500 ms",
+      "mensaje": "expected 657 to be at most 500"
+    },
+    {
+      "caso": "Limpiar postor Uno",
+      "comprobacion": "Responde en máximo 500 ms",
+      "mensaje": "expected 1917 to be at most 500"
+    }
+  ]
+}

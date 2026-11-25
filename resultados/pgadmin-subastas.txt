@@ -1,0 +1,97 @@
+INSERT 0 0
+       categoria       | condicion | productos 
+-----------------------+-----------+-----------
+ Almacenamiento        | NUEVO     |         2
+ Almacenamiento        | USADO     |         2
+ Celulares y tablets   | NUEVO     |         2
+ Celulares y tablets   | USADO     |         2
+ Computadores y clones | NUEVO     |         2
+ Computadores y clones | USADO     |         2
+ Consolas              | NUEVO     |         2
+ Consolas              | USADO     |         2
+ Fuentes y cajas       | NUEVO     |         2
+ Fuentes y cajas       | USADO     |         2
+ Memoria RAM           | NUEVO     |         2
+ Memoria RAM           | USADO     |         2
+ Periféricos           | NUEVO     |         3
+ Periféricos           | USADO     |         2
+ Placas base           | NUEVO     |         2
+ Placas base           | USADO     |         2
+ Procesadores          | NUEVO     |         2
+ Procesadores          | USADO     |         2
+ Redes y accesorios    | NUEVO     |         2
+ Redes y accesorios    | USADO     |         2
+ Tarjetas gráficas     | NUEVO     |         2
+ Tarjetas gráficas     | USADO     |         2
+(22 rows)
+
+ productos_demo | sin_imagen | sin_descripcion | con_segunda_vista 
+----------------+------------+-----------------+-------------------
+             45 |          0 |               0 |                23
+(1 row)
+
+ activos | fichas_incompletas 
+---------+--------------------
+      45 |                  0
+(1 row)
+
+               nombre               | stock 
+------------------------------------+-------
+ Portátil ThinkPad T480             |     0
+ Caja H510 de segunda mano          |     2
+ Consola Xbox One S de 1 TB         |     2
+ Placa A320M-K                      |     2
+ Tablet Galaxy Tab A8               |     2
+ Audífonos G435 inalámbricos        |     3
+ Celular Galaxy A34 5G              |     3
+ Consola PlayStation 4 Slim de 1 TB |     3
+ Enrutador Archer C6                |     3
+ Mouse G203 Lightsync               |     3
+ Placa Prime H410M-E                |     3
+ Procesador Core i3-10100           |     3
+ Procesador Ryzen 5 3600            |     3
+ Tarjeta GeForce GTX 1650 Ventus XS |     3
+(14 rows)
+
+  id  |        fecha_compra        | estado  |  total   
+------+----------------------------+---------+----------
+ 2547 | 2026-11-25 03:43:49.289981 | ENVIADA | 24000.00
+ 2546 | 2026-11-25 03:43:48.698821 | ENVIADA | 24000.00
+ 2545 | 2026-11-25 03:43:48.688478 | ENVIADA | 24000.00
+ 2544 | 2026-11-25 03:43:48.619582 | ENVIADA | 24000.00
+ 2543 | 2026-11-25 03:43:47.73864  | ENVIADA | 24000.00
+(5 rows)
+
+ sms_simulados |          ultimo_sms           
+---------------+-------------------------------
+            41 | 2026-11-24 22:37:43.242465-05
+(1 row)
+
+ en_bandeja | agotados 
+------------+----------
+          0 |        0
+(1 row)
+
+   categoria    | lotes | abiertos 
+----------------+-------+----------
+ CARROS         |     2 |        2
+ COLECCIONABLES |     2 |        2
+ ELECTRONICA    |     2 |        2
+ HOGAR          |     2 |        2
+ JOYERIA        |     2 |        2
+ MOTOS          |     2 |        2
+ OTROS          |     2 |        2
+ RELOJES        |     2 |        2
+(8 rows)
+
+ id |               titulo                |   estado   | pujas | version |   monto   |            pagada             
+----+-------------------------------------+------------+-------+---------+-----------+-------------------------------
+ 18 | Validación de subasta 1795577887467 | ADJUDICADA |     2 |       4 | 110000.00 | 2026-11-24 22:39:00.843429-05
+ 17 | Subasta Newman 1795577871040        | ADJUDICADA |     2 |       4 |    120.00 | 2026-11-24 22:40:31.115778-05
+(2 rows)
+
+ publicados | pendientes 
+------------+------------
+          6 |          0
+(1 row)
+

@@ -1,0 +1,12 @@
+{
+  "archivo": "auth",
+  "nombre": "org.bouncycastle:bcprov-jdk18on",
+  "version": "1.83",
+  "avisos": [
+    "GHSA-574f-3g2m-x479",
+    "GHSA-9pwp-9qqc-pr26",
+    "GHSA-c3fc-8qff-9hwx",
+    "GHSA-p93r-85wp-75v3",
+    "GHSA-qp49-qgx5-5m26"
+  ]
+}
