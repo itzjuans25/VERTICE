@@ -16,7 +16,7 @@
 .auction-hero img, .auction-photo { display: block; width: 100%; height: auto; max-height: 520px; object-fit: cover; aspect-ratio: 4/3; border-radius: var(--tech-radius); background: var(--tech-raised); }
 .auction-layout, .auction-detail { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; margin: 24px 0; align-items: start; }
 .auction-detail { grid-template-columns: minmax(0, 1fr) minmax(300px, .6fr); }
-.auction-page .auction-bid { position: sticky; top: 100px; margin: 0; scroll-margin-top: 110px; }
+.auction-page .auction-bid { margin: 0; scroll-margin-top: 110px; }
 .auction-panel, .auction-card { padding: 16px; background: var(--tech-surface); border: 1px solid var(--tech-border); border-radius: var(--tech-radius); }
 .auction-card { padding: 0; overflow: hidden; }
 .auction-card a { display: block; text-decoration: none; color: inherit; }
@@ -53,6 +53,18 @@
 .auction-panel dl { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
 .auction-panel dd { margin: 0; }
 .auction-mobile-bid { display: none; }
+.auction-bid-head, .auction-tarjeta-datos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--tech-muted); font-size: 14px; }
+.auction-bid-head { justify-content: space-between; margin-top: 12px; }
+.auction-tarjeta-datos { align-items: flex-start; }
+.auction-tarjeta-datos > span:nth-child(3), .auction-tarjeta-datos > p { flex-basis: 100%; }
+.auction-tarjeta-datos > p { margin: 0; overflow-wrap: anywhere; }
+.auction-tarjeta-datos > p strong { color: var(--tech-text); }
+.auction-bid .auction-valores { border-block: 1px solid var(--tech-border); padding-block: 12px; grid-template-columns: minmax(0, 1fr) auto; }
+.auction-valores dd { font-variant-numeric: tabular-nums; }
+.auction-regla { font-size: 13px; }
+.auction-referencias { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.auction-referencias h2 { font-size: 18px; margin: 0; }
+.auction-referencias p { margin: 8px 0 0; }
 @media (max-width: 1050px) {
   .auction-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .auction-categories { grid-template-columns: repeat(4, minmax(0, 1fr)); }

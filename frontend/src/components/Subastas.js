@@ -3,10 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { subastasApi as api } from '../api/subastasApi';
 import './Subastas.css';
-import { catalogoApi } from '../api/catalogoApi';
-import { categoriasMercado, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, destacadosPorCategoria, vitrinas } from '../categorias';
-import { Cierre, cop, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
-import { Recomendados, useMercado } from './ExplorarMercado';
+import { categoriasMercado, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, vitrinas } from '../categorias';
+import { Cierre, cop, tituloDelLote, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
+
 
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
 const img = categoria => categoriaLote(categoria)?.imagen || '/subastas/electronica.webp';
@@ -17,7 +16,7 @@ function EntregaLote({ estado }) {
   if (estado.cargando) return null;
   const data = estado.datos;
   return <p className="auction-muted">{data
-    ? 'Entrega estimada ' + data.fechaEstimada + ' · ' + (data.incluyeFestivos ? '3 días hábiles, Nager.Date' : 'calendario parcial')
+    ? data.fechaEstimada + ' · ' + (data.incluyeFestivos ? 'Nager.Date' : 'calendario parcial')
     : 'Referencia de entrega no disponible.'}</p>;
 }
 
@@ -77,22 +76,19 @@ export function Inicio() {
     cupo.set(categoria, cantidad+1);
     return true;
   });
-  const [productos, reintentar] = useMercado(catalogoApi.productos.inicio);
-  const destacados = destacadosPorCategoria(productos.datos?.destacables || []);
 
   return <main id="principal" className="auction-page mercado-inicio">
     <nav className="mercado-anclas" aria-label="Secciones del inicio">
-      <a href="#inicio-subastas">Subastas</a><a href="#inicio-categorias">Categorías</a><a href="#inicio-tienda">Tienda</a><a href="#inicio-como">Cómo funciona</a>
+      <a href="#inicio-subastas">Próximos cierres</a><a href="#inicio-categorias">Vitrinas</a><a href="#inicio-como">Cómo pujar</a>
     </nav>
     <section className="auction-hero">
       <div><Titulo>{marca.lema}</Titulo>
-        <p>Moda de autor, mecanismos de colección y objetos de estudio. Cada lote cuenta qué distingue a la pieza y por qué llega a la subasta.</p>
+        <p>Relojería de colección, moda de autor y piezas de exhibición con un motivo para cada subasta.</p>
         <div className="auction-row">
           <Link className="auction-btn primary" to="/subastas">Explorar subastas</Link>
-          <Link className="auction-btn" to="/productos">Ver catálogo</Link>
         </div>
       </div>
-      <img src="/mercado/vertice-06.webp" alt="Cronógrafo mecánico plateado Meridiano" width="640" height="480" />
+      <img src="/mercado/vertice-portada-galeria.webp" alt="Cronógrafo de esfera negra y caja dorada sobre piedra" width="1200" height="900" />
     </section>
     <section id="inicio-subastas" className="mercado-seccion"><h2>Subastas que cierran pronto</h2>
       <EstadoConsulta consulta={consulta} />
@@ -105,21 +101,11 @@ export function Inicio() {
         <strong>{nombre}</strong>
       </Link>)}
     </div></section>
-    <section id="inicio-tienda"><h2>Destacados de la tienda</h2>
-      <EstadoMercado estado={productos} reintentar={reintentar} />
-      <div className="tt-grid">{destacados.map(producto => <TarjetaMercado key={producto.id} producto={producto} />)}</div>
-    </section>
-    <section id="inicio-como"><h2>Cómo funciona</h2>
-    <h3>Compra directa</h3><ol className="mercado-pasos">
-      <li><strong>Elige</strong> Compara precio fijo, condición y stock de los productos.</li>
-      <li><strong>Agrega al carrito</strong> Inicia sesión y revisa las cantidades y la entrega estimada.</li>
-      <li><strong>Confirma</strong> Revisa el pedido en Mi cuenta y recibe el aviso por correo.</li>
-    </ol>
-    <h3>Subasta</h3><ol className="mercado-pasos">
+    <section id="inicio-como"><h2>Cómo pujar</h2><ol className="mercado-pasos">
       <li><strong>Elige</strong> Comprueba descripción, condición y plazo del lote.</li>
       <li><strong>Puja</strong> Inicia sesión y ofrece el monto mínimo o uno mayor.</li>
       <li><strong>Gana</strong> Consulta Mis subastas ganadas y confirma el pago simulado.</li>
-    </ol><p>La ficha de cada producto indica la garantía declarada y el grado de los usados cuando aplica.</p></section>
+    </ol></section>
   </main>;
 }
 
@@ -168,7 +154,7 @@ export function Detalle({ user }) {
   const consulta = useConsulta(cargar, true);
   const [monto, setMonto] = useState('');
   const [seleccion, setSeleccion] = useState(0);
-  const [tab, setTab] = useState('Descripción');
+  const [tab, setTab] = useState('Por qué se subasta');
   const [aviso, setAviso] = useState('');
   const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -224,43 +210,39 @@ export function Detalle({ user }) {
     <Link to="/subastas">Volver a subastas</Link>
     <EstadoConsulta consulta={consulta} />
     {lote && <>
-      <Titulo>{lote.titulo}</Titulo>
+      <Titulo>{tituloDelLote(lote.titulo)}</Titulo>
       <div className="auction-detail">
         <section>
-          <img className="auction-photo" src={lote.imagenes[seleccion] || lote.imagenes[0]} width="424" height="424" alt={lote.titulo} />
-          {lote.atributos['Por qué se subasta'] && <aside className="auction-panel vertice-curaduria">
-            <h2>Por qué se subasta</h2><p>{lote.atributos['Por qué se subasta']}</p>
-          </aside>}
+          <img className="auction-photo" src={lote.imagenes[seleccion] || lote.imagenes[0]} width="424" height="424" alt={tituloDelLote(lote.titulo)} />
           {lote.imagenes.length > 1 && <div className="auction-thumbs">{lote.imagenes.map((src, index) => <button type="button" key={src} aria-pressed={index === seleccion} onClick={() => setSeleccion(index)}><img src={src} width="68" height="68" alt={'Foto ' + (index + 1)} /></button>)}</div>}
           <div className="auction-tabs" aria-label="Información del lote">
-            {['Descripción', 'Atributos', 'Historial'].map(nombre => <button key={nombre} aria-pressed={tab === nombre} onClick={() => setTab(nombre)}>{nombre}</button>)}
+            {['Por qué se subasta', 'Ficha técnica', 'Historial de pujas'].map(nombre => <button key={nombre} aria-pressed={tab === nombre} onClick={() => setTab(nombre)}>{nombre}</button>)}
           </div>
           <div className="auction-panel">
-            {tab === 'Descripción' && <p>{lote.descripcion}</p>}
-            {tab === 'Atributos' && (Object.keys(lote.atributos).length ? <dl>{Object.entries(lote.atributos).filter(([nombre]) => nombre !== 'Por qué se subasta').map(([nombre, dato]) => <React.Fragment key={nombre}><dt>{nombre}</dt><dd>{dato}</dd></React.Fragment>)}</dl> : <p>Este lote no tiene atributos adicionales.</p>)}
-            {tab === 'Historial' && (detalle.historial.length ? <ul className="auction-records">{detalle.historial.map((puja, index) => <li key={index}><span>{puja.mia ? 'Tú' : puja.postor} · {fecha(puja.fecha)}</span><strong>{cop.format(puja.monto)}{consultaUsd.datos?.disponible ? ' · ≈ ' + usd.format(puja.monto * consultaUsd.datos.tasa) : ''}</strong></li>)}</ul> : <p>Aún no hay pujas.</p>)}
+            {tab === 'Por qué se subasta' && <p>{lote.atributos['Por qué se subasta'] || lote.descripcion}</p>}
+            {tab === 'Ficha técnica' && (Object.keys(lote.atributos).length ? <dl>{Object.entries(lote.atributos).filter(([nombre]) => nombre !== 'Por qué se subasta' && nombre !== 'Visibilidad').map(([nombre, dato]) => <React.Fragment key={nombre}><dt>{nombre}</dt><dd>{dato}</dd></React.Fragment>)}</dl> : <p>Este lote no tiene atributos adicionales.</p>)}
+            {tab === 'Historial de pujas' && (detalle.historial.length ? <ul className="auction-records">{detalle.historial.map((puja, index) => <li key={index}><span>{puja.mia ? 'Tú' : puja.postor} · {fecha(puja.fecha)}</span><strong>{cop.format(puja.monto)}{consultaUsd.datos?.disponible ? ' · ≈ ' + usd.format(puja.monto * consultaUsd.datos.tasa) : ''}</strong></li>)}</ul> : <p>Aún no hay pujas.</p>)}
           </div>
         </section>
         <section id="ofertar" className="auction-panel auction-bid">
           <span className="auction-muted">{categorias[lote.categoria]} · {lote.condicion === 'NUEVO' ? 'Nuevo' : 'Usado'}</span>
+          <div className="auction-bid-head"><span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]}</span><Cierre lote={lote} /></div>
           <strong className="auction-price">{cop.format(lote.precioActual)}</strong>
           {!consultaUsd.cargando && <p className="auction-muted">{consultaUsd.datos?.disponible ? '≈ ' + usd.format(lote.precioActual * consultaUsd.datos.tasa) + ' · Frankfurter' : 'Referencia USD no disponible'}</p>}
-          <EntregaLote estado={entrega} />
-          {!clima.cargando && <p className="auction-muted">{clima.datos?.disponible
-            ? 'Bogotá · ' + clima.datos.observacion.temperatura + ' °C · ' + clima.datos.observacion.humedad + ' % de humedad. Referencia de embalaje para cuero, papel y mecanismos · Open-Meteo.'
-            : 'Referencia de clima no disponible.'}</p>}
-          <p><Cierre lote={lote} /></p>
+          <dl className="auction-valores"><dt>Incremento</dt><dd>{cop.format(lote.incremento)}</dd>
+            {puedePujar && <><dt>Próxima oferta</dt><dd>{cop.format(lote.pujaMinima)}</dd></>}
+          </dl>
+          {puedePujar && <p className="auction-muted auction-regla">Últimos 2 min: una puja aceptada añade 2 min.</p>}
           {yaPujo && puedePujar && <p role="status">{lote.voyGanando ? 'Vas ganando' : 'Te superaron'}</p>}
           {puedePujar && (user ? <form onSubmit={revisar} className="auction-form">
             <label>Puja mínima requerida · {cop.format(lote.pujaMinima)} COP
               <input type="number" min={lote.pujaMinima} step="0.01" value={monto} placeholder={String(lote.pujaMinima)} onChange={e => setMonto(e.target.value)} aria-label="Monto de la puja en COP" />
             </label>
             <div className="auction-row">{[1, 2].map(n => <button type="button" key={n} onClick={() => setMonto(String(Number(lote.pujaMinima) + Number(lote.incremento) * n))}>+{cop.format(lote.incremento * n)}</button>)}</div>
-            <small>Si pujas en los últimos 2 minutos, el cierre se extiende 2 minutos.</small>
             <button disabled={enviando || lote.voyGanando || oferta !== null} className="primary">Revisar oferta</button>
-          </form> : <Link className="auction-btn primary" to="/login">Inicia sesión para pujar</Link>)}
+          </form> : <Link className="auction-btn primary" to="/login" state={{ volver: '/subastas/' + lote.id }}>Inicia sesión para pujar</Link>)}
           {oferta !== null && <fieldset className="vertice-confirmacion">
-            <legend>Confirmar oferta</legend><p>{lote.titulo} · {cop.format(oferta)} COP</p>
+            <legend>Confirmar oferta</legend><p>{tituloDelLote(lote.titulo)} · {cop.format(oferta)}</p>
             <button type="button" onClick={() => setOferta(null)} disabled={enviando}>Editar</button>
             <button type="button" className="primary" onClick={pujar} disabled={enviando || !puedePujar || oferta < lote.pujaMinima}>
               {enviando ? 'Enviando…' : 'Confirmar puja'}
@@ -272,7 +254,14 @@ export function Detalle({ user }) {
           {error && <p role="alert" className="auction-error">{error}</p>}
         </section>
       </div>
-      <Recomendados categoria={categoriaLote(lote.categoria)} lado="tienda" />
+      <section className="auction-referencias" aria-label="Entrega y conservación">
+        <div className="auction-panel"><h2>Entrega simulada</h2><EntregaLote estado={entrega} /></div>
+        <div className="auction-panel"><h2>Conservación</h2>
+          {!clima.cargando && <p className="auction-muted">{clima.datos?.disponible
+            ? 'Bogotá · ' + clima.datos.observacion.temperatura + ' °C · ' + clima.datos.observacion.humedad + ' % HR · Open-Meteo'
+            : 'Referencia de clima no disponible.'}</p>}
+        </div>
+      </section>
       {puedePujar && <div className="auction-mobile-bid"><strong>{cop.format(lote.precioActual)}</strong><a className="auction-btn primary" href="#ofertar">Pujar</a></div>}
     </>}
   </main>;

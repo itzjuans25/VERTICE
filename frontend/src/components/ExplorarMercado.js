@@ -26,7 +26,7 @@ async function productosDe(categoria, n) {
 export function Recomendados({ categoria, lado }) {
   const cargar = React.useCallback(() => {
     if (!categoria) return Promise.resolve([]);
-    if (lado === 'subastas') return subastasApi.listar({ grupo: categoria.lotes.join(','), tamano: 3 }).then(p => p.items);
+    if (lado === 'subastas') return subastasApi.listar({ grupo: categoria.lotes.join(','), curados: true, tamano: 3 }).then(p => p.items);
     return productosDe(categoria, 3).then(p => p.items);
   }, [categoria, lado]);
   const [estado] = useMercado(cargar);
@@ -40,13 +40,15 @@ export function Recomendados({ categoria, lado }) {
 
 export function BuscarMercado() {
   const [params] = useSearchParams();
+  const [verCatalogo, setVerCatalogo] = useState(false);
   const q = params.get('q')?.trim() || '';
   const productos = React.useCallback(() => q ? catalogoApi.productos.explorar({ q: q.slice(0,120), tamano: 12 }) : Promise.resolve({ items: [], total: 0 }), [q]);
-  const lotes = React.useCallback(() => q ? subastasApi.listar({ q: q.slice(0,100), tamano: 12 }) : Promise.resolve({ items: [], total: 0 }), [q]);
+  const lotes = React.useCallback(() => q ? subastasApi.listar({ q: q.slice(0,100), curados: true, tamano: 12 }) : Promise.resolve({ items: [], total: 0 }), [q]);
   return <main className="tt-shell mercado-pagina">
-    <h1>Buscar</h1>{q ? <p>Resultados para «{q}»</p> : <p>Escribe el nombre de un producto o lote en el buscador.</p>}
-    {q && <><Resultados nombre="Productos" cargar={productos} />
-    <Resultados nombre="Subastas" cargar={lotes} subastas /></>}
+    <h1>Buscar lotes</h1>{q ? <p>Resultados para «{q}»</p> : <p>Escribe el nombre de una pieza en el buscador.</p>}
+    {q && <><Resultados nombre="Lotes" cargar={lotes} subastas />
+    <details className="auction-panel" onToggle={e => setVerCatalogo(e.currentTarget.open)}><summary>Buscar también en el catálogo</summary>
+      {verCatalogo && <Resultados nombre="Catálogo" cargar={productos} />}</details></>}
   </main>;
 }
 
@@ -65,7 +67,7 @@ export function CategoriaMercado() {
   const subastas = parametros.get('ver') === 'subastas';
   const cargar = React.useCallback(async () => {
     if (!categoria) return { items: [], total: 0 };
-    if (subastas) return subastasApi.listar({ grupo: categoria.lotes.join(','), tamano: 24 });
+    if (subastas) return subastasApi.listar({ grupo: categoria.lotes.join(','), curados: true, tamano: 24 });
     return productosDe(categoria, 24);
   }, [categoria, subastas]);
   useEffect(() => { document.title = tituloMarca(categoria?.nombre); }, [categoria]);

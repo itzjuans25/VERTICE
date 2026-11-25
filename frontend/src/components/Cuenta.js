@@ -8,10 +8,10 @@ import { EstadoMercado } from './MercadoUI';
 import { useMercado } from './ExplorarMercado';
 
 const pestanas = [
-  ['/cuenta', 'Compras', ['/compras']],
-  ['/mis-pujas', 'Pujas', []],
+  ['/cuenta', 'Mis pujas', ['/mis-pujas']],
   ['/cuenta/ganadas', 'Subastas ganadas', []],
   ['/cuenta/avisos', 'Avisos', []],
+  ['/compras', 'Compras', []],
   ['/cuenta/seguridad', 'Seguridad', ['/cuenta/contrasena']],
 ];
 

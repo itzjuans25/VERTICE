@@ -24,6 +24,11 @@ import java.util.function.Supplier;
 
 @Repository
 public class RepositorioJdbc implements RepositorioSubastas {
+    private static final String CURADURIA_PUBLICA = """
+             AND NULLIF(BTRIM(CAST(atributos AS jsonb)->>'Por qué se subasta'), '') IS NOT NULL
+             AND (CAST(atributos AS jsonb)->>'Visibilidad') IS DISTINCT FROM 'Interna'
+             AND titulo !~* '^Ensayo curado[[:space:]]*[·–-]'
+            """;
     private final JdbcClient jdbc;
     private final TransactionTemplate tx;
     private final ObjectMapper json;
@@ -69,7 +74,7 @@ public class RepositorioJdbc implements RepositorioSubastas {
     public Pagina listar(Filtro f) {
         var parametros = new LinkedHashMap<String,Object>();
         var filtro = new StringBuilder(" WHERE estado <> 'CANCELADA'");
-        if (f.curados()) filtro.append(" AND jsonb_extract_path_text(CAST(atributos AS jsonb),'Por qué se subasta') IS NOT NULL");
+        if (f.curados()) filtro.append(CURADURIA_PUBLICA);
         if (f.texto() != null && !f.texto().isBlank()) {
             filtro.append(" AND (titulo ILIKE :texto ESCAPE '!' OR descripcion ILIKE :texto ESCAPE '!')");
             parametros.put("texto", "%" + f.texto().strip().replace("!","!!").replace("%","!%").replace("_","!_") + "%");
@@ -112,7 +117,7 @@ public class RepositorioJdbc implements RepositorioSubastas {
     @Override
     public Inicio inicio(Instant ahora) {
         var vigentes = " WHERE estado='ACTIVA' AND inicio<=:ahora AND fin>:ahora"
-                + " AND jsonb_extract_path_text(CAST(atributos AS jsonb),'Por qué se subasta') IS NOT NULL";
+                + CURADURIA_PUBLICA;
         var fecha = fecha(ahora);
         var lotes = jdbc.sql("SELECT * FROM subasta_lotes" + vigentes + " ORDER BY fin,id LIMIT 8")
                 .param("ahora", fecha).query(this::mapear).list();

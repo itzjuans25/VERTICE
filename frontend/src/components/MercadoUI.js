@@ -5,6 +5,7 @@ import { nombresCategorias } from '../categorias';
 import { pesos } from '../marca';
 
 export const cop = pesos;
+export const tituloDelLote = titulo => titulo.replace(/^Ensayo curado\s*[·–-]\s*(.+?)(?: 1[0-9]{12})?$/i, '$1');
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
 
 export function Cierre({ lote }) {
@@ -29,7 +30,7 @@ export function Cierre({ lote }) {
 
 export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
   const item = lote || producto;
-  const nombre = lote?.titulo || producto?.nombre;
+  const nombre = lote ? tituloDelLote(lote.titulo) : producto.nombre;
   const enlace = (lote ? '/subastas/' : '/productos/') + item.id;
   const condicion = item.condicion === 'USADO' ? 'Usado' : 'Nuevo';
   const precio = lote?.precioActual ?? producto?.precio;
@@ -48,7 +49,12 @@ export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
           <button className="tt-button tt-secondary" aria-label={(producto.stock > 0 ? 'Agregar ' : 'Agotado: ') + nombre}
             disabled={ocupado || producto.stock < 1} onClick={() => agregar(producto)}>{producto.stock > 0 ? 'Agregar' : 'Agotado'}</button>}
       </div>
-      {lote && <Cierre lote={lote} />}
+      {lote && <div className="auction-tarjeta-datos">
+        <span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]}</span>
+        <Cierre lote={lote} />
+        <span>Incremento {cop.format(lote.incremento)}{lote.estado === 'ACTIVA' && ' · +2 min al pujar en los últimos 2 min'}</span>
+        <p><strong>Por qué se subasta</strong><br />{lote.atributos?.['Por qué se subasta'] || 'Consulta el contexto en la ficha.'}</p>
+      </div>}
     </div>
   </article>;
 }

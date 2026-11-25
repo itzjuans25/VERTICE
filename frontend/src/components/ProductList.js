@@ -24,7 +24,7 @@ export function useAgregar({ user, setCartCount, actualizarStock }) {
   const navigate = useNavigate();
   async function agregar(producto) {
     if (!user) {
-      navigate('/login');
+      navigate('/login', { state: { volver: '/productos' } });
       return;
     }
     setOcupado(producto.id);

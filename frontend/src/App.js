@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -28,11 +28,12 @@ const Buscar = lazy(() => import('./components/ExplorarMercado').then(modulo => 
 const Categoria = lazy(() => import('./components/ExplorarMercado').then(modulo => ({ default: modulo.CategoriaMercado })));
 
 function inicioPara(user) {
-  return isAdmin(user) ? '/admin' : '/productos';
+  return isAdmin(user) ? '/admin' : '/subastas';
 }
 
 function RutaPrivada({ user, children }) {
-  return user ? children : <Navigate to="/login" replace />;
+  const { pathname } = useLocation();
+  return user ? children : <Navigate to="/login" state={{ volver: pathname }} replace />;
 }
 
 function RutaAdmin({ user, children }) {
@@ -154,7 +155,7 @@ function App() {
           <Route path="/productos/:id" element={<ProductDetail user={user} setCartCount={setCartCount} />} />
           <Route path="/cuenta/contrasena" element={<Navigate to="/cuenta/seguridad" replace />} />
           <Route path="/cuenta/seguridad" element={<RutaCuenta user={user}><Seguridad user={user}><CambiarClave cerrarSesion={handleLogout} /></Seguridad></RutaCuenta>} />
-          <Route path="/cuenta" element={<RutaCuenta user={user}><Orders user={user} /></RutaCuenta>} />
+          <Route path="/cuenta" element={<RutaCuenta user={user}><MisPujas vista="pujas" /></RutaCuenta>} />
           <Route path="/cuenta/avisos" element={<RutaCuenta user={user}><Avisos /></RutaCuenta>} />
           <Route path="/cuenta/ganadas" element={<RutaCuenta user={user}><MisPujas vista="ganadas" /></RutaCuenta>} />
 

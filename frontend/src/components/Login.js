@@ -39,7 +39,9 @@ function Login({ onLogin }) {
       const session = saveSession(respuesta);
 
       onLogin(session.user);
-      navigate(isAdmin(session.user) ? '/admin' : '/productos', {
+      const volver = location.state?.volver;
+      const destino = typeof volver === 'string' && /^\/[a-z][a-z0-9/-]*$/.test(volver) ? volver : '/subastas';
+      navigate(isAdmin(session.user) ? '/admin' : destino, {
         replace: true,
       });
     } catch (err) {

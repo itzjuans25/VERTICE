@@ -34,6 +34,6 @@ export default function Layout({ children, user, onLogout, cartCount }) {
       </nav>}
       {children}
     </div>
-    <footer className="tt-footer mercado-footer"><Logo /><small>{marca.taller}</small></footer>
+    <footer className="tt-footer mercado-footer"><Logo /><Link to="/productos">Catálogo de compra directa</Link><small>{marca.taller}</small></footer>
   </>;
 }
