@@ -38,6 +38,8 @@ Para tener un administrador, registra tu cuenta desde el frontend y, en la conso
 
 ## Límites del alojamiento
 
+Si publicas por Docker Compose con Caddy, la compilación usa rutas relativas `/servicios/subastas` y `/servicios/notificaciones`. Ambas pasan por HTTPS del mismo dominio del frontend. Comprueba `/servicios/subastas/health` y `/servicios/notificaciones/health`; luego inicia sesión y abre la actividad. Si publicas en Vercel con backends Render, configura las cuatro URLs HTTPS de la sección anterior.
+
 - Render Free suspende cada web service tras 15 minutos sin tráfico entrante. Su arranque en frío tarda aproximadamente un minuto. Las 750 horas gratuitas mensuales son compartidas por el workspace. El cron de cierre y el consumo de avisos solo avanzan mientras los procesos estén activos. Precalienta los cuatro `/health` antes de presentar. El entorno Free sirve para una demostración con horario. [Render Free](https://render.com/docs/free)
 - Neon Free indica 1 GB de PostgreSQL y 100 CU-h por proyecto. El cómputo suspende al pasar cinco minutos sin actividad. Una tarea periódica puede mantener activa la base mientras Render esté despierto. [Neon Free](https://neon.com/docs/introduction/plans) · [Scale to zero](https://neon.com/docs/introduction/scale-to-zero)
 - Vercel Hobby está destinado a uso personal y no comercial. Los archivos estáticos los sirve la plataforma y las solicitudes de la aplicación van a los backends. [Vercel Hobby](https://vercel.com/docs/plans/hobby)

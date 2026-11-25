@@ -44,6 +44,7 @@ const operaciones = {
   'cat_quitar': ['DELETE', '/carrito/eliminar/:id', 200],
   'cat_vaciar': ['DELETE', '/carrito/vaciar', 204],
   'cat_comprar': ['POST', '/compras/realizar', 201],
+  'cat_pagar': ['POST', '/compras/:id/pago', 200],
   'cat_historial': ['GET', '/compras/usuario/:id', 200],
   'cat_compra': ['GET', '/compras/:id', 200],
   'cat_estado': ['PATCH', '/compras/:id/estado', 200],
@@ -202,6 +203,7 @@ function recorrer(admin, cliente, nombre, sesion) {
   enviar('cat_agregar', { token, body: { productoId: producto.id, cantidad: 2 } });
   enviar('cat_resumen', { token });
   const compra = enviar('cat_comprar', { token });
+  enviar('cat_pagar', { token, id: compra.id });
   enviar('cat_estado', { token: admin, id: compra.id, body: { estado: 'ENVIADA' } });
   enviar('cat_compra', { token, id: compra.id });
   enviar('cat_historial', { token, id });

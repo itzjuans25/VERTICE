@@ -37,8 +37,10 @@ async function main() {
         assert.ok(respuesta.ok && respuesta.headers.get('content-type')?.startsWith('image/'), foto);
       }
     }
-    const candidato = process.env.TECHSTORE_E2E_PRODUCTO
-      ? productos.find(p => String(p.id) === process.env.TECHSTORE_E2E_PRODUCTO)
+    const interno = process.env.TECHSTORE_E2E_PRODUCTO;
+    if (interno) assert.ok(productos.every(p => String(p.id) !== interno), 'El fixture apareció en el catálogo público');
+    const candidato = interno
+      ? await (await fetch(catalogo + '/' + interno)).json()
       : productos.find(p => p.modelo === 'ThinkPad T480' && p.stock > 0)
         || productos.find(p => p.stock > 0 && p.condicion === 'USADO' && p.imagenSecundariaUrl);
     assert.ok(candidato);
@@ -85,12 +87,16 @@ async function main() {
     await page.getByRole('button', { name: /Iniciar Sesión/i }).click();
     await page.waitForURL('**/subastas');
 
-    await page.goto(tienda + '/productos');
-    await page.locator('select[name="marca"]').selectOption(candidato.marca);
-    await page.getByLabel('Condición').selectOption('USADO');
-    await page.getByLabel('Buscar productos').fill(candidato.nombre);
-    await page.getByRole('button', { name: 'Buscar', exact: true }).click();
-    await page.getByRole('heading', { name: candidato.nombre, exact: true }).getByRole('link').click();
+    if (interno) {
+      await page.goto(tienda + '/productos/' + candidato.id);
+    } else {
+      await page.goto(tienda + '/productos');
+      await page.locator('select[name="marca"]').selectOption(candidato.marca);
+      await page.getByLabel('Condición').selectOption('USADO');
+      await page.getByLabel('Buscar productos').fill(candidato.nombre);
+      await page.getByRole('button', { name: 'Buscar', exact: true }).click();
+      await page.getByRole('heading', { name: candidato.nombre, exact: true }).getByRole('link').click();
+    }
     await page.locator('.tt-detail-image').evaluate(img => img.decode());
     await page.getByRole('button', { name: 'Ver foto 2' }).click();
     await page.locator('.tt-detail-image').evaluate(img => img.decode());
@@ -122,6 +128,24 @@ async function main() {
     await page.getByRole('link', { name: 'Ver mis compras' }).click();
     await page.getByRole('heading', { name: 'Compra #' + pedido.id }).waitFor();
     await captura('historial');
+    const compraActual = page.locator('.order-card').filter({ has: page.getByRole('heading', { name: 'Compra #' + pedido.id, exact: true }) });
+    await compraActual.getByText(/^Pendiente ·/).waitFor();
+    const esperarPago = page.waitForResponse(r => r.url().endsWith('/compras/' + pedido.id + '/pago'));
+    await compraActual.getByRole('button', { name: 'Confirmar pago simulado' }).click();
+    const pagoHTTP = await esperarPago;
+    assert.equal(pagoHTTP.status(), 200);
+    const pagada = (await pagoHTTP.json()).pagoSimulado;
+    assert.equal(pagada.referencia, 'SIM-COMPRA-' + pedido.id);
+    assert.ok(pagada.pagadoEn);
+    const repetida = await page.evaluate(async id => {
+      const { token } = JSON.parse(localStorage.getItem('ecommerce.session'));
+      const r = await fetch('http://localhost:9092/api/ecommerce/compras/' + id + '/pago',
+        { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      return { codigo: r.status, pago: (await r.json()).pagoSimulado };
+    }, pedido.id);
+    assert.deepEqual(repetida, { codigo: 200, pago: pagada });
+    await compraActual.getByText('Pago simulado confirmado', { exact: true }).waitFor();
+    await captura('pago');
     assert.doesNotMatch(await page.locator('body').innerText(), /\b(undefined|NaN)\b/);
 
     await page.locator('.mercado-cuenta summary').click();
@@ -160,6 +184,8 @@ async function main() {
     await page.getByText(mensaje.Subject, { exact: false }).first().waitFor();
     await captura('correo');
     const resultado = { pedido: pedido.id, totalCop: pedido.total, estado: pedido.estado, correo: mensaje.Subject,
+      fixtureFueraDelCatalogo: Boolean(interno),
+      pagoSimulado: pagada, pagoIdempotente: true,
       fechaCorreo: mensaje.Created, anchosVerificados: [390,768,1440], productosVerificados: productos.length,
       producto: pedido.items[0].nombreProducto, cambioClaveYReingreso: true, cierreYRutaProtegida: true,
       calendario, stockAntes: candidato.stock, stockDespues: inventario.stock,

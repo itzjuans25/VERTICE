@@ -7,11 +7,11 @@
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
 
-\input{metricas-galeria.tex}
+\input{metricas-pagos.tex}
 \begin{document}
 \maketitle
 \begin{abstract}
-VÉRTICE es una casa editorial de subastas académicas. La compra directa permanece como canal complementario. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La galería se validó con 50 rutas en k6, dos postores, cierre y adjudicación. El análisis revela tiempos superiores al umbral académico en las pruebas de estrés. El pago de adjudicaciones es simulado.
+VÉRTICE es una casa editorial de subastas académicas. La compra directa permanece como canal complementario. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La galería se validó con 51 rutas en k6, dos postores, cierre, adjudicación y pago simulado en compras y subastas. El análisis revela tiempos superiores al umbral académico en las pruebas de estrés. El pago de adjudicaciones es simulado.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
@@ -144,12 +144,12 @@ El cambio de clave realiza una verificación y deriva otra contraseña. El login
 El listado paginado de productos controla la cardinalidad de respuesta y aplica los filtros en la base de datos. El listado heredado de productos y el listado de compras administrativas se mantienen para compatibilidad. Si se desea comparar esos recorridos entre entornos, debe controlarse la cantidad acumulada de registros. Las compras de k6 se guardan en una base de desarrollo y no se reutilizan como evidencia comercial.
 
 \subsection{Evidencia del catálogo}
-\captura{../capturas/vertice-galeria-inicio-1440.png}{Fig. 3. Nueva galería de subastas en Windows.}
+\captura{../capturas/vertice-pagos-inicio-1440.png}{Fig. 3. Nueva galería de subastas en Windows.}
 La búsqueda en servidor permite comprobar marca, categoría y condición sin depender de la página que estaba visible. El recorrido abre una ficha de segunda mano y cambia a la vista secundaria. Antes de confirmar, el carrito consolida unidades y calcula el total en pesos colombianos.
 
 \subsection{Evidencia de correo}
-\captura{../capturas/vertice-galeria-compra-correo.png}{Fig. 4. Correo de compra comprobado en Mailpit.}
-El asunto contiene el identificador del pedido. El tiempo HTTP de la compra y el de entrega del correo corresponden a etapas diferentes. Newman confirma el asunto mediante la API de Mailpit y el recorrido de navegador conserva una captura de la bandeja.
+\captura{../capturas/vertice-pagos-compra-pago.png}{Fig. 4. Pago de compra confirmado desde la actividad.}
+El pedido confirma el stock y deja pendiente el pago simulado. Su referencia identifica la orden. PostgreSQL registra el primer pago con una actualización condicional. Newman confirma el asunto mediante la API de Mailpit y el recorrido de navegador conserva una captura de la bandeja.
 
 \clearpage
 \section{Modelo de datos y despliegue}
@@ -211,8 +211,8 @@ El repositorio bloquea la fila actual del lote antes de comparar el monto con el
 
 La transacción escribe los avisos en PostgreSQL. El publicador espera confirmación de RabbitMQ y calcula un nuevo plazo si hay un fallo. El consumidor mantiene reintentos y cola de errores. La entrega al menos una vez admite duplicados si se pierde el registro de la confirmación.
 
-\captura{../capturas/vertice-galeria-puja-adjudicada.png}{Fig. 6. Pantalla de adjudicación y pago simulado en Windows.}
-\captura{../capturas/vertice-galeria-puja-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
+\captura{../capturas/vertice-pagos-puja-ganadas-pagada.png}{Fig. 6. Adjudicación y pago simulado desde la actividad en Windows.}
+\captura{../capturas/vertice-pagos-puja-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
 
 \GaleriaLatencia
 \GaleriaFlujos

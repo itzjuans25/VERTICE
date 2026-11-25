@@ -23,4 +23,6 @@ erDiagram
 
 La curaduría pública lee el motivo y la visibilidad desde los atributos JSON de `subasta_lotes`. Un lote interno conserva su enlace directo y sus relaciones con pujas, avisos y adjudicaciones. El script incluye el plan de consulta de la portada.
 
+La marca `compras.requiere_pago_simulado` habilita el flujo en pedidos nuevos. `pago_simulado_en` registra la primera confirmación. En Subastas, `subasta_ordenes.pagada` conserva el instante equivalente. El número de referencia se forma con el tipo y el identificador de orden. Las dos tablas conservan sus relaciones existentes y el estado de envío de Catálogo permanece separado del pago.
+
 [Consultas para inspeccionar PostgreSQL](vertice-inspeccion.sql) · [Claves foráneas inspeccionadas](../../resultados/vertice-datos.json)

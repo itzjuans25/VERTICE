@@ -49,7 +49,8 @@ async function verificar() {
   const sinJwt = await Promise.all([perfil, avisos].map(async url => (await fetch(url)).status));
   assert.deepEqual(sinJwt, [401, 401]);
   const evidencia = { perfiles: [uno.id, dos.id], avisos: ambos, sinJwt, aislamiento: true };
-  writeFileSync('resultados/vertice-galeria-cuentas.json', JSON.stringify(evidencia, null, 2) + '\n');
+  const salida = process.env.VERTICE_CUENTAS_JSON || 'resultados/vertice-galeria-cuentas.json';
+  writeFileSync(salida, JSON.stringify(evidencia, null, 2) + '\n');
   console.log(JSON.stringify(evidencia));
 }
 

@@ -1,0 +1,80 @@
+{
+  "prueba": "Cronógrafo de archivo · Serie Boreal",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "3FQuL9EQN5vLXayN1c6U1r"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "7QeeaRylJZFkdkUPHzx3cu"
+    }
+  ],
+  "postores": [
+    3546,
+    3547
+  ],
+  "lote": 837,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "pagoIdempotente": true,
+  "adjudicacion": 44,
+  "ganadas": {
+    "visibleParaGanador": true,
+    "visibleParaPerdedor": false,
+    "pagoVisible": true
+  },
+  "lotesActivos": [
+    {
+      "id": 394,
+      "titulo": "Brazalete articulado Bisagra",
+      "precio": 1030000,
+      "pujas": 1
+    },
+    {
+      "id": 395,
+      "titulo": "Collar geométrico Eclipse",
+      "precio": 905000,
+      "pujas": 1
+    },
+    {
+      "id": 396,
+      "titulo": "Grabado numerado Línea de sombra",
+      "precio": 650000,
+      "pujas": 1
+    }
+  ],
+  "ok": true
+}

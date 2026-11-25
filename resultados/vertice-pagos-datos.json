@@ -1,0 +1,18 @@
+{
+  "tecnologia": 45,
+  "lotes_curados": 18,
+  "compras_previas": [
+    2772,
+    2938
+  ],
+  "subastas_previas": [
+    421,
+    661
+  ],
+  "adjudicaciones_previas": [
+    39,
+    41
+  ],
+  "fecha_pago_compra": "2026-11-25T08:10:29.157254-05:00",
+  "fecha_pago_subasta": "2026-11-25T08:09:54.275181-05:00"
+}

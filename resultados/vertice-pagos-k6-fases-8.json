@@ -1,0 +1,103 @@
+{
+  "resultado": "resultados/vertice-pagos-k6-8.json",
+  "fases": [
+    {
+      "ruta": "cambiar-clave",
+      "fase": "consulta",
+      "muestras": 88.0,
+      "mediaMs": 2.25,
+      "maximoVentanaMicrometerMs": 20.79
+    },
+    {
+      "ruta": "cambiar-clave",
+      "fase": "escritura",
+      "muestras": 88.0,
+      "mediaMs": 7.77,
+      "maximoVentanaMicrometerMs": 65.88
+    },
+    {
+      "ruta": "cambiar-clave",
+      "fase": "espera_hash",
+      "muestras": 176.0,
+      "mediaMs": 16.35,
+      "maximoVentanaMicrometerMs": 319.27
+    },
+    {
+      "ruta": "cambiar-clave",
+      "fase": "hash",
+      "muestras": 176.0,
+      "mediaMs": 138.83,
+      "maximoVentanaMicrometerMs": 488.02
+    },
+    {
+      "ruta": "login",
+      "fase": "consulta",
+      "muestras": 89.0,
+      "mediaMs": 6.01,
+      "maximoVentanaMicrometerMs": 139.64
+    },
+    {
+      "ruta": "login",
+      "fase": "espera_hash",
+      "muestras": 89.0,
+      "mediaMs": 12.55,
+      "maximoVentanaMicrometerMs": 289.6
+    },
+    {
+      "ruta": "login",
+      "fase": "hash",
+      "muestras": 89.0,
+      "mediaMs": 133.66,
+      "maximoVentanaMicrometerMs": 372.71
+    },
+    {
+      "ruta": "renovar",
+      "fase": "consulta",
+      "muestras": 88.0,
+      "mediaMs": 1.67,
+      "maximoVentanaMicrometerMs": 13.3
+    },
+    {
+      "ruta": "renovar",
+      "fase": "espera_hash",
+      "muestras": 88.0,
+      "mediaMs": 9.17,
+      "maximoVentanaMicrometerMs": 146.42
+    },
+    {
+      "ruta": "renovar",
+      "fase": "hash",
+      "muestras": 88.0,
+      "mediaMs": 139.54,
+      "maximoVentanaMicrometerMs": 493.73
+    },
+    {
+      "ruta": "save",
+      "fase": "consulta",
+      "muestras": 97.0,
+      "mediaMs": 3.59,
+      "maximoVentanaMicrometerMs": 45.39
+    },
+    {
+      "ruta": "save",
+      "fase": "escritura",
+      "muestras": 97.0,
+      "mediaMs": 5.51,
+      "maximoVentanaMicrometerMs": 55.29
+    },
+    {
+      "ruta": "save",
+      "fase": "espera_hash",
+      "muestras": 97.0,
+      "mediaMs": 6.71,
+      "maximoVentanaMicrometerMs": 114.72
+    },
+    {
+      "ruta": "save",
+      "fase": "hash",
+      "muestras": 97.0,
+      "mediaMs": 122.92,
+      "maximoVentanaMicrometerMs": 366.89
+    }
+  ]
+}

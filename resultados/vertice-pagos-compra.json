@@ -1,0 +1,26 @@
+{
+  "pedido": 3119,
+  "totalCop": 95000,
+  "estado": "COMPLETADA",
+  "correo": "Confirmacion de Compra #3119 · VÉRTICE",
+  "fixtureFueraDelCatalogo": true,
+  "pagoSimulado": {
+    "referencia": "SIM-COMPRA-3119",
+    "pagadoEn": "2026-11-25T13:10:29.157254Z"
+  },
+  "pagoIdempotente": true,
+  "fechaCorreo": "2026-11-25T08:10:28.563-05:00",
+  "anchosVerificados": [
+    390,
+    768,
+    1440
+  ],
+  "productosVerificados": 75,
+  "producto": "Equipo de prueba 1795612213",
+  "cambioClaveYReingreso": true,
+  "cierreYRutaProtegida": true,
+  "calendario": "3 días hábiles. Excluye fines de semana y festivos de Colombia · Nager.Date.",
+  "stockAntes": 1,
+  "stockDespues": 0,
+  "contrasteBuscador": 18.14
+}

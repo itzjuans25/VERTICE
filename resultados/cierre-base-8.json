@@ -1,0 +1,305 @@
+{
+  "modo": "estres",
+  "prefijoPrueba": "k6-1795576265570",
+  "vusMaximos": 8,
+  "duracionSegundos": 22.0263584,
+  "avg": 0,
+  "med": 0,
+  "p(95)": 0,
+  "p(99)": 0,
+  "max": 0,
+  "errores": 0,
+  "peticiones": 0,
+  "rps": 0,
+  "flujosCompletados": 0,
+  "endpoints": [
+    {
+      "nombre": "auth_registrar",
+      "metodo": "POST",
+      "ruta": "/save",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_login",
+      "metodo": "POST",
+      "ruta": "/login",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_perfil",
+      "metodo": "GET",
+      "ruta": "/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_existe",
+      "metodo": "GET",
+      "ruta": "/:id/existe",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_actualizar",
+      "metodo": "PUT",
+      "ruta": "/update",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_eliminar",
+      "metodo": "DELETE",
+      "ruta": "/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_sesion",
+      "metodo": "GET",
+      "ruta": "/sesion",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_evaluar",
+      "metodo": "POST",
+      "ruta": "/evaluar-clave",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_renovar",
+      "metodo": "POST",
+      "ruta": "/renovar",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "auth_cambiar",
+      "metodo": "POST",
+      "ruta": "/cambiar-clave",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_productos",
+      "metodo": "GET",
+      "ruta": "/producto",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_producto",
+      "metodo": "GET",
+      "ruta": "/producto/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_explorar",
+      "metodo": "GET",
+      "ruta": "/producto/explorar?q=monitor&tamano=12&orden=precio-asc",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_categorias",
+      "metodo": "GET",
+      "ruta": "/producto/categorias",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_marcas",
+      "metodo": "GET",
+      "ruta": "/producto/marcas",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_crear",
+      "metodo": "POST",
+      "ruta": "/producto",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_actualizar",
+      "metodo": "PUT",
+      "ruta": "/producto/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_eliminar",
+      "metodo": "DELETE",
+      "ruta": "/producto/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_precio",
+      "metodo": "GET",
+      "ruta": "/producto/:id/precio-usd",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_entrega",
+      "metodo": "GET",
+      "ruta": "/producto/entrega?diasHabiles=3",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_carrito",
+      "metodo": "GET",
+      "ruta": "/carrito",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_resumen",
+      "metodo": "GET",
+      "ruta": "/carrito/resumen",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_agregar",
+      "metodo": "POST",
+      "ruta": "/carrito/agregar",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_cantidad",
+      "metodo": "PUT",
+      "ruta": "/carrito/actualizar/:id?cantidad=2",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_quitar",
+      "metodo": "DELETE",
+      "ruta": "/carrito/eliminar/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_vaciar",
+      "metodo": "DELETE",
+      "ruta": "/carrito/vaciar",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_comprar",
+      "metodo": "POST",
+      "ruta": "/compras/realizar",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_historial",
+      "metodo": "GET",
+      "ruta": "/compras/usuario/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_compra",
+      "metodo": "GET",
+      "ruta": "/compras/:id",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_estado",
+      "metodo": "PATCH",
+      "ruta": "/compras/:id/estado",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "cat_compras",
+      "metodo": "GET",
+      "ruta": "/compras",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "notif_validar",
+      "metodo": "POST",
+      "ruta": "/validar",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "notif_bienvenida",
+      "metodo": "POST",
+      "ruta": "/previsualizar/bienvenida",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "notif_compra",
+      "metodo": "POST",
+      "ruta": "/previsualizar/compra",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "notif_reintentos",
+      "metodo": "GET",
+      "ruta": "/plan-reintentos",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    },
+    {
+      "nombre": "notif_encolar",
+      "metodo": "POST",
+      "ruta": "/encolar",
+      "errores": 0,
+      "peticiones": 0,
+      "rps": 0
+    }
+  ]
+}

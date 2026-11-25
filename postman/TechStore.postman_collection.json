@@ -1021,6 +1021,51 @@
           }
         },
         {
+          "name": "Pagar compra en modo simulado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "const pago = pm.response.json().pagoSimulado;",
+                  "pm.test('Referencia estable de compra', () => { pm.expect(pago.referencia).to.eql('SIM-COMPRA-' + pm.environment.get('compraId')); pm.expect(pago.pagadoEn).to.be.a('string'); });",
+                  "if (pago) pm.collectionVariables.set('pagoCompraFecha', pago.pagadoEn);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{catalogoUrl}}/api/ecommerce/compras/{{compraId}}/pago"
+          }
+        },
+        {
+          "name": "Repetir el pago simulado de compra",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Repetir el pago conserva la fecha', () => pm.expect(pm.response.json().pagoSimulado.pagadoEn).to.eql(pm.collectionVariables.get('pagoCompraFecha')));",
+                  "pm.collectionVariables.unset('pagoCompraFecha');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{catalogoUrl}}/api/ecommerce/compras/{{compraId}}/pago"
+          }
+        },
+        {
           "name": "Historial de compras",
           "event": [
             {

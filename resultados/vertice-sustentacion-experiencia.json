@@ -1,0 +1,126 @@
+{
+  "marca": "VÉRTICE",
+  "vistas": [
+    {
+      "ancho": 390,
+      "documento": 390,
+      "desbordes": [],
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "reglas": 25,
+          "fallos": []
+        },
+        {
+          "pantalla": "tienda",
+          "reglas": 23,
+          "fallos": []
+        },
+        {
+          "pantalla": "categoria",
+          "reglas": 22,
+          "fallos": []
+        },
+        {
+          "pantalla": "subastas",
+          "reglas": 23,
+          "fallos": []
+        },
+        {
+          "pantalla": "lote",
+          "reglas": 25,
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 768,
+      "documento": 768,
+      "desbordes": [],
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "reglas": 25,
+          "fallos": []
+        },
+        {
+          "pantalla": "tienda",
+          "reglas": 23,
+          "fallos": []
+        },
+        {
+          "pantalla": "categoria",
+          "reglas": 22,
+          "fallos": []
+        },
+        {
+          "pantalla": "subastas",
+          "reglas": 23,
+          "fallos": []
+        },
+        {
+          "pantalla": "lote",
+          "reglas": 25,
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 1280,
+      "documento": 1280,
+      "desbordes": [],
+      "axe": []
+    },
+    {
+      "ancho": 1440,
+      "documento": 1440,
+      "desbordes": [],
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "reglas": 26,
+          "fallos": []
+        },
+        {
+          "pantalla": "tienda",
+          "reglas": 24,
+          "fallos": []
+        },
+        {
+          "pantalla": "categoria",
+          "reglas": 23,
+          "fallos": []
+        },
+        {
+          "pantalla": "subastas",
+          "reglas": 24,
+          "fallos": []
+        },
+        {
+          "pantalla": "lote",
+          "reglas": 26,
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 1920,
+      "documento": 1920,
+      "desbordes": [],
+      "axe": []
+    }
+  ],
+  "integracion": {
+    "busquedaSinRecarga": true,
+    "fichaSeparada": true,
+    "vehiculosAgrupadosApi": true,
+    "vehiculosAgrupadosVista": true,
+    "avisoLocal": true,
+    "perfil": true
+  },
+  "contraste": {
+    "textoFondo": 17.35,
+    "textoSuaveSuperficie": 7.2,
+    "accion": 8.72
+  }
+}

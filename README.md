@@ -26,9 +26,17 @@ El inicio prepara la base, verifica la salud de las APIs y abre la tienda, Mailp
 | RabbitMQ | 5673 | Health de Notificaciones |
 | Mailpit | 8025 web / 1025 SMTP | [Bandeja](http://localhost:8025) |
 
+## Actividad y pagos simulados
+
+Abre **Mi cuenta → Actividad**. Pujas muestra el historial, Subastas ganadas reúne las adjudicaciones y Compras conserva los pedidos y su inventario confirmado. Ambas modalidades muestran el importe en COP, la referencia de pago y el estado Pendiente o Pagado. Cuando hay una tasa válida, aparece la referencia aproximada de Frankfurter.
+
+La compra nueva descuenta el stock al confirmar el pedido. Su pago simulado se registra desde la cuenta y conserva la primera fecha al repetirse. La adjudicación registra el pago con la misma interacción. Los pedidos históricos conservan sus datos y estados. Se excluyen de la búsqueda, los conteos y las vitrinas los nombres reservados de QA, k6 y ensayo. El acceso por identificador conserva la trazabilidad de pruebas e historiales.
+
+Los pagos, la entrega y el traspaso son de demostración académica. El sistema no solicita tarjetas ni contacta proveedores de pago.
+
 ## Recorrido de compra
 
-Explora sin cuenta. Filtra por categoría, marca, condición o precio. La ficha reúne galería, compatibilidad, especificaciones, garantía y la nota de estado para usados. Regístrate, agrega un producto al carrito, confirma la compra y abre **Mis compras**. En Mailpit busca el correo con el número del pedido.
+Explora sin cuenta. Filtra por categoría, marca, condición o precio. La ficha reúne galería, compatibilidad, especificaciones, garantía y la nota de estado para usados. Regístrate, agrega un producto al carrito, confirma el pedido y abre **Compras** en la actividad para completar el pago. En Mailpit busca el correo con el número del pedido.
 
 El catálogo, la ficha y el carrito muestran el stock actual y lo consultan al volver a la pestaña. Si otra persona compra la última unidad, el artículo queda agotado y se bloquea la confirmación del carrito hasta ajustar sus cantidades. El servidor comprueba el stock y registra una sola compra por carrito, incluso con dos confirmaciones simultáneas.
 

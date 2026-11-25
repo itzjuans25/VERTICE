@@ -1,0 +1,80 @@
+{
+  "prueba": "Cronógrafo de archivo · Serie Boreal",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "1uD9ICVKSo2zTEl0EHvxsU"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "6i0PaV29D2zdMzQCPJ6yDq"
+    }
+  ],
+  "postores": [
+    3538,
+    3539
+  ],
+  "lote": 818,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "pagoIdempotente": true,
+  "adjudicacion": 43,
+  "ganadas": {
+    "visibleParaGanador": true,
+    "visibleParaPerdedor": false,
+    "pagoVisible": true
+  },
+  "lotesActivos": [
+    {
+      "id": 391,
+      "titulo": "Reloj esqueleto Arista",
+      "precio": 6050000,
+      "pujas": 1
+    },
+    {
+      "id": 392,
+      "titulo": "Reloj de vestir Esmalte",
+      "precio": 4080000,
+      "pujas": 1
+    },
+    {
+      "id": 393,
+      "titulo": "Anillo escultórico Sutura",
+      "precio": 775000,
+      "pujas": 1
+    }
+  ],
+  "ok": true
+}

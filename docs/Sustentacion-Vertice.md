@@ -3,8 +3,8 @@
 ## Guion
 
 1. Abre la portada y una vitrina. Enseña **Por qué se subasta**, **Ficha técnica** e **Historial de pujas**. Las imágenes, la procedencia, el pago, la entrega y el traspaso son una simulación académica.
-2. En dos sesiones, revisa y confirma una oferta. Explica el precio mínimo, el bloqueo de fila y la extensión de dos minutos. Abre el correo de Mailpit y muestra una adjudicación. Repetir el pago devuelve la misma orden.
-3. Abre Tienda y una compra. PostgreSQL descuenta stock dentro de la misma transacción. Muestra la notificación, el historial y las tres referencias externas si están disponibles.
+2. En dos sesiones, revisa y confirma una oferta. Explica el precio mínimo, el bloqueo de fila y la extensión de dos minutos. Abre el correo de Mailpit y muestra la adjudicación en **Actividad → Subastas ganadas**. Repetir el pago conserva su referencia.
+3. Abre Catálogo y una compra. PostgreSQL descuenta stock al confirmar el pedido. Paga desde **Actividad → Compras** y muestra sus estados, el correo y la referencia USD.
 4. Abre el MER. Explica los cuatro contextos, RabbitMQ y las comprobaciones de rendimiento. Distingue las medidas localmente ejecutadas de las pendientes.
 
 ## IntelliJ IDEA
@@ -21,18 +21,18 @@ Conecta a `127.0.0.1:55432`, base `ecommerce` y usuario habitual `ecommerce_dev`
 
 ## Postman
 
-Importa la colección y el entorno Local. Ejecuta registro e inicio de sesión y conserva el JWT del cliente. Usa ese token para carrito, pedidos, pujas, Avisos y perfil. Lista piezas con `GET /api/ecommerce/subastas?curados=true` y usa un ID real para detalles. Prueba USD y entrega en ambos canales y el clima de Bogotá en `GET /api/subastas/clima`. Revisa los correos locales en Mailpit. [Colección](../postman/TechStore.postman_collection.json)
+Importa la colección y el entorno Local. Ejecuta registro e inicio de sesión y conserva el JWT del cliente. Usa ese token para carrito, pedidos, pujas, Avisos y perfil. Repite `POST /api/ecommerce/compras/{id}/pago` con el propietario y compara fecha y referencia. Lista piezas con `GET /api/ecommerce/subastas?curados=true` y usa un ID real para detalles. Prueba USD y entrega en ambos canales y el clima de Bogotá en `GET /api/subastas/clima`. Revisa los correos locales en Mailpit. [Colección](../postman/TechStore.postman_collection.json)
 
 ## Publicación
 
 Sube el repositorio a GitHub sin datos privados. Crea Neon y toma la URL JDBC directa con SSL. Crea CloudAMQP y copia el URI AMQPS como secreto. Configura un remitente verificado en Brevo. Importa el Blueprint de Render y configura JWT, datos y servicios. En Vercel usa `frontend` como raíz, añade las URLs públicas obtenidas y configura CORS en Render. Ejecuta `scripts/smoke-nube.ps1` con una cuenta y fixtures de demostración. [Guía detallada](Render.md)
 ## Evidencia que puedes mostrar
 
-- Compra 2938 por COP 95.000. La referencia tenía una unidad, la venta quedó COMPLETADA y la cantidad terminó en cero.
-- Lote 661, Cronógrafo de archivo · Serie Boreal. Los compradores de prueba 3347 y 3348 pusieron ofertas. Se recibieron «Puja superada» y «Subasta ganada». La adjudicación 41 conservó la misma referencia al repetir el pago.
-- Empieza con 388, 389 o 390 para enseñar una puja activa. Vencen según el reloj de cada ficha. El ensayo de adjudicación adelantó en la base local el cierre de su propio lote para acortar la espera.
+- Compra 3119 por COP 95.000. Se descontó la última unidad y se confirmó `SIM-COMPRA-3119` desde la cuenta. Repetir el pago conservó el instante.
+- Lote 837, Cronógrafo de archivo · Serie Boreal. Los compradores de prueba 3546 y 3547 pusieron ofertas. Se recibieron «Puja superada» y «Subasta ganada». El ganador pagó `SIM-SUBASTA-44` en la actividad y la otra cuenta quedó sin adjudicación.
+- Empieza con 394, 395 o 396 para enseñar una puja activa. Vencen según el reloj de cada ficha. El ensayo de adjudicación adelantó en la base local el cierre de su propio lote para acortar la espera.
 - Abre las respuestas guardadas de USD, festivos y clima, y separa cobertura exclusivamente unitaria de la suite conjunta.
-- Usa los [resultados de rendimiento](../resultados/vertice-galeria-rendimiento.md) para explicar los picos por encima de 500 ms.
+- Usa los [resultados de rendimiento](../resultados/vertice-pagos-rendimiento.md) para explicar los picos por encima de 500 ms.
 
 ## Preguntas típicas
 

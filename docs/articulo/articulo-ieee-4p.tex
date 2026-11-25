@@ -4,11 +4,11 @@
 \usepackage{booktabs,tabularx,graphicx,url}
 \title{VÉRTICE: una casa editorial de subastas curadas}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
-\input{metricas-galeria.tex}
+\input{metricas-pagos.tex}
 \begin{document}
 \maketitle
 \begin{abstract}
-VÉRTICE ofrece subastas curadas con un canal de compra directa. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 50 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales midieron errores funcionales y el umbral académico de 500 ms por ruta.
+VÉRTICE ofrece subastas curadas con un canal de compra directa. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 51 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales midieron errores funcionales y el umbral académico de 500 ms por ruta.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, subastas, microservicios, concurrencia, PostgreSQL
@@ -41,7 +41,7 @@ El repositorio bloquea la fila del lote y comprueba la versión al modificarla. 
 El aviso de puja superada, salida próxima, ganadora o cierre sin ganador nace en la misma transacción que el cambio. El proceso de publicación espera confirmación de RabbitMQ y reintenta con espera creciente. La entrega al menos una vez admite duplicados si el proceso cae tras la confirmación del broker. Notificaciones consume la cola compartida y envía el correo.
 
 \section{Metodología}
-La evaluación usó una instalación Windows con PostgreSQL, RabbitMQ y Mailpit en ejecución. JaCoCo comprobó líneas ejecutadas por pruebas unitarias y de integración. Newman cubrió validación de contrato, tiempos y el flujo de dos postores. La prueba de navegador aceleró solo el reloj de un lote sintético para observar la tarea programada. Axe analizó el listado de lotes en tres anchos. k6 ejecutó carga con 3 usuarios y rampas a 6 y 8, con 50 rutas. El máximo por ruta evalúa el umbral académico.
+La evaluación usó una instalación Windows con PostgreSQL, RabbitMQ y Mailpit en ejecución. JaCoCo comprobó líneas ejecutadas por pruebas unitarias y de integración. Newman cubrió validación de contrato, tiempos y el flujo de dos postores. La prueba de navegador aceleró solo el reloj de un lote sintético para observar la tarea programada. Axe analizó el listado de lotes en tres anchos. k6 ejecutó carga con 3 usuarios y rampas a 6 y 8, con 51 rutas. El máximo por ruta evalúa el umbral académico.
 
 
 \clearpage
@@ -52,14 +52,14 @@ La evaluación usó una instalación Windows con PostgreSQL, RabbitMQ y Mailpit 
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=.90\columnwidth]{../capturas/vertice-galeria-inicio-1440.png}
+\includegraphics[width=.90\columnwidth]{../capturas/vertice-pagos-inicio-1440.png}
 \caption{Portada editorial dedicada a lotes de subasta.}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=.90\columnwidth]{../capturas/vertice-galeria-puja-adjudicada.png}
-\caption{Lote adjudicado, con pago simulado comprobado.}
+\includegraphics[width=.90\columnwidth]{../capturas/vertice-pagos-puja-ganadas-pagada.png}
+\caption{Adjudicación pagada desde la actividad de la cuenta.}
 \end{figure}
 
 \clearpage
@@ -69,7 +69,7 @@ La implementación local usa un script Windows. El Blueprint define cuatro servi
 Los resultados verifican las transacciones, los avisos y la separación de responsabilidades. El umbral de 500 ms sigue pendiente en los perfiles medidos. La validación local tampoco mide la primera visita tras suspender los procesos en la nube. El siguiente paso consiste en separar las latencias de las consultas, la escritura, los hashes y la espera para localizar los picos y repetir perfiles comparables.
 
 \subsection{Curaduría editorial y procedencia ilustrativa}
-VÉRTICE ofrece 18 piezas en cinco vitrinas. Las pruebas internas conservan sus datos y queda fuera de la galería cualquier ficha de ensayo. El catálogo de precio fijo sigue disponible en un menú secundario. Las referencias de entrega y conservación se muestran fuera del panel de puja.
+VÉRTICE ofrece 18 piezas en cinco vitrinas. Las pruebas internas conservan sus datos y queda fuera de la galería cualquier ficha de ensayo. La actividad concentra pujas, adjudicaciones y compras. Catálogo y Subastas mantienen sus órdenes, con referencias estables y un único paso de pago simulado. Las referencias de entrega y conservación se muestran fuera del panel de puja.
 
 Frankfurter ofrece COP/USD, Nager.Date estima días hábiles y Open-Meteo contextualiza temperatura y humedad. La actualización usa caché, timeout, reintento acotado y cortacircuito. Los pagos, entregas, procedencias y traspasos se simulan.
 

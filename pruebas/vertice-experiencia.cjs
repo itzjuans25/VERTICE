@@ -135,7 +135,9 @@ async function main() {
     await escritorio.getByRole('button',{name:'Guardar perfil'}).click();
     await escritorio.getByText('Perfil actualizado.',{exact:true}).waitFor();
     salida.integracion.perfil = true;
+    await escritorio.getByRole('link',{name:'Actividad',exact:true}).click();
     await escritorio.getByRole('link',{name:'Compras',exact:true}).click();
+    await escritorio.getByRole('heading',{name:'Mis compras',exact:true}).waitFor();
     salida.cuenta = [];
     if (process.env.TECHSTORE_AXE_JS) {
       for (const ancho of [390,768,1440]) {
