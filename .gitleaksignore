@@ -1,0 +1,11 @@
+# Coincidencias revisadas en ejemplos y fixtures históricos. Se ignoran por huella exacta.
+b1f9ba5962e922592c5e051a411f46f7c8e77de6:DEPLOYMENT.md:generic-api-key:98
+d1cdb50a145c134d59823e8ae411fba657225fbd:API.md:generic-api-key:53
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:.env.example:generic-api-key:22
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:API.md:generic-api-key:95
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:auth/auth/auth/.env.example:generic-api-key:11
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:auth/auth/auth/src/test/resources/application-test.properties:generic-api-key:9
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:catalogo/catalogo/.env.example:generic-api-key:14
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:catalogo/catalogo/src/test/java/com/ecommerce/catalogo/infraestructura/entry_points/TiendaApiIntegrationTest.java:generic-api-key:43
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:catalogo/catalogo/src/test/resources/application-test.properties:generic-api-key:9
+e7a6858ad011ecaaa7f0e48db431cc5359a6c7cb:INSTALL.md:generic-api-key:59

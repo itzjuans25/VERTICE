@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('auth', 'catalogo', 'notificaciones', 'frontend')]
+    [ValidateSet('auth', 'catalogo', 'notificaciones', 'subastas', 'frontend')]
     [string]$Service,
     [string]$EnvFile = '.env',
     [switch]$SkipInfrastructure,
@@ -35,6 +35,7 @@ $defaults = @{
     AUTH_PORT = '9090'
     CATALOGO_PORT = '9092'
     NOTIFICACIONES_PORT = '9093'
+    SUBASTAS_PORT = '9094'
     FRONTEND_PORT = '3000'
     MAILPIT_SMTP_PORT = '1025'
 }
@@ -51,6 +52,9 @@ if ($Service -eq 'frontend') {
     }
     if (-not $env:REACT_APP_CATALOGO_URL) {
         $env:REACT_APP_CATALOGO_URL = "http://localhost:$($env:CATALOGO_PORT)"
+    }
+    if (-not $env:REACT_APP_SUBASTAS_URL) {
+        $env:REACT_APP_SUBASTAS_URL = "http://localhost:$($env:SUBASTAS_PORT)"
     }
     Push-Location frontend
     try {
@@ -89,6 +93,7 @@ $services = @{
     auth = @{ Path = 'auth'; Port = $env:AUTH_PORT }
     catalogo = @{ Path = 'catalogo'; Port = $env:CATALOGO_PORT }
     notificaciones = @{ Path = 'notificaciones'; Port = $env:NOTIFICACIONES_PORT }
+    subastas = @{ Path = 'subastas'; Port = $env:SUBASTAS_PORT }
 }
 
 $env:SERVER_PORT = $services[$Service].Port

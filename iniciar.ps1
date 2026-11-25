@@ -45,7 +45,7 @@ if ($Docker) {
     if (-not $env:ERLANG_HOME) { $env:ERLANG_HOME = Join-Path $env:ProgramFiles 'Erlang OTP' }
     if (-not (Test-Path (Join-Path $env:ERLANG_HOME 'bin/erl.exe'))) { throw 'Falta Erlang OTP o ERLANG_HOME.' }
 
-    $services = [ordered]@{ auth = 'auth'; catalogo = 'catalogo'; notificaciones = 'notificaciones' }
+    $services = [ordered]@{ auth = 'auth'; catalogo = 'catalogo'; notificaciones = 'notificaciones'; subastas = 'subastas' }
     foreach ($service in $services.Keys) {
         $location = $services[$service]
         $jar = Get-ChildItem "$location/target/$service-*.jar" -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -137,17 +137,18 @@ $urls = [ordered]@{
     Auth = "http://localhost:$($config.AUTH_PORT)"
     Catalogo = "http://localhost:$($config.CATALOGO_PORT)"
     Notificaciones = "http://localhost:$($config.NOTIFICACIONES_PORT)"
+    Subastas = "http://localhost:$(if ($config.SUBASTAS_PORT) { $config.SUBASTAS_PORT } else { '9094' })"
 }
 Wait-EcommerceHttp Tienda $urls.Tienda 240
 Wait-EcommerceHttp Mailpit "$($urls.Mailpit)/api/v1/messages"
-foreach ($service in 'Auth','Catalogo','Notificaciones') {
+foreach ($service in 'Auth','Catalogo','Notificaciones','Subastas') {
     Wait-EcommerceHttp $service "$($urls[$service])/actuator/health"
     Wait-EcommerceHttp "Swagger $service" "$($urls[$service])/v3/api-docs"
 }
 if (-not $SinNavegador) {
     Start-Process $urls.Tienda
     Start-Process $urls.Mailpit
-    foreach ($service in 'Auth','Catalogo','Notificaciones') {
+    foreach ($service in 'Auth','Catalogo','Notificaciones','Subastas') {
         Start-Process "$($urls[$service])/swagger-ui.html"
     }
     $pgAdmin = Get-ChildItem "$env:ProgramFiles/PostgreSQL/*/pgAdmin 4/runtime/pgAdmin4.exe" -ErrorAction SilentlyContinue | Select-Object -First 1

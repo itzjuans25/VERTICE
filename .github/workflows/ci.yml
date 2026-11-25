@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-    branches: [main, 'refactor/**']
   pull_request:
 
 permissions:
@@ -19,6 +18,19 @@ jobs:
           - auth
           - catalogo
           - notificaciones
+          - subastas
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: subastas_pruebas
+          POSTGRES_USER: subastas_ci
+          POSTGRES_PASSWORD: postgres-ci-only
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U subastas_ci -d subastas_pruebas"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +43,10 @@ jobs:
 
       - name: Compilar y probar
         working-directory: ${{ matrix.service }}
+        env:
+          SUBASTAS_IT_JDBC: jdbc:postgresql://localhost:${{ job.services.postgres.ports[5432] }}/subastas_pruebas
+          SUBASTAS_IT_USUARIO: subastas_ci
+          SUBASTAS_IT_CLAVE: postgres-ci-only
         run: |
           chmod +x mvnw
           ./mvnw -B clean verify
@@ -46,11 +62,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - run: npm ci --no-audit --no-fund
+      - run: npm ci --include=dev --no-audit --no-fund
+
+      - name: Auditar dependencias de ejecución
+        run: npm audit --omit=dev
 
       - name: Pruebas
         run: npm test -- --watchAll=false
@@ -72,3 +91,23 @@ jobs:
         run: |
           cp .env.example .env
           docker compose config -q
+
+  secretos:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Revisar árbol e historial
+        env:
+          GITLEAKS_VERSION: '8.30.1'
+        run: |
+          archivo="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          curl --fail --silent --show-error --location --output "$RUNNER_TEMP/$archivo" "$base/$archivo"
+          curl --fail --silent --show-error --location --output "$RUNNER_TEMP/sumas" "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          (cd "$RUNNER_TEMP" && grep -F "  $archivo" sumas | sha256sum -c -)
+          tar -xzf "$RUNNER_TEMP/$archivo" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" dir --redact=100 --no-banner .
+          "$RUNNER_TEMP/gitleaks" git --redact=100 --no-banner --log-opts=--all .

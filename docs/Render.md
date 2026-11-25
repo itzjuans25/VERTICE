@@ -1,25 +1,52 @@
-# Publicar TechStore en Render
+# Publicar la demo de TechStore
 
-El arranque local ya permite sustentar todo el recorrido. Usa Render cuando necesites un enlace público. El Blueprint está preparado para el frontend estático, tres servicios Docker y PostgreSQL administrado. [Referencia de Blueprint](https://render.com/docs/blueprint-spec)
+La tienda React se aloja en Vercel Hobby. Render ejecuta los cuatro JAR, Neon guarda los datos persistentes, CloudAMQP enruta eventos y Brevo entrega correos. La demo local usa PostgreSQL, RabbitMQ y Mailpit. La publicación requiere las cuentas del propietario.
 
-1. Sube este proyecto a un repositorio GitHub o GitLab, excluyendo tus archivos de entorno. En CloudAMQP crea RabbitMQ **Little Lemur** y copia la URL AMQPS privada. [Planes CloudAMQP](https://www.cloudamqp.com/plans/)
-2. En Brevo verifica un remitente y crea una clave en **SMTP y API → SMTP**. Guarda su login, clave SMTP y remitente para el asistente. El Blueprint usa `smtp-relay.brevo.com:2525` con STARTTLS. [Puertos SMTP de Brevo](https://help.brevo.com/hc/en-us/articles/10905415650322-Which-SMTP-port-should-I-use-Port-587-465-or-2525)
-3. En Render pulsa **New → Blueprint → Connect repository**. Elige tu repositorio y rama. Usa `render.yaml`. Si el nombre del servicio ya existe, elige otro y actualiza sus URLs cuando queden asignadas.
-4. En cada servicio Java, completa `SPRING_RABBITMQ_ADDRESSES` con la misma URL AMQPS. En `CORS_ALLOWED_ORIGINS` coloca la URL HTTPS pública de **techstore-web** sin barra final. Render genera el `JWT_SECRET` del grupo `techstore-config` para que Auth y Catálogo compartan una clave exclusiva del entorno remoto. Si el asistente aún no muestra las URLs, usa temporalmente las previstas y corrígelas en **Environment** con los valores reales.
-5. En Catálogo define `AUTH_SERVICE_URL` con el enlace HTTPS de Auth. En el sitio estático define `REACT_APP_AUTH_URL` y `REACT_APP_CATALOGO_URL` con sus enlaces HTTPS. En Notificaciones completa `MAIL_USERNAME`, `MAIL_PASSWORD` y `MAIL_FROM` con los datos de Brevo.
-6. Pulsa **Deploy Blueprint**. Tras corregir URL o CORS, redepliega el sitio estático para incorporar las URLs al JavaScript. Catálogo aplica el esquema e inserta el seed al arrancar. El Blueprint mantiene la base cerrada para conexiones públicas hasta que autorices tu IP.
-7. Abre `/health` en las tres URLs Java. Notificaciones comprueba PostgreSQL y RabbitMQ. Abre la tienda, filtra usados y registra una cuenta. Haz un pedido con dirección permitida en Brevo. Revisa su actividad transaccional y tu bandeja. Verifica el stock y el pedido con [pgAdmin](pgadmin/README.md).
+## 1. GitHub y proveedores
 
-El Blueprint inyecta el host interno y las credenciales de PostgreSQL. Desde pgAdmin utiliza el host externo con `sslmode=require` y una regla temporal para tu IP. Los servicios Java usan el puerto `PORT`. Hikari espera la primera conexión a PostgreSQL hasta 60 segundos, con timeout de conexión JDBC de 5 segundos por intento. Notificaciones vuelve a intentar inicializar las colas si RabbitMQ todavía no responde.
+1. Sube la rama `subastas` a un repositorio propio en GitHub. Conserva la etiqueta `version-estable` como respaldo.
+2. En Neon crea un proyecto PostgreSQL. En **Connect**, desactiva **Connection pooling** y copia el host directo, el nombre de la base y el rol. Guarda la contraseña en el panel, con SSL obligatorio.
+3. En CloudAMQP crea una instancia RabbitMQ de demostración y obtiene el URI TLS completo que comienza por `amqps://`, incluido su vhost.
+4. En Brevo configura un remitente verificado, obtén el usuario y la clave SMTP en **SMTP & API**. El proyecto usa `smtp-relay.brevo.com:2525` con STARTTLS.
 
-Para usar SMS reales, verifica el destinatario y el remitente en Twilio. Agrega `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` y `TWILIO_FROM` en **Environment** de Notificaciones y cambia `SMS_PROVIDER` a `twilio`. Prueba con un destino habilitado. En la configuración inicial, el modo `log` guarda SMS de prueba en PostgreSQL.
+## 2. Backend en Render
 
-## Límites gratuitos comprobados
+En Render abre **New → Blueprint**, autoriza el repositorio, selecciona la rama `subastas` y confirma la configuración. Si Render ya administra un Blueprint anterior, agrega a mano las nuevas variables `sync: false` en **Environment**. La plataforma solo solicita estos valores al crear el Blueprint. [Referencia de Blueprints](https://render.com/docs/blueprint-spec)
 
-Render detiene servicios web Free tras 15 minutos sin tráfico y documenta un arranque de alrededor de un minuto. El primer request frío puede superar ampliamente 500 ms. La base Free vence a los 30 días y el workspace comparte 750 horas gratuitas al mes. Render bloquea salida por 25, 465 y 587 en Free. El Blueprint usa 2525 con STARTTLS, admitido por Brevo. Si el entorno permite 587, configura ese puerto. Verifica la conexión real después de desplegar. [Planes gratuitos de Render](https://render.com/docs/free) · [Puertos SMTP de Brevo](https://help.brevo.com/hc/en-us/articles/10905415650322-Which-SMTP-port-should-I-use-Port-587-465-or-2525)
+| Variable | Dónde va | De dónde sale |
+| --- | --- | --- |
+| `DB_HOST` | Los 4 | Host directo de Neon, sin `-pooler`. |
+| `DB_NAME` | Los 4 | Base del proyecto Neon. |
+| `DB_USERNAME` y `DB_PASSWORD` | Los 4 | Rol y contraseña de Neon. |
+| `SPRING_RABBITMQ_ADDRESSES` | Los 4 | URI AMQPS de CloudAMQP. |
+| `CORS_ALLOWED_ORIGINS` | Los 4 | URL pública de Vercel, sin barra final. Si aún falta Vercel, usa temporalmente `https://localhost.invalid` y corrígelo después. |
+| `AUTH_SERVICE_URL` | Catálogo | URL HTTPS pública de Auth, sin barra final. Ajusta tras crear el Blueprint con las URLs definitivas. |
+| `MAIL_USERNAME` y `MAIL_PASSWORD` | Notificaciones | Usuario y clave SMTP de Brevo. |
+| `MAIL_FROM` | Notificaciones | Correo de un remitente verificado en Brevo. |
 
-Antes de publicar desde una máquina con Docker, ejecuta `docker compose build` y luego `docker compose up -d --wait` con un `.env` privado. En Windows, instala Docker Desktop con WSL 2, reinicia si Windows lo solicita y comprueba `docker info`. [Guía oficial de instalación](https://docs.docker.com/desktop/setup/install/windows-install/)
+`JWT_SECRET` se genera una vez en el grupo `techstore-config`. Cada JAR comparte esa firma y toma `PORT` de Render. Spring resuelve el JDBC desde el host y la base indicados, con `sslmode=require`. Hikari usa hasta 4 conexiones, mínimo 0 inactivas, espera de 30 s y vida máxima de 4 min. El arranque tolera hasta 60 s ante fallos de conexión iniciales. Los cuatro servicios exponen `/health`.
 
-Con Docker local, el Compose incluido usa RabbitMQ y Mailpit. Si prefieres operar RabbitMQ propio para Render, aloja el broker Docker fuera de Render con AMQPS, acceso restringido y un vhost dedicado. Configura su URL en la misma variable.
+Para tener un administrador, registra tu cuenta desde el frontend y, en la consola SQL de tu propia base, actualiza únicamente su rol usando el ID de esa cuenta. Vuelve a iniciar sesión para que Auth emita el JWT actualizado.
 
-La infraestructura pública y las credenciales se agregan desde tu cuenta. La verificación disponible en este equipo es Windows local.
+## 3. Frontend en Vercel
+
+1. Abre **Add New Project**, importa el mismo repositorio y elige la rama que publicaste.
+2. Define **Root Directory = frontend** y Node.js 22. El proyecto utiliza Create React App. El directorio de salida es `build`.
+3. Configura `REACT_APP_AUTH_URL`, `REACT_APP_CATALOGO_URL` y `REACT_APP_SUBASTAS_URL` con las URLs HTTPS de Render, sin barra final. Cambiar una de ellas requiere un nuevo despliegue.
+4. Añade la URL final de Vercel a `CORS_ALLOWED_ORIGINS` en Render y vuelve a desplegar los servicios si el panel lo solicita. Abre directamente `/productos` y `/subastas` para verificar el fallback de la SPA.
+5. Verifica los cuatro `/health`, registro, login, carrito, compra y puja con `scripts/smoke-nube.ps1` o `scripts/smoke-nube.sh`. Usa un producto y un lote de demostración, porque el smoke cambia el stock y el precio. Para ver PostgreSQL usa [pgAdmin con Neon](pgadmin/README.md).
+
+## Límites del alojamiento
+
+- Render Free suspende cada web service tras 15 minutos sin tráfico entrante. Su arranque en frío tarda aproximadamente un minuto. Las 750 horas gratuitas mensuales son compartidas por el workspace. El cron de cierre y el consumo de avisos solo avanzan mientras los procesos estén activos. Precalienta los cuatro `/health` antes de presentar. El entorno Free sirve para una demostración con horario. [Render Free](https://render.com/docs/free)
+- Neon Free indica 1 GB de PostgreSQL y 100 CU-h por proyecto. El cómputo suspende al pasar cinco minutos sin actividad. Una tarea periódica puede mantener activa la base mientras Render esté despierto. [Neon Free](https://neon.com/docs/introduction/plans) · [Scale to zero](https://neon.com/docs/introduction/scale-to-zero)
+- Vercel Hobby está destinado a uso personal y no comercial. Los archivos estáticos los sirve la plataforma y las solicitudes de la aplicación van a los backends. [Vercel Hobby](https://vercel.com/docs/plans/hobby)
+
+Docker local, con motor activo y `.env` privada preparada
+
+```powershell
+docker compose --env-file .env.example config --quiet
+docker compose build auth catalogo notificaciones subastas frontend
+docker compose up -d --wait
+docker compose down
+```

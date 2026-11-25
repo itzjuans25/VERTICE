@@ -1,34 +1,5 @@
 services:
   - type: web
-    name: techstore-web
-    runtime: static
-    rootDir: frontend
-    buildCommand: npm ci --include=dev && npm run build
-    staticPublishPath: ./build
-    headers:
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
-      - path: /*
-        name: Referrer-Policy
-        value: strict-origin-when-cross-origin
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: NODE_VERSION
-        value: "22"
-      - key: REACT_APP_AUTH_URL
-        sync: false
-      - key: REACT_APP_CATALOGO_URL
-        sync: false
-      - key: REACT_APP_REQUEST_TIMEOUT_MS
-        value: "15000"
-  - type: web
     name: techstore-auth
     runtime: docker
     region: oregon
@@ -37,35 +8,23 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - key: PORT
-        value: "10000"
-      - key: JAVA_TOOL_OPTIONS
-        value: "-XX:ActiveProcessorCount=2"
       - fromGroup: techstore-config
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_URL
+        value: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}?sslmode=require&connectTimeout=5
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
       - key: SPRING_RABBITMQ_ADDRESSES
         sync: false
+      - key: SPRING_RABBITMQ_SSL_ENABLED
+        value: "true"
       - key: CORS_ALLOWED_ORIGINS
         sync: false
-      - key: DB_HOST
-        fromDatabase:
-          name: techstore-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: techstore-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: techstore-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: techstore-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: techstore-db
-          property: password
   - type: web
     name: techstore-catalogo
     runtime: docker
@@ -75,35 +34,23 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - key: PORT
-        value: "10000"
-      - key: JAVA_TOOL_OPTIONS
-        value: "-XX:ActiveProcessorCount=2"
       - fromGroup: techstore-config
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_URL
+        value: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}?sslmode=require&connectTimeout=5
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
       - key: SPRING_RABBITMQ_ADDRESSES
         sync: false
+      - key: SPRING_RABBITMQ_SSL_ENABLED
+        value: "true"
       - key: CORS_ALLOWED_ORIGINS
         sync: false
-      - key: DB_HOST
-        fromDatabase:
-          name: techstore-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: techstore-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: techstore-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: techstore-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: techstore-db
-          property: password
       - key: AUTH_SERVICE_URL
         sync: false
   - type: web
@@ -115,35 +62,23 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - key: PORT
-        value: "10000"
-      - key: JAVA_TOOL_OPTIONS
-        value: "-XX:ActiveProcessorCount=2"
       - fromGroup: techstore-config
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_URL
+        value: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}?sslmode=require&connectTimeout=5
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
       - key: SPRING_RABBITMQ_ADDRESSES
         sync: false
+      - key: SPRING_RABBITMQ_SSL_ENABLED
+        value: "true"
       - key: CORS_ALLOWED_ORIGINS
         sync: false
-      - key: DB_HOST
-        fromDatabase:
-          name: techstore-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: techstore-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: techstore-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: techstore-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: techstore-db
-          property: password
       - key: MAIL_HOST
         value: smtp-relay.brevo.com
       - key: MAIL_PORT
@@ -164,14 +99,44 @@ services:
         value: log
       - key: NOTIFICACIONES_API_KEY
         generateValue: true
+  - type: web
+    name: techstore-subastas
+    runtime: docker
+    region: oregon
+    plan: free
+    rootDir: subastas
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - fromGroup: techstore-config
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_URL
+        value: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}?sslmode=require&connectTimeout=5
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: SPRING_RABBITMQ_ADDRESSES
+        sync: false
+      - key: SPRING_RABBITMQ_SSL_ENABLED
+        value: "true"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
 envVarGroups:
   - name: techstore-config
     envVars:
       - key: JWT_SECRET
         generateValue: true
-databases:
-  - name: techstore-db
-    databaseName: ecommerce
-    region: oregon
-    plan: free
-    ipAllowList: []
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:ActiveProcessorCount=2"
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: "4"
+      - key: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+        value: "0"
+      - key: SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT
+        value: "30000"
+      - key: SPRING_DATASOURCE_HIKARI_MAX_LIFETIME
+        value: "240000"
