@@ -1,0 +1,49 @@
+{
+  "prueba": "Validación de subasta 1795582033090",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "5f3SQ3GMfZOHptGC38NM3h"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "1K9tVGaSX4GWDxOUS9tojr"
+    }
+  ],
+  "lote": 162,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "ok": true
+}

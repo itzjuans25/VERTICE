@@ -1,12 +1,15 @@
 import config from '../config';
 import { request } from './client';
+import vistasTecnologia from '../vistasTecnologia.json';
 
 const BASE = config.CATALOGO_URL;
 const PRODUCTOS = '/api/ecommerce/producto';
 const CARRITO = '/api/ecommerce/carrito';
 const COMPRAS = '/api/ecommerce/compras';
 
-export function imagenProducto(url) {
+export function imagenProducto(url, nombre) {
+  const vista = vistasTecnologia[nombre];
+  if (vista?.original === url) return vista.archivo;
   return url?.startsWith('/api/ecommerce/producto/') ? BASE + url : url || '/techtrade/torre.webp';
 }
 
@@ -26,6 +29,9 @@ export function contarItems(carrito) {
 
 export const catalogoApi = {
   productos: {
+    inicio() {
+      return request(BASE, '/api/ecommerce/inicio', { auth:false });
+    },
     explorar(query) {
       return request(BASE, PRODUCTOS + '/explorar', { query });
     },

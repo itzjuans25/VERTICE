@@ -18,6 +18,7 @@ const operaciones = {
   'auth_registrar': ['POST', '/save', 201],
   'auth_login': ['POST', '/login', 200],
   'auth_perfil': ['GET', '/:id', 200],
+  'auth_pantalla_perfil': ['GET', '/api/auth/perfil', 200],
   'auth_existe': ['GET', '/:id/existe', 200],
   'auth_actualizar': ['PUT', '/update', 200],
   'auth_eliminar': ['DELETE', '/:id', 204],
@@ -26,6 +27,7 @@ const operaciones = {
   'auth_renovar': ['POST', '/renovar', 200],
   'auth_cambiar': ['POST', '/cambiar-clave', 204],
   'cat_productos': ['GET', '/producto', 200],
+  'cat_inicio': ['GET', '/inicio', 200],
   'cat_producto': ['GET', '/producto/:id', 200],
   'cat_explorar': ['GET', '/producto/explorar?q=monitor&tamano=12&orden=precio-asc', 200],
   'cat_categorias': ['GET', '/producto/categorias', 200],
@@ -47,11 +49,15 @@ const operaciones = {
   'cat_estado': ['PATCH', '/compras/:id/estado', 200],
   'cat_compras': ['GET', '/compras', 200],
   'notif_validar': ['POST', '/validar', 200],
+  'notif_avisos': ['GET', '/api/notificaciones/mis-avisos?tamano=10', 200],
   'notif_bienvenida': ['POST', '/previsualizar/bienvenida', 200],
   'notif_compra': ['POST', '/previsualizar/compra', 200],
   'notif_reintentos': ['GET', '/plan-reintentos', 200],
   'notif_encolar': ['POST', '/encolar', 202],
   'sub_crear': ['POST', '', 201],
+  'sub_inicio': ['GET', '/api/subastas/inicio', 200],
+  'sub_precio': ['GET', '/api/subastas/lote/:id/precio-usd', 200],
+  'sub_entrega': ['GET', '/api/subastas/entrega?diasHabiles=3', 200],
   'sub_listar': ['GET', '?categoria=HOGAR&minimo=100&maximo=500&tamano=4', 200],
   'sub_detalle': ['GET', '/:id', 200],
   'sub_pujar': ['POST', '/:id/pujas', 201],
@@ -83,6 +89,9 @@ export const options = {
 };
 
 function base(nombre) {
+  if (nombre === 'auth_pantalla_perfil') return auth.replace('/api/ecommerce/usuario','');
+  if (nombre === 'notif_avisos') return notificaciones.replace('/api/ecommerce/notificaciones','');
+  if (['sub_inicio','sub_precio','sub_entrega'].includes(nombre)) return subastas.replace('/api/ecommerce/subastas','');
   if (nombre.startsWith('auth_')) return auth;
   if (nombre.startsWith('cat_')) return catalogo;
   if (nombre.startsWith('sub_')) return subastas;
@@ -160,6 +169,7 @@ function recorrer(admin, cliente, nombre, mitad) {
   const nueva = mitad ? otraClave : password;
   const { token } = enviar('auth_login', { body: { email: cliente.email, password: actual } });
   enviar('auth_perfil', { token, id });
+  enviar('auth_pantalla_perfil', { token });
   enviar('auth_existe', { id });
   enviar('auth_sesion', { token });
   enviar('auth_evaluar', { body: { password: nueva } });
@@ -172,6 +182,7 @@ function recorrer(admin, cliente, nombre, mitad) {
   const producto = enviar('cat_crear', { token: admin, body: datosProducto });
   enviar('cat_actualizar', { token: admin, id: producto.id, body: datosProducto });
   enviar('cat_productos');
+  enviar('cat_inicio');
   enviar('cat_producto', { id: producto.id });
   enviar('cat_explorar');
   enviar('cat_categorias');
@@ -200,7 +211,10 @@ function recorrer(admin, cliente, nombre, mitad) {
   } });
   try {
     enviar('sub_listar');
+    enviar('sub_inicio');
     enviar('sub_detalle', { id: lote.id });
+    enviar('sub_precio', { id:lote.id });
+    enviar('sub_entrega');
     enviar('sub_pujar', { token, id: lote.id, body: { monto: lote.pujaMinima } });
     enviar('sub_mias', { token });
     enviar('sub_pago_sin_adjudicacion', { token, id: lote.id });
@@ -209,6 +223,7 @@ function recorrer(admin, cliente, nombre, mitad) {
   }
 
   enviar('notif_validar', { body: correo });
+  enviar('notif_avisos', { token });
   enviar('notif_bienvenida', { body: { nombre: 'Cliente k6' } });
   enviar('notif_compra', { body: { nombre: 'Cliente k6', orden: compra.id, totalCop: compra.total } });
   enviar('notif_reintentos');

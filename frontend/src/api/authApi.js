@@ -23,6 +23,12 @@ export const authApi = {
   getUsuario(id) {
     return request(BASE, `/api/ecommerce/usuario/${id}`);
   },
+  perfil() {
+    return request(BASE, '/api/auth/perfil');
+  },
+  editarPerfil(body) {
+    return request(BASE, '/api/auth/perfil', { method:'PUT', body });
+  },
 
   cambiarClave(actual, nueva) {
     return request(BASE, '/api/ecommerce/usuario/cambiar-clave', {

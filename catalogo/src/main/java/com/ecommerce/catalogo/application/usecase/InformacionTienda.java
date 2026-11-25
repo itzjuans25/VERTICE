@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InformacionTienda {
     private final Clock reloj;
     private volatile Tasa tasa;
-    private final Map<Integer, Set<LocalDate>> festivos = new ConcurrentHashMap<>();
+    private final Map<Integer, Festivos> festivos = new ConcurrentHashMap<>();
 
     public InformacionTienda() {
         this(Clock.system(ZoneId.of("America/Bogota")));
@@ -35,7 +35,7 @@ public class InformacionTienda {
     }
 
     public void actualizarFestivos(int ano, Set<LocalDate> fechas) {
-        festivos.put(ano, Set.copyOf(fechas));
+        festivos.put(ano, new Festivos(Set.copyOf(fechas),reloj.instant()));
         festivos.keySet().removeIf(anterior -> anterior < hoy().getYear());
     }
 
@@ -45,7 +45,7 @@ public class InformacionTienda {
 
     public Cotizacion cotizar(BigDecimal precioCop) {
         Tasa actual = tasa;
-        if (actual == null || actual.consultada().plusSeconds(259200).isBefore(reloj.instant())) {
+        if (actual == null || !reloj.instant().isBefore(actual.consultada().plusSeconds(21600))) {
             throw new TasaNoDisponibleException();
         }
         return new Cotizacion(precioCop, precioCop.multiply(actual.valor()).setScale(2, RoundingMode.HALF_UP),
@@ -61,7 +61,9 @@ public class InformacionTienda {
             if (fecha.getDayOfWeek() == DayOfWeek.SATURDAY || fecha.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 continue;
             }
-            Set<LocalDate> fechas = festivos.get(fecha.getYear());
+            Festivos datos = festivos.get(fecha.getYear());
+            Set<LocalDate> fechas = datos != null && reloj.instant().isBefore(datos.consulta().plusSeconds(86400))
+                    ? datos.fechas() : null;
             if (fechas == null) {
                 calendarioCompleto = false;
             }
@@ -74,6 +76,7 @@ public class InformacionTienda {
     }
 
     private record Tasa(BigDecimal valor, LocalDate fecha, Instant consultada) {}
+    private record Festivos(Set<LocalDate> fechas, Instant consulta) {}
 
     public record Cotizacion(BigDecimal precioCop, BigDecimal precioUsd, BigDecimal tasa,
                              LocalDate fechaTasa, String fuente, Instant ultimaConsulta) {}

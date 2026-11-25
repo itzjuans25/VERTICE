@@ -20,6 +20,9 @@ class NotificacionListenerTest {
     @Mock
     private ProcesarNotificacionService procesarNotificacionService;
 
+    @Mock
+    private com.ecommerce.notificaciones.application.port.out.HistorialAvisos historial;
+
     @InjectMocks
     private NotificacionListener listener;
 
@@ -28,7 +31,7 @@ class NotificacionListenerTest {
         MensajeNotificacion mensaje = MensajeNotificacion.builder()
                 .tipo(MensajeNotificacion.TipoNotificacion.EMAIL)
                 .email(NotificacionEmail.builder()
-                        .destinatario("ana@example.com")
+                        .usuarioId(31L).destinatario("ana@example.com")
                         .asunto("Bienvenido")
                         .cuerpo("Hola")
                         .build())
@@ -37,6 +40,7 @@ class NotificacionListenerTest {
         listener.escuchar(mensaje);
 
         verify(procesarNotificacionService).procesar(mensaje);
+        verify(historial).registrar(31,"EMAIL","Bienvenido","ENVIADO");
     }
 
     @Test

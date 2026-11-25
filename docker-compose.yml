@@ -137,7 +137,9 @@ services:
       TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
       TWILIO_FROM: ${TWILIO_FROM:-}
       MAIL_FROM: ${MAIL_FROM:-no-reply@ecommerce.local}
-      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-E-Commerce}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Remata}
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
       SMS_PROVIDER: ${SMS_PROVIDER:-log}
       SMS_WEBHOOK_URL: ${SMS_WEBHOOK_URL:-}
       SMS_WEBHOOK_TOKEN: ${SMS_WEBHOOK_TOKEN:-}
@@ -192,6 +194,7 @@ services:
         REACT_APP_AUTH_URL: ${REACT_APP_AUTH_URL:-http://localhost:9090}
         REACT_APP_CATALOGO_URL: ${REACT_APP_CATALOGO_URL:-http://localhost:9092}
         REACT_APP_SUBASTAS_URL: ${REACT_APP_SUBASTAS_URL:-http://localhost:9094}
+        REACT_APP_NOTIFICACIONES_URL: ${REACT_APP_NOTIFICACIONES_URL:-http://localhost:9093}
         REACT_APP_REQUEST_TIMEOUT_MS: ${REACT_APP_REQUEST_TIMEOUT_MS:-15000}
     container_name: ecommerce-frontend
     ports:

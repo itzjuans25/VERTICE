@@ -48,8 +48,9 @@ export default function ProductDetail({ user, setCartCount }) {
     <p role={error ? 'alert' : 'status'}>{error || 'Cargando producto…'}</p>
   </main>;
 
-  const fotos = [producto.imagenUrl, producto.imagenSecundariaUrl].filter(Boolean);
-  if (!fotos.length) fotos.push(null);
+  const primera = imagenProducto(producto.imagenUrl,producto.nombre);
+  const galeriaOriginal = imagenProducto(producto.imagenUrl) === primera;
+  const fotos = [primera, galeriaOriginal && producto.imagenSecundariaUrl].filter(Boolean);
   const disponible = producto.stock > 0;
   return <main className="tt-shell tt-section">
     <Link to="/productos">Volver al catálogo</Link>

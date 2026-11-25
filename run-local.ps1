@@ -56,6 +56,9 @@ if ($Service -eq 'frontend') {
     if (-not $env:REACT_APP_SUBASTAS_URL) {
         $env:REACT_APP_SUBASTAS_URL = "http://localhost:$($env:SUBASTAS_PORT)"
     }
+    if (-not $env:REACT_APP_NOTIFICACIONES_URL) {
+        $env:REACT_APP_NOTIFICACIONES_URL = "http://localhost:$($env:NOTIFICACIONES_PORT)"
+    }
     Push-Location frontend
     try {
         & npm.cmd start

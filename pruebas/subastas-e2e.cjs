@@ -10,7 +10,7 @@ const subastas = 'http://127.0.0.1:9094/api/ecommerce/subastas';
 const mailpit = 'http://127.0.0.1:8025';
 const marca = 'Validación de subasta ' + Date.now();
 const prefijo = 'e2e-subasta-' + Date.now();
-const captura = (page, nombre) => page.screenshot({ path: 'docs/capturas/subastas-' + nombre + '.png', animations: 'disabled' });
+const captura = (page, nombre) => page.screenshot({ path: 'docs/capturas/' + (process.env.TECHSTORE_SUBASTAS_PREFIJO || 'subastas-') + nombre + '.png', animations: 'disabled' });
 const estado = { prueba: marca, vistas: [], correos: [] };
 
 async function pedir(url, { body, token, method = 'GET' } = {}) {
@@ -146,7 +146,7 @@ async function main() {
     estado.ok = true;
   } finally {
     await browser.close();
-    fs.writeFileSync('resultados/subastas-e2e.json', JSON.stringify(estado, null, 2));
+    fs.writeFileSync(process.env.TECHSTORE_SUBASTAS_RESULTADO || 'resultados/subastas-e2e.json', JSON.stringify(estado, null, 2));
   }
 }
 main().catch(error => { console.error(error.message); process.exitCode = 1; });

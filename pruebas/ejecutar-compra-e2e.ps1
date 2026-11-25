@@ -28,8 +28,8 @@ try {
     foreach ($campo in $campos) { $datos[$campo]=$base.$campo }
     $lote = Invoke-RestMethod $producto -Method Post -ContentType 'application/json' -Headers $admin -Body ($datos | ConvertTo-Json -Depth 8)
     $env:TECHSTORE_E2E_PRODUCTO = [string]$lote.id
-    $env:TECHSTORE_E2E_RESULTADO = 'resultados/e2e-compra-subastas.json'
-    $env:TECHSTORE_E2E_CAPTURAS = 'entrega-subastas-'
+    if (-not $env:TECHSTORE_E2E_RESULTADO) { $env:TECHSTORE_E2E_RESULTADO = 'resultados/remata-compra-e2e.json' }
+    if (-not $env:TECHSTORE_E2E_CAPTURAS) { $env:TECHSTORE_E2E_CAPTURAS = 'remata-compra-' }
     & $node 'pruebas/techstore-e2e.cjs'
     exit $LASTEXITCODE
 } finally {

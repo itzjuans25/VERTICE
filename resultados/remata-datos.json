@@ -1,0 +1,26 @@
+{
+  "tecnologiaIntacta": true,
+  "huella": "45:86d8d2ecde422c3368cd93ffde12eabb",
+  "categoriasGenerales": [
+    "Accesorios de moto|4",
+    "Coleccionables y arte|3",
+    "Deportes y aire libre|4",
+    "Herramientas|3",
+    "Hogar y cocina|4",
+    "Joyería y accesorios|4",
+    "Moda y bolsos|4",
+    "Relojes|4"
+  ],
+  "lotesActivos": [
+    "CARROS|3",
+    "COLECCIONABLES|3",
+    "DEPORTES|1",
+    "ELECTRONICA|3",
+    "HERRAMIENTAS|1",
+    "HOGAR|2",
+    "JOYERIA|3",
+    "MOTOS|2",
+    "OTROS|2",
+    "RELOJES|1"
+  ]
+}

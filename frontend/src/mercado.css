@@ -27,6 +27,8 @@
 .mercado-pasos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--espacio-4); padding:0; }
 .mercado-pasos li { list-style:none; background:var(--tech-surface); border:1px solid var(--tech-border); padding:var(--espacio-4); border-radius:var(--tech-radius); }
 .mercado-pasos strong { display:block; color:var(--tech-accent); }
+.mercado-categorias small { display:block; margin-top:var(--espacio-1); color:var(--tech-muted); }
+.mercado-categorias strong { color:var(--tech-text); }
 .mercado-cuenta-pagina > header { text-align:left; margin-block:var(--espacio-4); }
 .mercado-cuenta-pagina > header p { color:var(--tech-muted); }
 .App .mercado-footer { padding-inline:max(var(--espacio-4), calc((100% - var(--mercado-ancho))/2)); }

@@ -3,21 +3,21 @@
 \usepackage[T1]{fontenc}
 \usepackage{booktabs,tabularx,graphicx,url}
 \input{metricas-techstore.tex}
-\title{Remata: comercio electrónico y subastas con cuatro microservicios}
+\title{Remata: compra directa y subastas en una tienda general}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-Remata reúne una tienda colombiana de tecnología y un mercado de subastas administrado por la tienda. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
+Remata reúne dos modalidades de venta en una tienda general colombiana: precio fijo y subasta. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
 \end{IEEEkeywords}
 
 \section{Introducción}
-Una tienda que vende tecnología nueva y usada administra mercancía, cantidades y condiciones. En artículos usados, la ficha debe comunicar el grado, la garantía y la compatibilidad sin ocultar la diferencia entre un anuncio y una unidad física. Se adoptó como alcance una tienda con inventario propio y gestión centralizada de pedidos.
+Una tienda general administra mercancía nueva y usada de varias categorías. El precio fijo reserva unidades de un inventario y la subasta resuelve qué oferta gana al vencer un plazo. En artículos usados, la ficha debe comunicar el grado, la garantía y la compatibilidad sin ocultar la diferencia entre un anuncio y una unidad física. Se adoptó como alcance una tienda con inventario propio y gestión centralizada de pedidos.
 
 Remata amplía una aplicación académica con registro, sesión, carrito e historial. El catálogo muestra computadores ensamblados, componentes, periféricos, teléfonos, consolas y artículos de segunda mano. Los precios se expresan en pesos colombianos. La operación de compra registra un pedido y descuenta inventario. El pago y el despacho físico quedan fuera del recorrido académico.
 
@@ -56,7 +56,7 @@ Los controladores traducen solicitudes y respuestas. Los adaptadores implementan
 \clearpage
 \section{Implementación}
 \subsection{Catálogo y datos}
-El seed contiene 45 artículos y once categorías. Cada fila usa una clave estable. La restricción única y la cláusula de conflicto permiten repetir la carga sin duplicar filas ni reiniciar stock consumido. La migración inicial rellena metadatos faltantes y añade índices para consultas. Los precios son representativos de una demostración en COP. Las imágenes generadas corresponden al tipo de artículo y se sirven localmente sin depender de proveedores de imágenes.
+La base histórica contiene 45 artículos de Tecnología. El seed de Remata agrega 30 en ocho categorías principales sin sustituir las existencias ni los pedidos existentes. Cada fila usa una clave estable. La restricción única y la cláusula de conflicto permiten repetir la carga sin duplicar filas ni reiniciar stock consumido. La migración inicial rellena metadatos faltantes y añade índices para consultas. Los precios son representativos de una demostración en COP. Las imágenes generadas corresponden al tipo de artículo y se sirven localmente sin depender de proveedores de imágenes.
 
 \begin{table}[!ht]
 \caption{Almacenamiento del recorrido}
@@ -198,7 +198,7 @@ El despliegue en Render y el uso de SMTP fuera de Mailpit requieren cuentas y cr
 \section{Conclusiones y trabajo futuro}
 Remata ejecuta el recorrido de búsqueda, compra e historial con avisos al cliente. Los registros muestran qué perfiles y rutas satisfacen o exceden el objetivo temporal. Los principales elementos para reproducir la evaluación son el guion k6, las salidas JaCoCo, las imágenes del flujo real y las instrucciones Windows.
 
-Las siguientes tareas comprenden verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
+Las siguientes tareas comprenden estudiar la publicación de lotes desiertos como venta directa mediante un evento idempotente por identificador de lote, verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
 
 \clearpage
 \section{Ampliación y verificación de Subastas}
@@ -231,6 +231,14 @@ Newman ejecutó 80 peticiones y 238 aserciones. Nueve superaron el umbral, con u
 
 La verificación final ejecutó 86 pruebas Java y 12 pruebas React sin fallos. JaCoCo midió 84,00\,\% de líneas en Auth, 88,39\,\% en Catálogo, 82,95\,\% en Notificaciones y 98,97\,\% en Subastas. Estas cifras combinan pruebas de unidad e integración.
 
+\subsection{Catálogo general y experiencia compartida}
+Remata mapea las categorías de las API a nueve grupos principales desde el frontend. Un mismo buscador separa los resultados por modalidad; las fichas proponen hasta tres artículos del mismo grupo en la otra modalidad. Los vehículos completos permanecen como lotes simulados. Los accesorios de moto se venden por precio fijo. Mi cuenta agrupa compras, pujas, adjudicaciones y avisos de la identidad autenticada.
+
+La comprobación en PostgreSQL conservó la huella de las 45 filas de Tecnología y añadió 30 fichas generales. Se verificaron 75 productos y 21 lotes activos con 96 imágenes principales y cero SHA-256 repetidos. Las variantes ilustrativas de Tecnología se resuelven en la presentación sin editar las filas. Los destacados rotan y limitan a dos la representación de un grupo.
+
+Identidad emite el JWT; Catálogo y pedidos mantiene la unidad transaccional de inventario y compra; Subastas protege la puja y ordena el cierre; Notificaciones entrega los avisos. RabbitMQ desacopla los productores. Los adaptadores externos de Catálogo y Subastas consultan de forma asíncrona a Frankfurter y Nager.Date. La tasa vence a las seis horas y los festivos a las 24 horas. Los clientes tienen tiempo de conexión de un segundo, lectura de dos segundos, un reintento y un cortacircuito. El flujo monetario sigue expresándose en COP.
+
+\IfFileExists{metricas-remata.tex}{\input{metricas-remata.tex}}{}
 \begin{thebibliography}{00}
 \bibitem{micro} J. Lewis y M. Fowler, \emph{Microservices}, 2014. \url{https://martinfowler.com/articles/microservices.html}
 \bibitem{outbox} C. Richardson, \emph{Transactional outbox}. \url{https://microservices.io/patterns/data/transactional-outbox.html}

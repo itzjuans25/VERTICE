@@ -20,17 +20,14 @@ export function useMercado(cargar) {
 }
 
 async function productosDe(categoria, n) {
-  const disponibles = await catalogoApi.productos.categorias();
-  const listas = await Promise.all(categoria.tienda.filter(nombre => disponibles.includes(nombre)).map(nombre =>
-    catalogoApi.productos.explorar({ categoria: nombre, tamano: n, orden: 'recientes' })));
-  return listas.flatMap(lista => lista.items).sort((a,b) => b.id-a.id).slice(0,n);
+  return catalogoApi.productos.explorar({ categoria: categoria.tienda.join(','), tamano: n, orden:'relevancia' });
 }
 
 export function Recomendados({ categoria, lado }) {
   const cargar = React.useCallback(() => {
     if (!categoria) return Promise.resolve([]);
-    if (lado === 'subastas') return subastasApi.listar({ categoria: categoria.lote, tamano: 3 }).then(p => p.items);
-    return productosDe(categoria, 3);
+    if (lado === 'subastas') return subastasApi.listar({ grupo: categoria.lotes.join(','), tamano: 3 }).then(p => p.items);
+    return productosDe(categoria, 3).then(p => p.items);
   }, [categoria, lado]);
   const [estado] = useMercado(cargar);
   if (!estado.datos?.length) return null;
@@ -68,9 +65,8 @@ export function CategoriaMercado() {
   const subastas = parametros.get('ver') === 'subastas';
   const cargar = React.useCallback(async () => {
     if (!categoria) return { items: [], total: 0 };
-    if (subastas) return subastasApi.listar({ categoria: categoria.lote, tamano: 24 });
-    const items = await productosDe(categoria, 24);
-    return { items, total: items.length };
+    if (subastas) return subastasApi.listar({ grupo: categoria.lotes.join(','), tamano: 24 });
+    return productosDe(categoria, 24);
   }, [categoria, subastas]);
   useEffect(() => { document.title = tituloMarca(categoria?.nombre); }, [categoria]);
   if (!categoria) return <main className="tt-shell mercado-pagina"><h1>Categoría no encontrada</h1><Link to="/">Ver categorías</Link></main>;

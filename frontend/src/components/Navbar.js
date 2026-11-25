@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { FaSearch, FaShoppingCart } from 'react-icons/fa';
 import Logo from './Logo';
 import { isAdmin } from '../session';
+import { categoriasMercado } from '../categorias';
 import './Navbar.css';
 
 export default function Navbar({ user, onLogout, cartCount }) {
@@ -30,6 +31,9 @@ export default function Navbar({ user, onLogout, cartCount }) {
       <nav id="mercado-navigation" aria-label="Navegación principal" className={'nav-menu' + (abierto ? ' tech-open' : '')}>
         <NavLink to="/productos" className="nav-link">Tienda</NavLink>
         <NavLink to="/subastas" className="nav-link">Subastas</NavLink>
+        <details className="mercado-menu-categorias" key={ubicacion.key + '-categorias'}>
+          <summary>Categorías</summary><div>{categoriasMercado.map(c => <Link key={c.slug} to={'/categoria/' + c.slug}>{c.nombre}</Link>)}</div>
+        </details>
         {!isAdmin(user) && <NavLink to="/carrito" className="nav-link cart-link"><FaShoppingCart aria-hidden="true" /> Carrito
           {cartCount > 0 && <span className="mercado-contador">{cartCount}</span>}</NavLink>}
         {user ? <details className="mercado-cuenta" key={ubicacion.key}>

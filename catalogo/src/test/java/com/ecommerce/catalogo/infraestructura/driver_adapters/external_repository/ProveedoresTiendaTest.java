@@ -22,19 +22,18 @@ class ProveedoresTiendaTest {
     private final MockRestServiceServer servidor = MockRestServiceServer.bindTo(cliente).build();
 
     @Test
-    void mantieneUltimaRespuestaValidaTrasTimeoutYErrorHttp() {
+    void reintentaTimeoutYErrorHttpYConservaCacheVigente() {
         int ano = tienda.hoy().getYear();
         String actual = FESTIVOS.replace("{year}", String.valueOf(ano));
         String siguiente = FESTIVOS.replace("{year}", String.valueOf(ano + 1));
+        servidor.expect(requestTo(TASA)).andRespond(withException(new SocketTimeoutException()));
         servidor.expect(requestTo(TASA)).andRespond(withSuccess(
                 "{\"rate\":0.0003,\"date\":\"2026-11-20\"}", MediaType.APPLICATION_JSON));
+        servidor.expect(requestTo(actual)).andRespond(withStatus(HttpStatus.BAD_GATEWAY));
         servidor.expect(requestTo(actual)).andRespond(withSuccess(
                 "[{\"date\":\"" + ano + "-01-01\"}]", MediaType.APPLICATION_JSON));
         servidor.expect(requestTo(siguiente)).andRespond(withSuccess(
                 "[{\"date\":\"" + (ano + 1) + "-01-01\"}]", MediaType.APPLICATION_JSON));
-        servidor.expect(requestTo(TASA)).andRespond(withException(new SocketTimeoutException()));
-        servidor.expect(requestTo(actual)).andRespond(withStatus(HttpStatus.BAD_GATEWAY));
-        servidor.expect(requestTo(siguiente)).andRespond(withStatus(HttpStatus.BAD_GATEWAY));
 
         var proveedores = new ProveedoresTienda(tienda, TASA, FESTIVOS, cliente.build());
         proveedores.actualizar();

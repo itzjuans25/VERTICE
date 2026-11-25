@@ -32,7 +32,7 @@ async function main() {
       assert.ok(p.condicion === 'NUEVO' ? !p.grado : p.condicion === 'USADO' && ['A','B','C'].includes(p.grado), p.nombre);
       assert.ok(p.imagenUrl, p.nombre);
       for (const foto of [p.imagenUrl,p.imagenSecundariaUrl].filter(Boolean)) {
-        assert.match(foto, /^\/techtrade\//);
+        assert.match(foto, /^\/(techtrade|mercado)\//);
         const respuesta = await fetch(tienda + foto, { method: 'HEAD' });
         assert.ok(respuesta.ok && respuesta.headers.get('content-type')?.startsWith('image/'), foto);
       }
@@ -70,7 +70,7 @@ async function main() {
     assert.ok(contraste >= 4.5);
 
     await page.goto(tienda + '/register');
-    await page.locator('form').waitFor();
+    await page.locator('#contenido form').waitFor();
     await captura('registro');
     const campos = { nombre: 'Comprador de demostración', email, telefono: '303' + String(stamp).slice(-7),
       edad: '30', password, 'confirm-password': password };
@@ -86,7 +86,6 @@ async function main() {
     await page.waitForURL('**/productos');
 
     await page.locator('select[name="marca"]').selectOption(candidato.marca);
-    await page.locator('select[name="categoria"]').selectOption(candidato.categoria);
     await page.getByLabel('Condición').selectOption('USADO');
     await page.getByLabel('Buscar productos').fill(candidato.nombre);
     await page.getByRole('button', { name: 'Buscar', exact: true }).click();

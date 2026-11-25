@@ -19,5 +19,5 @@ FROM (VALUES
  (15,'Bolso de viaje compacto','Compartimiento principal amplio y correa ajustable. Imagen ilustrativa.','OTROS','NUEVO','{}','["/subastas/otros.webp"]',89000,6000,INTERVAL '2880 minutes'),
  (16,'Bolso de fin de semana','Tela resistente y bolsillos exteriores con cremallera. Imagen ilustrativa.','OTROS','NUEVO','{}','["/subastas/otros.webp"]',93000,6000,INTERVAL '4320 minutes')
 ) AS v(numero,titulo,descripcion,categoria,condicion,atributos,imagenes,precio,incremento,duracion)
-WHERE NOT EXISTS (SELECT 1 FROM subasta_lotes WHERE semilla IS NOT NULL AND estado IN ('PROGRAMADA','ACTIVA') AND fin>CURRENT_TIMESTAMP)
+WHERE NOT EXISTS (SELECT 1 FROM subasta_lotes WHERE semilla LIKE 'demo-%' AND estado IN ('PROGRAMADA','ACTIVA') AND fin>CURRENT_TIMESTAMP)
 ON CONFLICT (semilla) DO NOTHING;

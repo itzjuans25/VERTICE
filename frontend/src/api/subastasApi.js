@@ -5,6 +5,9 @@ const base = '/api/ecommerce/subastas';
 const call = (path, options) => request(config.SUBASTAS_URL, base + path, options);
 
 export const subastasApi = {
+  inicio: () => request(config.SUBASTAS_URL, '/api/subastas/inicio', { auth:false }),
+  precioUsd: id => request(config.SUBASTAS_URL, '/api/subastas/lote/' + id + '/precio-usd', { auth:false }),
+  entrega: () => request(config.SUBASTAS_URL, '/api/subastas/entrega', { auth:false, query:{ diasHabiles:3 } }),
   listar: query => call('', { query }),
   detalle: id => call('/' + id),
   crear: body => call('', { method: 'POST', body }),

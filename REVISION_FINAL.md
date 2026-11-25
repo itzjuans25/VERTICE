@@ -1,5 +1,17 @@
 # Revisión final de Remata
 
+## Remata · Compra directa y subastas
+
+El símbolo, los iconos PNG y la imagen social se integraron desde el kit adjunto. La marca y los colores de la aplicación se editan en `frontend/src/marca.js`. La navegación, los filtros y las fichas usan nueve categorías compartidas. Tienda vende a precio fijo y Subastas adjudica con pago simulado. Los vehículos completos se publican como lotes.
+
+La revisión de PostgreSQL contó 75 productos. La huella de las 45 fichas históricas coincide antes y después del despliegue. Los 30 SKU generales insertan una sola vez. Hay 21 lotes activos que representan los nueve grupos. Se eliminaron las pujas, adjudicaciones y lotes que coincidían con los prefijos automáticos de las pruebas anteriores. Las 96 imágenes principales de artículos visibles arrojaron cero huellas SHA-256 repetidas. Las 26 variantes para fichas históricas se resuelven en la interfaz. [Base de datos](resultados/remata-datos.json) · [Imágenes](resultados/remata-imagenes.json)
+
+Pasaron 90 pruebas Java. Cobertura de líneas de JaCoCo: Auth 82,44 %, Catálogo 86,97 %, Notificaciones 81,76 % y Subastas 89,00 %. [Medición](resultados/remata-cobertura.json). El primer intento de Notificaciones alcanzó aproximadamente 77 %. Las pruebas del historial paginado y del JWT elevaron la cobertura. La suite de verificación incluye pruebas de integración. Un análisis de cobertura exclusivamente unitaria requiere una medición adicional.
+
+La compra sintética 2550 registró stock de 1 a 0 y entregó el correo de confirmación en Mailpit. El lote 162 comprobó dos postores, puja superada, adjudicación y pago simulado. Newman hizo 86 peticiones y 256 aserciones, con dos incumplimientos de tiempo y máximo de 846 ms. [Compra](resultados/remata-compra-e2e.json) · [Subasta](resultados/remata-puja.json) · [Newman](resultados/remata-postman.json)
+
+Los identificadores históricos de archivo y los resultados del apartado anterior a Remata siguen disponibles para comparar. El evento que traslada lotes desiertos a la tienda queda como trabajo futuro.
+
 ## Rama subastas, 24 de noviembre de 2026
 
 - La etiqueta `version-estable` conserva la entrega del 22 de noviembre. El cuarto servicio se integra en la rama `subastas`, con JWT de Auth y PostgreSQL compartido.

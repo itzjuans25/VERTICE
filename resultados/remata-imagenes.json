@@ -1,0 +1,39 @@
+{
+  "productos": 75,
+  "lotesActivos": 21,
+  "imagenes": 96,
+  "duplicadas": [],
+  "categoriasTienda": [
+    "Accesorios de moto",
+    "Almacenamiento",
+    "Celulares y tablets",
+    "Coleccionables y arte",
+    "Computadores y clones",
+    "Consolas",
+    "Deportes y aire libre",
+    "Fuentes y cajas",
+    "Herramientas",
+    "Hogar y cocina",
+    "Joyería y accesorios",
+    "Memoria RAM",
+    "Moda y bolsos",
+    "Periféricos",
+    "Placas base",
+    "Procesadores",
+    "Redes y accesorios",
+    "Relojes",
+    "Tarjetas gráficas"
+  ],
+  "categoriasSubastas": [
+    "CARROS",
+    "COLECCIONABLES",
+    "DEPORTES",
+    "ELECTRONICA",
+    "HERRAMIENTAS",
+    "HOGAR",
+    "JOYERIA",
+    "MOTOS",
+    "OTROS",
+    "RELOJES"
+  ]
+}

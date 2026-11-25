@@ -1,0 +1,106 @@
+{
+  "Caja Q300L Micro-ATX": {
+    "original": "/techtrade/torre.webp",
+    "archivo": "/mercado/store-027.webp"
+  },
+  "Caja H510 de segunda mano": {
+    "original": "/techtrade/torre.webp",
+    "archivo": "/mercado/store-028.webp"
+  },
+  "Portátil IdeaPad Slim 3": {
+    "original": "/techtrade/portatil.webp",
+    "archivo": "/mercado/store-004.webp"
+  },
+  "Procesador Core i3-10100": {
+    "original": "/techtrade/cpu.webp",
+    "archivo": "/mercado/store-006.webp"
+  },
+  "Procesador Core i5-12400F": {
+    "original": "/techtrade/cpu.webp",
+    "archivo": "/mercado/store-007.webp"
+  },
+  "Procesador Ryzen 5 3600": {
+    "original": "/techtrade/cpu.webp",
+    "archivo": "/mercado/store-008.webp"
+  },
+  "Memoria portátil 8 GB DDR4": {
+    "original": "/techtrade/ram.webp",
+    "archivo": "/mercado/store-010.webp"
+  },
+  "Kit Vengeance 32 GB DDR5": {
+    "original": "/techtrade/ram.webp",
+    "archivo": "/mercado/store-011.webp"
+  },
+  "Kit Ripjaws V 16 GB DDR4": {
+    "original": "/techtrade/ram.webp",
+    "archivo": "/mercado/store-012.webp"
+  },
+  "SSD SATA 860 EVO de 500 GB": {
+    "original": "/techtrade/ssd.webp",
+    "archivo": "/mercado/store-014.webp"
+  },
+  "Disco duro Blue de 2 TB": {
+    "original": "/techtrade/ssd.webp",
+    "archivo": "/mercado/store-015.webp"
+  },
+  "SSD SATA MX500 de 1 TB": {
+    "original": "/techtrade/ssd.webp",
+    "archivo": "/mercado/store-016.webp"
+  },
+  "Tarjeta GeForce GTX 1650 Ventus XS": {
+    "original": "/techtrade/gpu.webp",
+    "archivo": "/mercado/store-018.webp"
+  },
+  "Tarjeta Radeon RX 6600 Pulse": {
+    "original": "/techtrade/gpu.webp",
+    "archivo": "/mercado/store-019.webp"
+  },
+  "Tarjeta GeForce RTX 3050 de 6 GB": {
+    "original": "/techtrade/gpu.webp",
+    "archivo": "/mercado/store-020.webp"
+  },
+  "Placa Prime H410M-E": {
+    "original": "/techtrade/board.webp",
+    "archivo": "/mercado/store-022.webp"
+  },
+  "Placa PRO H610M-G DDR4": {
+    "original": "/techtrade/board.webp",
+    "archivo": "/mercado/store-023.webp"
+  },
+  "Placa A320M-K": {
+    "original": "/techtrade/board.webp",
+    "archivo": "/mercado/store-024.webp"
+  },
+  "Fuente MWE 550 Bronze V2": {
+    "original": "/techtrade/fuente.webp",
+    "archivo": "/mercado/store-026.webp"
+  },
+  "Celular Galaxy A34 5G": {
+    "original": "/techtrade/celular.webp",
+    "archivo": "/mercado/store-035.webp"
+  },
+  "Tablet Galaxy Tab A8": {
+    "original": "/techtrade/tablet.webp",
+    "archivo": "/mercado/store-037.webp"
+  },
+  "Consola PlayStation 4 Slim de 1 TB": {
+    "original": "/techtrade/consola.webp",
+    "archivo": "/mercado/store-039.webp"
+  },
+  "Consola Switch Lite": {
+    "original": "/techtrade/consola.webp",
+    "archivo": "/mercado/store-040.webp"
+  },
+  "Consola Xbox One S de 1 TB": {
+    "original": "/techtrade/consola.webp",
+    "archivo": "/mercado/store-041.webp"
+  },
+  "Conmutador GS105 de cinco puertos": {
+    "original": "/techtrade/router.webp",
+    "archivo": "/mercado/store-043.webp"
+  },
+  "Enrutador Archer C6": {
+    "original": "/techtrade/router.webp",
+    "archivo": "/mercado/store-044.webp"
+  }
+}

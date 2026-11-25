@@ -3,7 +3,7 @@ param([switch]$Docker, [switch]$SinNavegador, [switch]$Recompilar)
 
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
-Write-Host "Remata | Tienda y subastas"
+Write-Host "Remata | Compra directa y subastas"
 . (Join-Path $PSScriptRoot 'scripts/windows-local.ps1')
 
 if ($Docker) {
@@ -46,6 +46,7 @@ if ($Docker) {
     if (-not $env:ERLANG_HOME) { $env:ERLANG_HOME = Join-Path $env:ProgramFiles 'Erlang OTP' }
     if (-not (Test-Path (Join-Path $env:ERLANG_HOME 'bin/erl.exe'))) { throw 'Falta Erlang OTP o ERLANG_HOME.' }
 
+    Stop-EcommerceProcesses
     $services = [ordered]@{ auth = 'auth'; catalogo = 'catalogo'; notificaciones = 'notificaciones'; subastas = 'subastas' }
     foreach ($service in $services.Keys) {
         $location = $services[$service]
@@ -68,7 +69,6 @@ if ($Docker) {
         } finally { Pop-Location }
     }
 
-    Stop-EcommerceProcesses
     $processes = [Collections.Generic.List[object]]::new()
     function Start-EcommerceProcess($Name, $File, $Arguments, $Directory, $Control = '') {
         $process = Start-Process -FilePath $File -ArgumentList $Arguments -WorkingDirectory $Directory -WindowStyle Hidden -PassThru `

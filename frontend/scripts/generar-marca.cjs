@@ -5,8 +5,9 @@ const publico = path.join(__dirname, '..', 'public');
 const html = path.join(publico, 'index.html');
 const { colores, simbolo } = marca;
 const escape = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-const paths = '<path d="' + simbolo.etiqueta + '" fill="' + colores.accent + '"/><path d="' + simbolo.trazo + '" fill="none" stroke="' + colores.text + '" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/>';
-const favicon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="' + colores.background + '"/>' + paths + '</svg>';
+const rect = ([x,y,w,h,rx]) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + rx + '"/>';
+const paths = '<g fill="' + colores.accent + '" transform="rotate(-38 32 26)">' + simbolo.martillo.map(rect).join('') + '</g><g fill="' + colores.text + '">' + rect(simbolo.base) + '</g>';
+const favicon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + simbolo.vista + '"><rect width="64" height="64" rx="12" fill="' + colores.background + '"/>' + paths + '</svg>';
 fs.writeFileSync(path.join(publico, 'favicon.svg'), favicon + '\n');
 const meta = [
   '<meta name="theme-color" content="' + colores.background + '" />',

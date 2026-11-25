@@ -77,6 +77,10 @@ public class RepositorioJdbc implements RepositorioSubastas {
             filtro.append(" AND categoria=:categoria");
             parametros.put("categoria",f.categoria().name());
         }
+        if (!f.grupo().isEmpty()) {
+            filtro.append(" AND categoria IN (:grupo)");
+            parametros.put("grupo",f.grupo().stream().map(Enum::name).toList());
+        }
         if (f.condicion() != null) {
             filtro.append(" AND condicion=:condicion");
             parametros.put("condicion",f.condicion().name());
@@ -102,6 +106,17 @@ public class RepositorioJdbc implements RepositorioSubastas {
         jdbc.sql("INSERT INTO subasta_pujas(lote_id,usuario_id,monto,fecha) VALUES (:lote,:usuario,:monto,:fecha)")
                 .param("lote",p.loteId()).param("usuario",p.usuarioId()).param("monto",p.monto())
                 .param("fecha",fecha(p.fecha())).update();
+    }
+
+    @Override
+    public Inicio inicio(Instant ahora) {
+        var vigentes = " WHERE estado='ACTIVA' AND inicio<=:ahora AND fin>:ahora";
+        var fecha = fecha(ahora);
+        var lotes = jdbc.sql("SELECT * FROM subasta_lotes" + vigentes + " ORDER BY fin,id LIMIT 8")
+                .param("ahora", fecha).query(this::mapear).list();
+        var categorias = jdbc.sql("SELECT categoria,count(*) FROM subasta_lotes" + vigentes + " GROUP BY categoria ORDER BY categoria")
+                .param("ahora", fecha).query((r,n) -> new CategoriaActiva(Lote.Categoria.valueOf(r.getString(1)), r.getLong(2))).list();
+        return new Inicio(lotes,categorias,categorias.stream().mapToLong(CategoriaActiva::total).sum());
     }
 
     public List<Puja> historial(long id) {
@@ -141,11 +156,11 @@ public class RepositorioJdbc implements RepositorioSubastas {
                 """).param("ahora",fecha(ahora)).param("pronto",fecha(ahora.plusSeconds(600))).query(Long.class).list();
     }
 
-    public void avisar(String clave, String destino, String asunto, String mensaje) {
+    public void avisar(String clave, Long usuarioId, String destino, String asunto, String mensaje) {
         jdbc.sql("""
-                INSERT INTO subasta_avisos(clave,destino,asunto,mensaje) VALUES(:clave,:destino,:asunto,:mensaje)
+                INSERT INTO subasta_avisos(clave,usuario_id,destino,asunto,mensaje) VALUES(:clave,:usuario,:destino,:asunto,:mensaje)
                 ON CONFLICT (clave) DO NOTHING
-                """).param("clave",clave).param("destino",destino).param("asunto",asunto).param("mensaje",mensaje).update();
+                """).param("clave",clave).param("usuario",usuarioId).param("destino",destino).param("asunto",asunto).param("mensaje",mensaje).update();
     }
 
     private Lote mapear(ResultSet r,int fila) throws SQLException {

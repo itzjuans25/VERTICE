@@ -1,0 +1,20 @@
+{
+  "pedido": 2550,
+  "totalCop": 95000,
+  "estado": "COMPLETADA",
+  "correo": "Confirmacion de Compra #2550 · Remata",
+  "fechaCorreo": "2026-11-24T23:54:48.237-05:00",
+  "anchosVerificados": [
+    390,
+    768,
+    1440
+  ],
+  "productosVerificados": 76,
+  "producto": "Equipo de prueba 1795582477",
+  "cambioClaveYReingreso": true,
+  "cierreYRutaProtegida": true,
+  "calendario": "3 días hábiles. Excluye fines de semana y festivos de Colombia · Nager.Date.",
+  "stockAntes": 1,
+  "stockDespues": 0,
+  "contrasteBuscador": 17.66
+}

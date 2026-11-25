@@ -149,7 +149,7 @@ public class CompraUseCase implements CompraService {
         String texto = "Pedido #" + compra.getId() + ": " + compra.getEstado();
         var mensaje = MensajeNotificacion.builder()
                 .tipo(MensajeNotificacion.TipoNotificacion.EMAIL)
-                .email(NotificacionEmail.builder().destinatario(usuario.getEmail()).asunto(asunto).cuerpo(texto).build())
+                .email(NotificacionEmail.builder().usuarioId(usuario.getId()).destinatario(usuario.getEmail()).asunto(asunto).cuerpo(texto).build())
                 .build();
         if (usuario.getTelefono() != null && !usuario.getTelefono().isBlank()) {
             mensaje.setTipo(MensajeNotificacion.TipoNotificacion.AMBOS);
@@ -167,7 +167,7 @@ public class CompraUseCase implements CompraService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
             NotificacionEmail email = NotificacionEmail.builder()
-                    .destinatario(usuario.getEmail())
+                    .usuarioId(usuario.getId()).destinatario(usuario.getEmail())
                     .asunto("Confirmacion de Compra #" + compra.getId() + " · Remata")
                     .cuerpo("<h1>Compra confirmada</h1>"
                             + "<p>Hola " + usuario.getNombre() + ",</p>"

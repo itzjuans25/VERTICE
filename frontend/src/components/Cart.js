@@ -213,7 +213,7 @@ function Cart({ setCartCount }) {
                 <div key={item.id} className="cart-item">
                   <div className="item-image">
                     {item.imagenUrl ? (
-                      <img src={imagenProducto(item.imagenUrl)} alt={item.nombreProducto} />
+                      <img src={imagenProducto(item.imagenUrl,item.nombreProducto)} alt={item.nombreProducto} />
                     ) : (
                       <FaBox />
                     )}

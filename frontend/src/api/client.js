@@ -2,6 +2,24 @@ import config from '../config';
 import { clearSession, getAccessToken } from '../session';
 
 export const SESSION_EXPIRED_EVENT = 'session:expired';
+export const SERVIDOR_LENTO_EVENT = 'servidor:lento';
+let solicitudesLentas = 0;
+let calentado = false;
+
+function publicarDemora(cambio) {
+  solicitudesLentas += cambio;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(SERVIDOR_LENTO_EVENT,{ detail:solicitudesLentas > 0 }));
+  }
+}
+
+export function despertarServicios() {
+  if (calentado) return;
+  calentado = true;
+  [config.AUTH_URL,config.CATALOGO_URL,config.SUBASTAS_URL,config.NOTIFICACIONES_URL].forEach(base => {
+    fetch(base + '/health',{ method:'GET', mode:'no-cors', cache:'no-store' }).catch(() => {});
+  });
+}
 
 export class ApiError extends Error {
   constructor(message, { status = 0, payload = null } = {}) {
@@ -112,42 +130,39 @@ export async function request(baseUrl, path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  let response;
+  let lenta = false;
+  const indicador = setTimeout(() => { lenta = true; publicarDemora(1); },3000);
+  const segura = ['GET','HEAD'].includes(method.toUpperCase());
   try {
-    response = await fetch(url, {
-      method,
-      headers,
-      body: multipart ? body : body !== undefined ? JSON.stringify(body) : undefined,
-      signal: controller.signal,
-    });
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      throw new ApiError('La solicitud tardo demasiado. Intenta de nuevo.');
-    }
-    throw new ApiError(
-      'No se pudo conectar con el servidor. Verifica que este en ejecucion.'
-    );
-  } finally {
-    clearTimeout(timeoutId);
-  }
-
-  const payload = await parseResponse(response);
-
-  if (!response.ok) {
-    if (response.status === 401 && token) {
-      clearSession();
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+    for (let intento=0;intento<=Number(segura);intento++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(),timeoutMs);
+      let response;
+      try {
+        response = await fetch(url,{
+          method, headers, body:multipart ? body : body !== undefined ? JSON.stringify(body) : undefined,
+          signal:controller.signal,
+        });
+      } catch (error) {
+        if (error.name === 'AbortError' && segura && intento === 0) continue;
+        throw new ApiError(error.name === 'AbortError' ? 'La solicitud tardó demasiado. Intenta de nuevo.'
+          : 'No se pudo conectar con el servidor.');
+      } finally {
+        clearTimeout(timeoutId);
       }
+      if (response.status === 503 && segura && intento === 0) continue;
+      const payload = await parseResponse(response);
+      if (!response.ok) {
+        if (response.status === 401 && token) {
+          clearSession();
+          if (typeof window !== 'undefined') window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+        }
+        throw new ApiError(extractMessage(payload,response.status),{ status:response.status, payload });
+      }
+      return payload;
     }
-    throw new ApiError(extractMessage(payload, response.status), {
-      status: response.status,
-      payload,
-    });
+  } finally {
+    clearTimeout(indicador);
+    if (lenta) publicarDemora(-1);
   }
-
-  return payload;
 }

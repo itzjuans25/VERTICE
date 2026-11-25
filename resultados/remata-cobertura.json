@@ -1,0 +1,34 @@
+{
+  "auth": {
+    "pruebas": 24.0,
+    "errores": 0.0,
+    "fallos": 0.0,
+    "cubiertas": 399,
+    "total": 484,
+    "porcentaje": 82.44
+  },
+  "catalogo": {
+    "pruebas": 33.0,
+    "errores": 0.0,
+    "fallos": 0.0,
+    "cubiertas": 828,
+    "total": 952,
+    "porcentaje": 86.97
+  },
+  "notificaciones": {
+    "pruebas": 24.0,
+    "errores": 0.0,
+    "fallos": 0.0,
+    "cubiertas": 251,
+    "total": 307,
+    "porcentaje": 81.76
+  },
+  "subastas": {
+    "pruebas": 9.0,
+    "errores": 0.0,
+    "fallos": 0.0,
+    "cubiertas": 356,
+    "total": 400,
+    "porcentaje": 89.0
+  }
+}

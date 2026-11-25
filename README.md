@@ -1,6 +1,11 @@
-# Remata
+# Remata · Compra directa y subastas
 
-Tienda colombiana de computadores, componentes y electrónica nueva y usada, con subastas de ocho categorías. La tienda administra el inventario, publica los lotes y atiende los pedidos. El nombre del repositorio sigue siendo ECOMMERCE_FRANK.
+Tienda general en Colombia con dos modalidades. En **Tienda** pagas el precio fijo publicado. En **Subastas** haces una oferta y, si ganas, confirmas un pago simulado. Las dos modalidades comparten navegación, categorías, buscador y cuenta. Los vehículos completos se ofrecen en Subastas. En Tienda hay accesorios de moto.
+
+El catálogo conserva 45 fichas de Tecnología y añade 30 productos en ocho categorías principales. [Mapa compartido](frontend/src/categorias.js) agrupa las categorías de Catálogo y Subastas sin cambiar sus textos históricos. La portada muestra conteos por modalidad y rota los destacados con un máximo de dos productos por grupo.
+
+Los cuatro contextos son Identidad, Catálogo y pedidos, Subastas y Notificaciones. Catálogo comparte inventario, carrito y pedidos para registrar el descuento y la confirmación en una sola transacción local. No hay un gateway. Subastas administra pujas y adjudicaciones. Los avisos viajan por RabbitMQ.
+
 
 ## Arranque en Windows
 
@@ -37,6 +42,7 @@ flowchart LR
   UI[React] --> A[Auth]
   UI --> C[Catálogo]
   UI --> S[Subastas]
+  UI --> N[Notificaciones]
   C --> A
   A --> PG[(PostgreSQL)]
   C --> PG
@@ -49,11 +55,13 @@ flowchart LR
   N --> SMTP[Mailpit o Brevo]
   C --> FX[Frankfurter]
   C --> F[Nager.Date]
+  S --> FX
+  S --> F
 ```
 
 ## Recorrido de subasta
 
-Abre **Subastas** y filtra por nombre, categoría, condición o rango de precio. En la ficha puedes consultar la puja mínima y el historial anonimizado. Con una cuenta inicia una puja. Si otra cuenta ofrece un monto superior, el primer postor recibe un correo. Cada oferta aceptada en los últimos 2 minutos extiende el cierre otros 2 minutos. En **Mis pujas** se muestran las ofertas propias y las adjudicaciones. El ganador confirma un pago simulado. Las fotos locales son ilustrativas y los vehículos y joyas son lotes ficticios. Hay dos lotes por cada una de las ocho categorías.
+Abre **Subastas** y filtra por nombre, categoría, condición o rango de precio. En la ficha puedes consultar la puja mínima y el historial anonimizado. Con una cuenta inicia una puja. Si otra cuenta ofrece un monto superior, el primer postor recibe un correo. Cada oferta aceptada en los últimos 2 minutos extiende el cierre otros 2 minutos. En **Mis pujas** se muestran las ofertas propias y las adjudicaciones. El ganador confirma un pago simulado. Las fotos locales son ilustrativas y los vehículos y joyas son lotes ficticios. Los 16 lotes históricos se complementan con ejemplos que mantienen representadas las nueve categorías principales.
 
 Las rutas se agrupan bajo `/api/ecommerce/subastas`.
 
@@ -89,7 +97,14 @@ En pgAdmin usa host `127.0.0.1`, puerto `55432`, base `ecommerce` y usuario `eco
 | Catálogo | `GET /producto/explorar` filtra y pagina, `GET /producto/{id}/precio-usd` convierte moneda, `GET /producto/entrega` estima días hábiles, `GET /carrito/resumen` calcula totales y `POST /compras/realizar` aplica inventario y registra el pedido. Prefijo `/api/ecommerce`. |
 | Notificaciones | `POST /validar` revisa el mensaje, `POST /previsualizar/bienvenida` y `POST /previsualizar/compra` renderizan correos, `GET /plan-reintentos` devuelve esperas y `POST /encolar` acepta y guarda el aviso con clave de servicio. Prefijo `/api/ecommerce/notificaciones`. |
 
-Frankfurter actualiza la tasa COP/USD en segundo plano. Sin una tasa vigente, la conversión devuelve 503. Nager.Date entrega festivos de Colombia. Si falta un año necesario, la fecha estimada indica que es parcial. Los dos adaptadores usan caché y límites de conexión y lectura de 2 s. [Frankfurter](https://frankfurter.dev/) · [Nager.Date](https://date.nager.at/)
+| Proveedor | Dónde se usa | Vigencia y fallback |
+| --- | --- | --- |
+| [Frankfurter](https://frankfurter.dev/) | USD en la ficha de Tienda y de Subastas. Historial de pujas con la tasa vigente. | 6 h. Catálogo responde 503 sin tasa válida. Subastas devuelve `disponible:false`. |
+| [Nager.Date](https://date.nager.at/) | Entrega del carrito, ficha de lote y adjudicación. | 24 h por año. Sin calendario vigente se calcula con lunes a viernes y se indica «Calendario parcial». |
+
+Los dos servicios consultan en segundo plano con 1 s de conexión, 2 s de lectura, un reintento y un cortacircuito de 60 s tras tres fallos consecutivos. El precio en COP, la compra y la puja conservan su funcionamiento.
+
+`GET /api/ecommerce/inicio` y `GET /api/subastas/inicio` alimentan la portada con caché de 30 y 15 segundos. La cuenta expone perfil en `/api/auth/perfil` y avisos paginados de la identidad firmada en `/api/notificaciones/mis-avisos`. Las fichas cruzan enlaces a la misma categoría principal. La conversión de una subasta desierta en una venta directa se deja para una fase futura.
 
 Para verlas en la tienda, abre cualquier ficha y mira la **referencia en USD** debajo del precio en pesos. Luego agrega un producto y abre el **carrito**. El resumen muestra la **fecha estimada** para tres días hábiles con el calendario colombiano. Si una consulta falla, el precio en COP y la confirmación de compra siguen disponibles.
 
@@ -106,7 +121,7 @@ Importa la colección y elige **Local**. Guarda credenciales administrativas y c
 <!-- RESULTADOS TECHSTORE -->
 Pasaron **76 pruebas Java** y **12 React**. JaCoCo de líneas en la suite Java completa: **Auth 85,28 %, Catálogo 88,49 %, Notificaciones 82,95 %**.
 
-El pedido #2151 de Portátil ThinkPad T480 por 850.000 COP se confirmó en el navegador y se encontró el correo correspondiente en Mailpit.
+Como antecedente, el pedido #2151 de Portátil ThinkPad T480 por 850.000 COP se confirmó en el navegador y se encontró el correo correspondiente en Mailpit.
 
 Newman ejecutó 48 peticiones y 145 aserciones. Hubo 0 aserciones fallidas en la corrida de revisión, con máximo 194,00 ms. En la primera corrida de la revisión hubo 2 fallos de tiempo y un máximo de 1354,00 ms.
 

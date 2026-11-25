@@ -55,7 +55,7 @@ public class GestionSubastas implements Subastas {
             var nueva = repo.actualizar(lote.ofertar(actor.id(), actor.email(), monto, ahora));
             repo.registrar(new Puja(id, actor.id(), monto, ahora));
             if (lote.ganadorEmail() != null) {
-                repo.avisar("superada:" + id + ":" + nueva.version(), lote.ganadorEmail(), "Puja superada",
+                repo.avisar("superada:" + id + ":" + nueva.version(), lote.ganadorId(), lote.ganadorEmail(), "Puja superada",
                         "Otra persona ofreció más en " + lote.titulo() + ".");
             }
             return nueva;
@@ -64,6 +64,9 @@ public class GestionSubastas implements Subastas {
 
     @Override
     public MisPujas mias(Actor actor) { return repo.mias(actor.id()); }
+
+    @Override
+    public Inicio inicio() { return repo.inicio(reloj.instant()); }
 
     @Override
     public Lote cancelar(Actor actor, long id) {
@@ -101,7 +104,7 @@ public class GestionSubastas implements Subastas {
                     cerrar(lote);
                 } else if (!ahora.plusSeconds(600).isBefore(lote.fin())) {
                     String destino = lote.ganadorEmail() == null ? lote.tiendaEmail() : lote.ganadorEmail();
-                    repo.avisar("vence:" + id, destino, "Subasta por terminar",
+                    repo.avisar("vence:" + id, lote.ganadorId(), destino, "Subasta por terminar",
                             "Quedan diez minutos o menos para " + lote.titulo() + ".");
                 }
                 return null;
@@ -112,13 +115,13 @@ public class GestionSubastas implements Subastas {
     private void cerrar(Lote lote) {
         var cerrada = repo.actualizar(lote.cambiar(Estado.CERRADA));
         if (cerrada.ganadorId() == null) {
-            repo.avisar("sin-ganador:" + lote.id(), lote.tiendaEmail(), "Subasta cerrada sin ganador",
+            repo.avisar("sin-ganador:" + lote.id(), null, lote.tiendaEmail(), "Subasta cerrada sin ganador",
                     lote.titulo() + " cerró sin pujas.");
             return;
         }
         repo.adjudicar(cerrada);
         repo.actualizar(cerrada.cambiar(Estado.ADJUDICADA));
-        repo.avisar("ganada:" + lote.id(), cerrada.ganadorEmail(), "Subasta ganada",
+        repo.avisar("ganada:" + lote.id(), cerrada.ganadorId(), cerrada.ganadorEmail(), "Subasta ganada",
                 "Ganaste " + lote.titulo() + ". Puedes confirmar el pago simulado en Mis pujas.");
     }
 

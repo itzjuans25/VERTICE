@@ -1,0 +1,20 @@
+{
+  "peticiones": 86,
+  "peticionesFallidas": 0,
+  "aserciones": 256,
+  "asercionesFallidas": 2,
+  "promedioMs": 100.90697674418603,
+  "maximoMs": 846.0,
+  "fallos": [
+    {
+      "caso": "Auth Swagger JSON",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 846 to be below 500"
+    },
+    {
+      "caso": "Validar correo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 543 to be below 500"
+    }
+  ]
+}

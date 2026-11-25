@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { imagenProducto } from '../api/catalogoApi';
 import { nombresCategorias } from '../categorias';
+import { pesos } from '../marca';
 
-export const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 2, minimumFractionDigits: 0 });
+export const cop = pesos;
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
 
 export function Cierre({ lote }) {
@@ -35,7 +36,7 @@ export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
   const ficha = lote ? nombresCategorias[item.categoria] : producto.categoria;
   return <article className="tt-card product-card mercado-card">
     <Link className="tt-card-image" to={enlace} tabIndex={-1} aria-hidden="true">
-      <img src={lote ? lote.imagenes[0] : imagenProducto(producto.imagenUrl)} alt="" width="424" height="318" loading="lazy" />
+      <img src={lote ? lote.imagenes[0] : imagenProducto(producto.imagenUrl,producto.nombre)} alt="" width="424" height="318" loading="lazy" />
     </Link>
     <div className="tt-card-body">
       <div className="tt-etiquetas"><span>{condicion}</span>{producto?.grado && <span>Grado {producto.grado}</span>}</div>
@@ -70,6 +71,7 @@ export function FiltrosMercado({ valores = {}, categorias, marcas, lote = false,
     <label>Hasta (COP)<input name="maximo" type="number" min="0" defaultValue={valores.maximo} /></label>
     {!lote && <label>Orden<select name="orden" defaultValue={valores.orden || 'recientes'}>
       <option value="recientes">Más recientes</option><option value="precio-asc">Menor precio</option><option value="precio-desc">Mayor precio</option>
+      <option value="relevancia">Mejor disponibilidad</option>
     </select></label>}
     <div className="mercado-filtro-acciones"><button className="tt-button" type="submit">Buscar</button>
       {alLimpiar && <button type="button" className="tt-button tt-secondary" onClick={alLimpiar}>Limpiar</button>}</div>

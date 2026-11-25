@@ -48,10 +48,10 @@ class ProcesosSubastas {
     void publicar() {
         for (int i=0;i<10;i++) {
             Boolean enviado=repo.transaccion(()->jdbc.sql("""
-                    SELECT clave,destino,asunto,mensaje,intentos FROM subasta_avisos
+                    SELECT clave,destino,asunto,mensaje,intentos,usuario_id FROM subasta_avisos
                     WHERE enviado IS NULL AND reintentar<=CURRENT_TIMESTAMP
                     ORDER BY reintentar,clave LIMIT 1 FOR UPDATE SKIP LOCKED
-                    """).query((r,f)->new Aviso(r.getString(1),r.getString(2),r.getString(3),r.getString(4),r.getInt(5)))
+                    """).query((r,f)->new Aviso(r.getString(1),r.getString(2),r.getString(3),r.getString(4),r.getInt(5),r.getObject(6,Long.class)))
                     .optional().map(this::enviar).orElse(false));
             if (!Boolean.TRUE.equals(enviado)) return;
         }
@@ -59,7 +59,9 @@ class ProcesosSubastas {
 
     private boolean enviar(Aviso a) {
         try {
-            var correo=Map.of("destinatario",a.destino(),"asunto",a.asunto(),"cuerpo",a.mensaje(),"html",false);
+            var correo=new java.util.LinkedHashMap<String,Object>(Map.of("destinatario",a.destino(),
+                    "asunto",a.asunto(),"cuerpo",a.mensaje(),"html",false));
+            if (a.usuarioId()!=null) correo.put("usuarioId",a.usuarioId());
             var carga=json.writeValueAsBytes(Map.of("tipo","EMAIL","email",correo));
             var mensaje=MessageBuilder.withBody(carga).setContentType("application/json")
                     .setDeliveryMode(MessageDeliveryMode.PERSISTENT).setMessageId(a.clave()).build();
@@ -78,5 +80,5 @@ class ProcesosSubastas {
         return true;
     }
 
-    private record Aviso(String clave,String destino,String asunto,String mensaje,int intentos) {}
+    private record Aviso(String clave,String destino,String asunto,String mensaje,int intentos,Long usuarioId) {}
 }

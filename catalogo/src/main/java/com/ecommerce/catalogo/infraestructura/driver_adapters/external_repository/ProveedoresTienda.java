@@ -10,11 +10,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Duration;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,6 +30,9 @@ public class ProveedoresTienda {
     private final RestClient cliente;
     private final String frankfurter;
     private final String nager;
+    private final Clock reloj = Clock.systemUTC();
+    private final ProveedorEnCache<TasaDto> divisas = new ProveedorEnCache<>(reloj,Duration.ofHours(6));
+    private final Map<Integer,ProveedorEnCache<Set<LocalDate>>> calendario = new ConcurrentHashMap<>();
 
     @Autowired
     public ProveedoresTienda(InformacionTienda informacion,
@@ -44,35 +51,30 @@ public class ProveedoresTienda {
     // La latencia de Internet queda fuera del camino de las peticiones de la tienda.
     @Scheduled(fixedDelayString = "${app.integraciones.actualizacion-ms:300000}")
     public void actualizar() {
-        try {
-            TasaDto tasa = cliente.get().uri(frankfurter).retrieve().body(TasaDto.class);
-            if (tasa != null) {
-                informacion.actualizarTasa(tasa.rate(), tasa.date());
+        divisas.actualizar(() -> {
+            var tasa = cliente.get().uri(frankfurter).retrieve().body(TasaDto.class);
+            if (tasa == null || tasa.rate() == null || tasa.rate().signum() <= 0 || tasa.date() == null) {
+                throw new IllegalStateException("Tasa inválida");
             }
-        } catch (RestClientException ex) {
-            log.warn("Frankfurter no disponible: {}", ex.getClass().getSimpleName());
-        }
+            return tasa;
+        }).ifPresent(tasa -> informacion.actualizarTasa(tasa.rate(),tasa.date()));
         int ano = informacion.hoy().getYear();
         cargarFestivos(ano);
         cargarFestivos(ano + 1);
+        calendario.keySet().removeIf(anterior -> anterior < ano);
     }
 
     private void cargarFestivos(int ano) {
-        try {
+        calendario.computeIfAbsent(ano,a -> new ProveedorEnCache<>(reloj,Duration.ofHours(24))).actualizar(() -> {
             FestivoDto[] respuesta = cliente.get().uri(nager, ano).retrieve().body(FestivoDto[].class);
-            if (respuesta != null && respuesta.length > 0) {
-                informacion.actualizarFestivos(ano, Arrays.stream(respuesta)
-                        .map(FestivoDto::date)
-                        .collect(Collectors.toSet()));
-            }
-        } catch (RestClientException ex) {
-            log.warn("Nager.Date no disponible para {}: {}", ano, ex.getClass().getSimpleName());
-        }
+            if (respuesta == null || respuesta.length == 0) throw new IllegalStateException("Calendario vacío");
+            return Arrays.stream(respuesta).map(FestivoDto::date).collect(Collectors.toUnmodifiableSet());
+        }).ifPresent(fechas -> informacion.actualizarFestivos(ano,fechas));
     }
 
     private static RestClient clienteConTimeout() {
         var fabrica = new SimpleClientHttpRequestFactory();
-        fabrica.setConnectTimeout(2000);
+        fabrica.setConnectTimeout(1000);
         fabrica.setReadTimeout(2000);
         return RestClient.builder().requestFactory(fabrica).build();
     }

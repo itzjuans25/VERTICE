@@ -1,5 +1,11 @@
 # Auditoría Remata
 
+## Catálogo general
+
+Las dos modalidades comparten nueve categorías principales. El inventario histórico se verificó por huella de las 45 filas en PostgreSQL. El seed añadió 30 referencias y su segunda ejecución insertó cero filas. La revisión SHA-256 comparó las imágenes principales que muestra la interfaz para 75 productos y 21 lotes activos. Encontró cero repetidas. Los archivos de resultados explican el alcance de cada comprobación.
+
+[Datos PostgreSQL](../resultados/remata-datos.json) · [Imágenes](../resultados/remata-imagenes.json) · [Tienda y subastas](capturas/remata-tienda-y-subastas.png)
+
 ## Rama subastas
 
 | Requisito | Estado | Evidencia |

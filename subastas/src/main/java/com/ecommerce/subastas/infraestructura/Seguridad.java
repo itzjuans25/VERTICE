@@ -56,6 +56,7 @@ class Seguridad {
                 .authorizeHttpRequests(a->a
                         .requestMatchers("/health","/actuator/health","/actuator/health/**","/error","/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/ecommerce/subastas/mias").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/api/subastas/inicio","/api/subastas/lote/*/precio-usd","/api/subastas/entrega").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/ecommerce/subastas","/api/ecommerce/subastas/*").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(filtro,UsernamePasswordAuthenticationFilter.class).build();

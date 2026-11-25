@@ -76,11 +76,11 @@ Cuando aparezca `UPDATE 1`, cierra sesión y vuelve a entrar para que el nuevo J
 Con el entorno Windows nativo en ejecución y k6 instalado:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo carga -Resultado resultados/carga-techstore.json
-powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 6 -Resultado resultados/estres-6vu-techstore.json
-powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 8 -Resultado resultados/estres-techstore.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo carga -Resultado resultados/remata-k6-3.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 6 -Resultado resultados/remata-k6-6.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 8 -Resultado resultados/remata-k6-8.json
 ```
 
 Los perfiles crean datos sintéticos, incluidos pedidos. Ejecútalos en la base de desarrollo. Los JSON en `resultados` contienen una fila por ruta. Para cobertura ejecuta `mvnw.cmd clean verify` desde cada carpeta Java y abre `target/site/jacoco/index.html`.
 
-Para regenerar los datos del artículo TechStore ejecuta `python pruebas/generar-techstore.py` con Pillow, después de Maven, k6, Newman y la prueba de navegador. La fuente IEEEtran y sus tablas están en `docs/articulo`.
+Para regenerar los datos del artículo Remata ejecuta `python pruebas/generar-techstore.py` con Pillow, después de Maven, k6, Newman y la prueba de navegador. La fuente IEEEtran y sus tablas están en `docs/articulo`.

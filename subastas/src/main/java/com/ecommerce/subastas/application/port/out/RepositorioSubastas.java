@@ -13,6 +13,7 @@ public interface RepositorioSubastas {
     Optional<Lote> lote(long id, boolean bloquear);
     Lote actualizar(Lote lote);
     Pagina listar(Filtro filtro);
+    Inicio inicio(Instant ahora);
     void registrar(Puja puja);
     List<Puja> historial(long id);
     MisPujas mias(long usuario);
@@ -20,5 +21,5 @@ public interface RepositorioSubastas {
     void adjudicar(Lote lote);
     Orden pagar(long id, Instant fecha);
     List<Long> pendientes(Instant ahora);
-    void avisar(String clave, String destinatario, String asunto, String mensaje);
+    void avisar(String clave, Long usuarioId, String destinatario, String asunto, String mensaje);
 }

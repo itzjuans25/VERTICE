@@ -32,12 +32,13 @@ class SubastasController {
     PaginaPublica listar(@AuthenticationPrincipal Actor actor,
                          @RequestParam(required=false) @Size(max=100) String q,
                          @RequestParam(required=false) Lote.Categoria categoria,
+                         @RequestParam(required=false) @Size(max=12) List<Lote.Categoria> grupo,
                          @RequestParam(required=false) Lote.Condicion condicion,
                          @RequestParam(required=false) @DecimalMin("0") BigDecimal minimo,
                          @RequestParam(required=false) @DecimalMin("0") BigDecimal maximo,
                          @RequestParam(defaultValue="0") @Min(0) int pagina,
                          @RequestParam(defaultValue="12") @Min(1) @Max(48) int tamano) {
-        var resultado=subastas.listar(new Filtro(q,categoria,condicion,minimo,maximo,pagina,tamano));
+        var resultado=subastas.listar(new Filtro(q,categoria,condicion,minimo,maximo,pagina,tamano,grupo == null ? List.of() : grupo));
         return new PaginaPublica(resultado.items().stream().map(l->Publico.de(l,actor)).toList(),pagina,tamano,resultado.total());
     }
 
@@ -80,7 +81,7 @@ class SubastasController {
     record Formulario(@NotBlank @Size(max=150) String titulo,@NotBlank @Size(max=4000) String descripcion,
                       @NotNull Lote.Categoria categoria,@NotNull Lote.Condicion condicion,
                       @NotNull @Size(max=12) Map<@NotBlank @Size(max=40) String,@NotBlank @Size(max=100) String> atributos,
-                      @NotNull @Size(min=1,max=5) List<@NotBlank @Pattern(regexp="/subastas/[a-zA-Z0-9_-]+\\.(webp|png|jpg|svg)") String> imagenes,
+                      @NotNull @Size(min=1,max=5) List<@NotBlank @Pattern(regexp="/(?:subastas|mercado)/[a-zA-Z0-9_-]+\\.(webp|png|jpg|svg)") String> imagenes,
                       @NotNull @Digits(integer=13,fraction=2) @DecimalMin("1") BigDecimal precioInicial,
                       @NotNull @Digits(integer=13,fraction=2) @DecimalMin("1") BigDecimal incremento,
                       @NotNull Instant inicio,@NotNull Instant fin) {}

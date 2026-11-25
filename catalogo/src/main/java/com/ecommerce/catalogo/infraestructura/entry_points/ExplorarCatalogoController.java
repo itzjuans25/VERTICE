@@ -31,7 +31,9 @@ public class ExplorarCatalogoController {
 
     public static final List<String> CATEGORIAS = List.of(
             "Computadores y clones", "Procesadores", "Memoria RAM", "Almacenamiento", "Tarjetas gráficas",
-            "Placas base", "Fuentes y cajas", "Periféricos", "Celulares y tablets", "Consolas", "Redes y accesorios");
+            "Placas base", "Fuentes y cajas", "Periféricos", "Celulares y tablets", "Consolas", "Redes y accesorios",
+            "Relojes", "Joyería y accesorios", "Accesorios de moto", "Hogar y cocina",
+            "Deportes y aire libre", "Moda y bolsos", "Coleccionables y arte", "Herramientas");
 
     @GetMapping("/marcas")
     @Operation(summary = "Marcas de los productos disponibles en el catálogo")
@@ -52,10 +54,11 @@ public class ExplorarCatalogoController {
                            @RequestParam(required = false) BigDecimal minimo,
                            @RequestParam(required = false) BigDecimal maximo,
                            @RequestParam(defaultValue = "recientes") String orden) {
+        List<String> categorias = categoria.isBlank() ? List.of() : List.of(categoria.split(",",-1));
         if (pagina < 0 || pagina > 10000 || tamano < 1 || tamano > 48 || q.length() > 120
                 || minimo != null && minimo.signum() < 0 || maximo != null && maximo.signum() < 0
                 || minimo != null && maximo != null && minimo.compareTo(maximo) > 0
-                || !categoria.isEmpty() && !CATEGORIAS.contains(categoria)
+                || categorias.size() > CATEGORIAS.size() || !CATEGORIAS.containsAll(categorias)
                 || !condicion.isEmpty() && !Set.of("NUEVO", "USADO").contains(condicion)
                 || marca.length() > 80) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Revisa los parámetros de búsqueda");
@@ -65,6 +68,7 @@ public class ExplorarCatalogoController {
             case "recientes" -> recientes;
             case "precio-asc" -> Sort.by("precio").and(recientes);
             case "precio-desc" -> Sort.by(Sort.Direction.DESC, "precio").and(recientes);
+            case "relevancia" -> Sort.by(Sort.Direction.DESC,"stock","garantiaDias").and(recientes);
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Orden no disponible");
         };
         Specification<ProductoData> filtro = (root, query, cb) -> {
@@ -77,7 +81,7 @@ public class ExplorarCatalogoController {
                         cb.like(cb.lower(root.get("descripcion")), patron, '!'),
                         cb.like(cb.lower(root.get("modelo")), patron, '!')));
             }
-            if (!categoria.isEmpty()) criterios.add(cb.equal(root.get("categoria"), categoria));
+            if (!categorias.isEmpty()) criterios.add(root.get("categoria").in(categorias));
             if (!condicion.isEmpty()) criterios.add(cb.equal(root.get("condicion"), condicion));
             if (!marca.isBlank()) criterios.add(cb.equal(root.get("marca"), marca));
             if (minimo != null) criterios.add(cb.greaterThanOrEqualTo(root.get("precio"), minimo));

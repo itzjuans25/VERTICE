@@ -11,7 +11,7 @@ public record Lote(long id, String titulo, String descripcion, Categoria categor
                    Map<String,String> atributos, List<String> imagenes, BigDecimal precioInicial,
                    BigDecimal incremento, BigDecimal precioActual, Long ganadorId, String ganadorEmail,
                    String tiendaEmail, Estado estado, Instant inicio, Instant fin, int pujas, long version) {
-    public enum Categoria { RELOJES, JOYERIA, CARROS, MOTOS, ELECTRONICA, COLECCIONABLES, HOGAR, OTROS }
+    public enum Categoria { RELOJES, JOYERIA, CARROS, MOTOS, ELECTRONICA, COLECCIONABLES, HOGAR, OTROS, DEPORTES, MODA, HERRAMIENTAS }
     public enum Condicion { NUEVO, USADO }
 
     public BigDecimal pujaMinima() { return precioActual.add(incremento); }

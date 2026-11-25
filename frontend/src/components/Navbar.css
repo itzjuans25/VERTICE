@@ -13,6 +13,10 @@
 .mercado-cuenta summary { cursor:pointer; overflow:hidden; text-overflow:ellipsis; }
 .mercado-cuenta > div { position:absolute; right:0; min-width:168px; display:grid; background:var(--tech-raised); border:1px solid var(--tech-control); border-radius:var(--tech-radius-sm); padding:var(--espacio-2); }
 .mercado-cuenta > div a, .mercado-cuenta button { display:block; text-align:left; padding:var(--espacio-2); color:var(--tech-text); }
+.mercado-menu-categorias { position:relative; }
+.mercado-menu-categorias summary { cursor:pointer; white-space:nowrap; color:var(--tech-text); font-size:var(--texto-sm); padding:var(--espacio-2); }
+.mercado-menu-categorias div { position:absolute; right:0; background:var(--tech-raised); border:1px solid var(--tech-control); min-width:175px; border-radius:var(--tech-radius-sm); padding:var(--espacio-2); }
+.mercado-menu-categorias a { display:block; color:var(--tech-text); padding:var(--espacio-2); }
 .tech-nav-toggle { display:none; }
 @media (max-width: 950px) {
   .mercado-nav { position:relative; grid-template-columns:auto minmax(0,1fr) auto; column-gap:var(--espacio-3); }
@@ -21,6 +25,7 @@
   .App .nav-menu.tech-open { display:grid; gap:var(--espacio-2); }
   .mercado-cuenta { max-width:none; }
   .mercado-cuenta > div { position:static; }
+  .mercado-menu-categorias div { position:static; }
 }
 @media (max-width:480px) {
   :root { --mercado-cabecera: 112px; }

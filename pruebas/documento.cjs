@@ -10,12 +10,13 @@ const output = 'output/pdf/guia-ecommerce-frank.pdf';
 async function main() {
   const readme = fs.readFileSync('README.md', 'utf8').replace(/^!\[[^\n]+\]\(https:\/\/img\.shields\.io[^\n]+\)\r?\n/gm, '')
     .replace(/^\x60{3}mermaid\r?\n[\s\S]*?^\x60{3}/m,
-    'React → Auth y Catálogo → PostgreSQL\n\nAuth y Catálogo → RabbitMQ → Notificaciones → Mailpit en Windows / Brevo en Render\n\nCatálogo → Frankfurter y Nager.Date');
+    'React → Identidad, Catálogo y pedidos, y Subastas → PostgreSQL\n\nProductores → RabbitMQ → Notificaciones → Mailpit en Windows / Brevo en Render\n\nCatálogo y Subastas → Frankfurter y Nager.Date');
   const rendered = execFileSync(process.env.PYTHON_PATH || 'python', ['-c',
     'from markdown_it import MarkdownIt; import sys; sys.stdout.write(MarkdownIt("gfm-like", {"linkify": False}).render(sys.stdin.read()))'],
   { input: readme, encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
-  const capturas = ['tienda', 'movil', 'detalle', 'carrito', 'compra', 'historial', 'correo'];
-  const gallery = capturas.map(paso => 'techstore-' + paso + '.png')
+  const capturas = ['inicio-1440','tienda-y-subastas','categoria-1440','lote-1440','avisos'];
+  const gallery = capturas.map(paso => 'remata-' + paso + '.png')
+    .filter(name => fs.existsSync(path.resolve(directory,name)))
     .map(name => '<figure><img src="' + pathToFileURL(path.resolve(directory, name)).href + '"><figcaption>' + name.slice(0, -4).replace(/-/g, ' ') + '</figcaption></figure>').join('');
   const rootUrl = pathToFileURL(path.resolve('.') + path.sep).href;
   const html = '<!doctype html><html lang="es"><meta charset="utf-8"><base href="' + rootUrl + '">' +

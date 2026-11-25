@@ -12,18 +12,26 @@ public interface Subastas {
                 Map<String,String> atributos, List<String> imagenes, BigDecimal precioInicial,
                 BigDecimal incremento, Instant inicio, Instant fin) {}
     record Filtro(String texto, Lote.Categoria categoria, Lote.Condicion condicion,
-                  BigDecimal minimo, BigDecimal maximo, int pagina, int tamano) {}
+                  BigDecimal minimo, BigDecimal maximo, int pagina, int tamano, List<Lote.Categoria> grupo) {
+        public Filtro(String texto, Lote.Categoria categoria, Lote.Condicion condicion,
+                      BigDecimal minimo, BigDecimal maximo, int pagina, int tamano) {
+            this(texto,categoria,condicion,minimo,maximo,pagina,tamano,List.of());
+        }
+    }
     record Pagina(List<Lote> items, int pagina, int tamano, long total) {}
     record Puja(long loteId, long usuarioId, BigDecimal monto, Instant fecha) {}
     record Orden(long id, long loteId, long usuarioId, BigDecimal monto, Instant pagada) {}
     record Detalle(Lote lote, List<Puja> historial, Orden orden) {}
     record MisPujas(List<Puja> pujas, List<Orden> adjudicaciones) {}
+    record CategoriaActiva(Lote.Categoria categoria, long total) {}
+    record Inicio(List<Lote> lotes, List<CategoriaActiva> categorias, long total) {}
 
     Lote crear(Actor actor, Alta alta);
     Pagina listar(Filtro filtro);
     Detalle detalle(long id);
     Lote pujar(Actor actor, long id, BigDecimal monto);
     MisPujas mias(Actor actor);
+    Inicio inicio();
     Lote cancelar(Actor actor, long id);
     Orden pagar(Actor actor, long id);
     void procesarReloj();

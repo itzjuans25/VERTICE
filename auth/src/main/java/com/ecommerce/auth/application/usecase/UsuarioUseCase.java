@@ -200,7 +200,7 @@ public class UsuarioUseCase implements UsuarioService {
     private void notificarBienvenida(Usuario usuario) {
         try {
             NotificacionEmail email = NotificacionEmail.builder()
-                    .destinatario(usuario.getEmail())
+                    .usuarioId(usuario.getId()).destinatario(usuario.getEmail())
                     .asunto("Bienvenido a Remata")
                     .cuerpo("<h1>Hola " + usuario.getNombre() + "</h1>"
                             + "<p>Gracias por registrarte en nuestra plataforma.</p>"

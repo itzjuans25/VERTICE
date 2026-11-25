@@ -1,17 +1,25 @@
-import { tituloMarca } from '../marca';
+import { marca, tituloMarca } from '../marca';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { subastasApi as api } from '../api/subastasApi';
 import './Subastas.css';
 import { catalogoApi } from '../api/catalogoApi';
-import { categoriasMercado, nombresCategorias as categorias, categoriaLote } from '../categorias';
+import { categoriasMercado, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, categoriaProducto, destacadosPorCategoria } from '../categorias';
 import { Cierre, cop, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
 import { Recomendados, useMercado } from './ExplorarMercado';
 
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
-const img = categoria => '/subastas/' + categoria.toLowerCase() + '.webp';
+const img = categoria => categoriaLote(categoria)?.imagen || '/subastas/electronica.webp';
 const fecha = valor => new Date(valor).toLocaleString('es-CO');
-const vacio = { q: '', categoria: '', condicion: '', minimo: '', maximo: '' };
+const usd = new Intl.NumberFormat('es-CO', { style:'currency', currency:'USD', currencyDisplay:'code' });
+
+function EntregaLote({ estado }) {
+  if (estado.cargando) return null;
+  const data = estado.datos;
+  return <p className="auction-muted">{data
+    ? 'Entrega estimada ' + data.fechaEstimada + ' · ' + (data.incluyeFestivos ? '3 días hábiles, Nager.Date' : 'calendario parcial')
+    : 'Referencia de entrega no disponible.'}</p>;
+}
 
 function useConsulta(consulta, sondeo = false) {
   const [estado, actualizar] = useState({ datos: null, error: '', cargando: true });
@@ -60,40 +68,60 @@ function Titulo({ children }) {
 function EstadoConsulta({ consulta }) { return <EstadoMercado estado={consulta} reintentar={consulta.recargar} />; }
 
 export function Inicio() {
-  const cargar = useCallback(() => api.listar({ tamano: 3 }), []);
-  const consulta = useConsulta(cargar);
-  const lotes = consulta.datos?.items.filter(l => l.estado === 'ACTIVA');
-  const recien = useCallback(() => catalogoApi.productos.explorar({ tamano: 4, orden: 'recientes' }), []);
-  const [productos, reintentar] = useMercado(recien);
+  const consulta = useConsulta(api.inicio);
+  const cupo = new Map();
+  const lotes = consulta.datos?.items.filter(l => {
+    const categoria = categoriaLote(l.categoria)?.slug || l.categoria;
+    const cantidad = cupo.get(categoria) || 0;
+    if (l.estado !== 'ACTIVA' || cantidad >= 2) return false;
+    cupo.set(categoria, cantidad+1);
+    return true;
+  });
+  const [productos, reintentar] = useMercado(catalogoApi.productos.inicio);
+  const destacados = destacadosPorCategoria(productos.datos?.destacables || []);
 
   return <main id="principal" className="auction-page mercado-inicio">
     <nav className="mercado-anclas" aria-label="Secciones del inicio">
       <a href="#inicio-subastas">Subastas</a><a href="#inicio-categorias">Categorías</a><a href="#inicio-tienda">Tienda</a><a href="#inicio-como">Cómo funciona</a>
     </nav>
     <section className="auction-hero">
-      <div><Titulo>Tienda y subastas</Titulo>
-        <p>Compra productos nuevos y usados o presenta tu oferta en los lotes de la tienda.</p>
+      <div><Titulo>{marca.lema}</Titulo>
+        <p>Encuentra artículos para tu casa, tu tiempo libre o el trabajo. Paga el precio publicado o presenta tu oferta por un lote.</p>
         <div className="auction-row">
-          <Link className="auction-btn primary" to="/productos">Ver tienda</Link>
+          <Link className="auction-btn primary" to="/productos">Comprar ahora</Link>
           <Link className="auction-btn" to="/subastas">Ver subastas</Link>
         </div>
       </div>
-      <img src={img('ELECTRONICA')} alt="Cámara digital" width="424" height="424" />
+      <img src="/mercado/lote-lampara-metal.webp" alt="Lámpara articulada de metal oscuro" width="424" height="424" />
     </section>
     <section id="inicio-subastas" className="mercado-seccion"><h2>Subastas que terminan pronto</h2>
       <EstadoConsulta consulta={consulta} />
       <div className="tt-grid">{lotes?.map(lote => <TarjetaMercado key={lote.id} lote={lote} />)}</div>
       {lotes?.length === 0 && <p>En este momento no hay lotes activos próximos a cerrar.</p>}
     </section>
-    <section id="inicio-categorias"><h2>Categorías</h2><div className="auction-categories">
-      {categoriasMercado.map(({ lote, nombre, slug }) => <Link to={'/categoria/' + slug} key={slug}>
-        <img src={img(lote)} width="424" height="424" loading="lazy" alt="" />{nombre}</Link>)}
+    <section id="inicio-categorias"><h2>Categorías</h2><div className="auction-categories mercado-categorias">
+      {categoriasMercado.map(({ nombre, slug, imagen }) => {
+        const tienda = productos.datos?.categorias.filter(c => categoriaProducto(c.categoria)?.slug === slug).reduce((s,c) => s+c.total,0);
+        const subastas = consulta.datos?.categorias.filter(c => categoriaLote(c.categoria)?.slug === slug).reduce((s,c) => s+c.total,0);
+        return <Link to={'/categoria/' + slug} key={slug}>
+          <img src={imagen} width="424" height="424" loading="lazy" alt="" />
+          <strong>{nombre}</strong>
+          {tienda !== undefined && <small>Tienda {tienda}</small>}
+          {subastas !== undefined && <small>Subastas {subastas}</small>}
+        </Link>;
+      })}
     </div></section>
-    <section id="inicio-tienda"><h2>Recién llegados a la tienda</h2>
+    <section id="inicio-tienda"><h2>Destacados de la tienda</h2>
       <EstadoMercado estado={productos} reintentar={reintentar} />
-      <div className="tt-grid">{productos.datos?.items.map(producto => <TarjetaMercado key={producto.id} producto={producto} />)}</div>
+      <div className="tt-grid">{destacados.map(producto => <TarjetaMercado key={producto.id} producto={producto} />)}</div>
     </section>
-    <section id="inicio-como"><h2>Cómo funciona</h2><ol className="mercado-pasos">
+    <section id="inicio-como"><h2>Cómo funciona</h2>
+    <h3>Compra directa</h3><ol className="mercado-pasos">
+      <li><strong>Elige</strong> Compara precio fijo, condición y stock de los productos.</li>
+      <li><strong>Agrega al carrito</strong> Inicia sesión y revisa las cantidades y la entrega estimada.</li>
+      <li><strong>Confirma</strong> Revisa el pedido en Mi cuenta y recibe el aviso por correo.</li>
+    </ol>
+    <h3>Subasta</h3><ol className="mercado-pasos">
       <li><strong>Elige</strong> Comprueba descripción, condición y plazo del lote.</li>
       <li><strong>Puja</strong> Inicia sesión y ofrece el monto mínimo o uno mayor.</li>
       <li><strong>Gana</strong> Consulta Mis subastas ganadas y confirma el pago simulado.</li>
@@ -104,7 +132,11 @@ export function Inicio() {
 export function Lista() {
   const [params, cambiarParams] = useSearchParams();
   const pagina = Math.max(0, Number(params.get('pagina')) || 0);
-  const cargador = useCallback(() => api.listar(Object.fromEntries(params)), [params]);
+  const cargador = useCallback(() => {
+    const query = Object.fromEntries(params);
+    const principal = categoriaPorSlug(query.categoria);
+    return api.listar(principal ? { ...query, categoria:undefined, grupo:principal.lotes.join(',') } : query);
+  }, [params]);
   const consulta = useConsulta(cargador, true);
 
   function filtrar(valores) {
@@ -121,7 +153,7 @@ export function Lista() {
     <Titulo>Subastas</Titulo>
     <p className="auction-muted">Ofertas en COP y pagos simulados.</p>
     <div className="mercado-seccion">
-      <FiltrosMercado lote valores={Object.fromEntries(params)} categorias={Object.entries(categorias)} alBuscar={filtrar} alLimpiar={() => cambiarParams({})}
+      <FiltrosMercado lote valores={Object.fromEntries(params)} categorias={categoriasMercado.map(c => [c.slug,c.nombre])} alBuscar={filtrar} alLimpiar={() => cambiarParams({})}
         key={[...params].filter(([k]) => k !== 'pagina').join()} />
       <section aria-label="Resultados">
         <EstadoConsulta consulta={consulta} />
@@ -147,6 +179,9 @@ export function Detalle({ user }) {
   const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [nueva, setNueva] = useState(null);
+  const cotizar = useCallback(() => api.precioUsd(id),[id]);
+  const consultaUsd = useConsulta(cotizar, true);
+  const entrega = useConsulta(api.entrega);
   const detalle = consulta.datos;
 
   const lote = nueva && detalle && nueva.id === detalle.lote.id && nueva.version > detalle.lote.version ? nueva : detalle?.lote;
@@ -198,12 +233,14 @@ export function Detalle({ user }) {
           <div className="auction-panel">
             {tab === 'Descripción' && <p>{lote.descripcion}</p>}
             {tab === 'Atributos' && (Object.keys(lote.atributos).length ? <dl>{Object.entries(lote.atributos).map(([nombre, dato]) => <React.Fragment key={nombre}><dt>{nombre}</dt><dd>{dato}</dd></React.Fragment>)}</dl> : <p>Este lote no tiene atributos adicionales.</p>)}
-            {tab === 'Historial' && (detalle.historial.length ? <ul className="auction-records">{detalle.historial.map((puja, index) => <li key={index}><span>{puja.mia ? 'Tú' : puja.postor} · {fecha(puja.fecha)}</span><strong>{cop.format(puja.monto)}</strong></li>)}</ul> : <p>Aún no hay pujas.</p>)}
+            {tab === 'Historial' && (detalle.historial.length ? <ul className="auction-records">{detalle.historial.map((puja, index) => <li key={index}><span>{puja.mia ? 'Tú' : puja.postor} · {fecha(puja.fecha)}</span><strong>{cop.format(puja.monto)}{consultaUsd.datos?.disponible ? ' · ≈ ' + usd.format(puja.monto * consultaUsd.datos.tasa) : ''}</strong></li>)}</ul> : <p>Aún no hay pujas.</p>)}
           </div>
         </section>
         <section id="ofertar" className="auction-panel auction-bid">
           <span className="auction-muted">{categorias[lote.categoria]} · {lote.condicion === 'NUEVO' ? 'Nuevo' : 'Usado'}</span>
           <strong className="auction-price">{cop.format(lote.precioActual)}</strong>
+          {!consultaUsd.cargando && <p className="auction-muted">{consultaUsd.datos?.disponible ? '≈ ' + usd.format(lote.precioActual * consultaUsd.datos.tasa) + ' · Frankfurter' : 'Referencia no disponible'}</p>}
+          <EntregaLote estado={entrega} />
           <p><Cierre lote={lote} /></p>
           {yaPujo && puedePujar && <p role="status">{lote.voyGanando ? 'Vas ganando' : 'Te superaron'}</p>}
           {puedePujar && (user ? <form onSubmit={pujar} className="auction-form">
@@ -226,11 +263,13 @@ export function Detalle({ user }) {
 
 export function MisPujas({ vista }) {
   const consulta = useConsulta(api.mias, true);
+  const entrega = useConsulta(api.entrega);
   return <main id="principal" className="auction-page">
     <Titulo>{vista === 'ganadas' ? 'Subastas ganadas' : 'Mis pujas'}</Titulo>
     <EstadoConsulta consulta={consulta} />
     {consulta.datos && <>
       {vista !== 'pujas' && <>
+      {!!consulta.datos.adjudicaciones.length && <EntregaLote estado={entrega} />}
       <div className="auction-panel">{consulta.datos.adjudicaciones.length ? <ul className="auction-records">
         {consulta.datos.adjudicaciones.map(orden => <li key={orden.id}><Link to={'/subastas/' + orden.loteId}>Lote {orden.loteId}</Link><span>{cop.format(orden.monto)} · {orden.pagada ? 'Pago simulado confirmado' : 'Pendiente de pago simulado'}</span></li>)}
       </ul> : <p>Aún no tienes adjudicaciones.</p>}</div>

@@ -54,6 +54,7 @@ public class SecurityConfig {
                                 writeError(response, 403, "Acceso denegado",
                                         "No tienes permisos para realizar esta accion")))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/ecommerce/inicio").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ecommerce/producto/**").permitAll()
                         .requestMatchers("/health", "/actuator/health", "/actuator/health/**").permitAll()

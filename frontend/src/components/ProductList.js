@@ -1,4 +1,5 @@
-import { tituloMarca } from '../marca';
+import { tituloMarca, pesos } from '../marca';
+import { categoriasMercado, categoriaPorSlug } from '../categorias';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiltrosMercado, TarjetaMercado, Paginacion, EstadoMercado } from './MercadoUI';
@@ -7,7 +8,7 @@ import { observarDisponibilidad } from '../api/observarDisponibilidad';
 import './TechTrade.css';
 
 export const condiciones = { NUEVO: 'Nuevo', USADO: 'Usado' };
-export const precioCop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+export const precioCop = pesos;
 const inicial = { q: '', categoria: '', condicion: '', marca: '', minimo: '', maximo: '', orden: 'recientes' };
 
 export function Etiquetas({ producto }) {
@@ -45,7 +46,6 @@ export function useAgregar({ user, setCartCount, actualizarStock }) {
 export default function ProductList({ user, setCartCount }) {
   const [reinicio, setReinicio] = useState(0);
   const [aplicados, setAplicados] = useState(inicial);
-  const [categorias, setCategorias] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [pagina, setPagina] = useState(0);
   const [reintento, setReintento] = useState(0);
@@ -56,7 +56,6 @@ export default function ProductList({ user, setCartCount }) {
 
   useEffect(() => {
     document.title = tituloMarca();
-    catalogoApi.productos.categorias().then(setCategorias).catch(() => setCategorias([]));
     catalogoApi.productos.marcas().then(setMarcas).catch(() => setMarcas([]));
   }, []);
   useEffect(() => {
@@ -80,7 +79,10 @@ export default function ProductList({ user, setCartCount }) {
     return () => { vigente = false; dejarDeObservar(); };
   }, [aplicados, pagina, reintento]);
 
-  function aplicar(filtros) { setPagina(0); setAplicados(filtros); }
+  function aplicar(filtros) {
+    setPagina(0);
+    setAplicados({...filtros, categoria:categoriaPorSlug(filtros.categoria)?.tienda.join(',') || ''});
+  }
   function limpiar() { aplicar(inicial); setReinicio(v => v+1); }
 
   return <main className="tt-shell">
@@ -91,7 +93,7 @@ export default function ProductList({ user, setCartCount }) {
         <h2>Nuestros productos</h2>
         {estado.resultado && <span aria-live="polite">{estado.resultado.total} resultados</span>}
       </div>
-      <FiltrosMercado key={reinicio} categorias={categorias.map(n => [n,n])} marcas={marcas} alBuscar={aplicar} alLimpiar={limpiar} />
+      <FiltrosMercado key={reinicio} categorias={categoriasMercado.map(c => [c.slug,c.nombre])} marcas={marcas} alBuscar={aplicar} alLimpiar={limpiar} />
       {mensaje && <p className="tt-aviso" role={mensaje.error ? 'alert' : 'status'}>{mensaje.texto}</p>}
       <EstadoMercado estado={{ cargando:estado.carga, error:estado.error }} reintentar={() => setReintento(v => v+1)}
         vacio={estado.resultado?.items.length === 0 ? 'No hay productos con estos filtros.' : ''} />

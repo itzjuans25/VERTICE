@@ -1,5 +1,7 @@
 # Guion de sustentación de Remata
 
+Empieza con la portada. Cambia entre **En tienda** y **En subasta** en la misma categoría. Explica por qué un casco puede comprarse al precio publicado y por qué un vehículo completo solo aparece como lote simulado.
+
 **1. Arquitectura, 1 minuto.** Abre la tienda y los cuatro Swagger. Auth emite JWT, Catálogo maneja inventario y pedidos, Subastas valida ofertas y adjudica lotes, y Notificaciones entrega avisos. PostgreSQL conserva los datos y RabbitMQ transporta los mensajes.
 
 **2. Compra, 2 minutos.** Filtra un portátil usado por marca y condición. Abre la ficha y la segunda imagen. Explica el grado y la garantía. Registra una cuenta, compra y muestra el pedido en **Mis compras** y su correo en Mailpit.

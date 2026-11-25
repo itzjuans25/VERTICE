@@ -1939,6 +1939,147 @@
       ]
     },
     {
+      "name": "Inicio, cuenta y referencias Remata",
+      "item": [
+        {
+          "name": "Inicio de tienda",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Inicio agrupado', () => { const j=pm.response.json(); pm.expect(j.items.length).to.be.at.most(8); pm.expect(j.categorias).to.be.an('array'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{catalogoUrl}}/api/ecommerce/inicio"
+          }
+        },
+        {
+          "name": "Inicio de subastas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Conteos de lotes activos', () => { const j=pm.response.json(); pm.expect(j.items.length).to.be.at.most(8); pm.expect(j.total).to.be.a('number'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{subastasUrl}}/api/subastas/inicio"
+          }
+        },
+        {
+          "name": "Mi perfil",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Perfil de la sesión', () => pm.expect(pm.response.json().nombre).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{authUrl}}/api/auth/perfil"
+          }
+        },
+        {
+          "name": "Mis avisos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Avisos paginados', () => pm.expect(pm.response.json().items).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{notificacionesUrl}}/api/notificaciones/mis-avisos?tamano=10"
+          }
+        },
+        {
+          "name": "Precio de lote en USD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Referencia con estado', () => pm.expect(pm.response.json().disponible).to.be.a('boolean'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{subastasUrl}}/api/subastas/lote/{{subId}}/precio-usd"
+          }
+        },
+        {
+          "name": "Entrega de subasta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "pm.test('Entrega de tres días', () => pm.expect(pm.response.json().diasHabiles).to.eql(3));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{subastasUrl}}/api/subastas/entrega?diasHabiles=3"
+          }
+        }
+      ]
+    },
+    {
       "name": "Limpieza",
       "item": [
         {
