@@ -1,0 +1,33 @@
+{
+  "blueprintValido": true,
+  "servicios": [
+    {
+      "servicio": "vertice-auth",
+      "dockerfile": "auth/./Dockerfile",
+      "health": "/health",
+      "tlsBase": true,
+      "tlsBroker": true
+    },
+    {
+      "servicio": "vertice-catalogo",
+      "dockerfile": "catalogo/./Dockerfile",
+      "health": "/health",
+      "tlsBase": true,
+      "tlsBroker": true
+    },
+    {
+      "servicio": "vertice-notificaciones",
+      "dockerfile": "notificaciones/./Dockerfile",
+      "health": "/health",
+      "tlsBase": true,
+      "tlsBroker": true
+    },
+    {
+      "servicio": "vertice-subastas",
+      "dockerfile": "subastas/./Dockerfile",
+      "health": "/health",
+      "tlsBase": true,
+      "tlsBroker": true
+    }
+  ]
+}

@@ -58,8 +58,8 @@ WITH piezas(semilla, relato, origen) AS (VALUES
 ), actualizacion AS (
     SELECT l.id, p.relato,
            CASE WHEN p.semilla='vertice-01' THEN 'CALZADO' ELSE l.categoria END AS categoria,
-           (CAST(l.atributos AS jsonb) || jsonb_build_object(
-               'Procedencia', p.origen, 'Certificado', 'VT-S-' || upper(substr(md5('vertice/galeria/' || p.semilla),1,12))
+           ((CAST(l.atributos AS jsonb) - 'Certificado') || jsonb_build_object(
+               'Procedencia', p.origen
            ))::text AS atributos,
            jsonb_build_array('/mercado/' || p.semilla || '-editorial.webp', '/mercado/' || p.semilla || '-detalle.webp')::text AS imagenes
     FROM subasta_lotes l JOIN piezas p USING (semilla)

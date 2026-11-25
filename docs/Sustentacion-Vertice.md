@@ -2,9 +2,9 @@
 
 ## Guion
 
-1. Abre la portada y una vitrina. Enseña **Por qué se subasta**, **Ficha técnica** e **Historial de pujas**. Las imágenes, la procedencia, el pago, la entrega y el traspaso son una simulación académica.
+1. Abre la portada y compara el número de lotes en una casilla con los resultados de su filtro. Enseña las dos vistas de un lote, **Por qué se subasta**, su ficha y el historial anonimizado.
 2. En dos sesiones, revisa y confirma una oferta. Explica el precio mínimo, el bloqueo de fila y la extensión de dos minutos. Abre el correo de Mailpit y muestra la adjudicación en **Actividad → Subastas ganadas**. Repetir el pago conserva su referencia.
-3. Abre Catálogo y una compra. PostgreSQL descuenta stock al confirmar el pedido. Paga desde **Actividad → Compras** y muestra sus estados, el correo y la referencia USD.
+3. Abre **Lanzamientos**. Muestra cupo, fecha y máximo por cliente. PostgreSQL descuenta stock al confirmar el pedido. Paga desde **Actividad → Compras** y abre Mailpit para enseñar el comprobante.
 4. Abre el MER. Explica los cuatro contextos, RabbitMQ y las comprobaciones de rendimiento. Distingue las medidas localmente ejecutadas de las pendientes.
 
 ## IntelliJ IDEA
@@ -28,11 +28,13 @@ Importa la colección y el entorno Local. Ejecuta registro e inicio de sesión y
 Sube el repositorio a GitHub sin datos privados. Crea Neon y toma la URL JDBC directa con SSL. Crea CloudAMQP y copia el URI AMQPS como secreto. Configura un remitente verificado en Brevo. Importa el Blueprint de Render y configura JWT, datos y servicios. En Vercel usa `frontend` como raíz, añade las URLs públicas obtenidas y configura CORS en Render. Ejecuta `scripts/smoke-nube.ps1` con una cuenta y fixtures de demostración. [Guía detallada](Render.md)
 ## Evidencia que puedes mostrar
 
-- Compra 3119 por COP 95.000. Se descontó la última unidad y se confirmó `SIM-COMPRA-3119` desde la cuenta. Repetir el pago conservó el instante.
-- Lote 837, Cronógrafo de archivo · Serie Boreal. Los compradores de prueba 3546 y 3547 pusieron ofertas. Se recibieron «Puja superada» y «Subasta ganada». El ganador pagó `SIM-SUBASTA-44` en la actividad y la otra cuenta quedó sin adjudicación.
-- Empieza con 394, 395 o 396 para enseñar una puja activa. Vencen según el reloj de cada ficha. El ensayo de adjudicación adelantó en la base local el cierre de su propio lote para acortar la espera.
+- Compra 3356 por COP 95.000. Se descontó la última unidad y se confirmó `SIM-COMPRA-3356` desde la cuenta. Repetir el pago conservó el instante.
+- Dos solicitudes de pago concurrentes devolvieron el mismo comprobante. El sistema rechazó el exceso de cupo antes de descontar inventario. [Prueba del lanzamiento](../resultados/vertice-curado-e2e.json)
+- Lote 1411, Cronógrafo de archivo · Serie Boreal. Dos postores probaron la extensión. Mailpit recibió «Puja superada», «Subasta ganada» y el comprobante de `SIM-SUBASTA-48`. [Prueba de subasta](../resultados/vertice-curado-puja.json)
 - Abre las respuestas guardadas de USD, festivos y clima, y separa cobertura exclusivamente unitaria de la suite conjunta.
-- Usa los [resultados de rendimiento](../resultados/vertice-pagos-rendimiento.md) para explicar los picos por encima de 500 ms.
+- Usa los [resultados de rendimiento](../resultados/vertice-curado-rendimiento.md) para explicar los picos medidos.
+
+Para la presentación, usa las [capturas de la galería curada](capturas/) cuyo nombre empieza por `vertice-curado-`. Las capturas numeradas de PostgreSQL, RabbitMQ, SMS, JaCoCo y k6 corresponden a corridas previas. Para citar cifras, usa la primera tabla de [Auditoría](Auditoria.md).
 
 ## Preguntas típicas
 

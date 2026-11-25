@@ -28,8 +28,9 @@ const operaciones = {
   'auth_cambiar': ['POST', '/cambiar-clave', 204],
   'cat_productos': ['GET', '/producto', 200],
   'cat_inicio': ['GET', '/inicio', 200],
+  'cat_lanzamientos': ['GET', '/lanzamientos', 200],
   'cat_producto': ['GET', '/producto/:id', 200],
-  'cat_explorar': ['GET', '/producto/explorar?q=monitor&tamano=12&orden=precio-asc', 200],
+  'cat_explorar': ['GET', '/producto/explorar?q=bruma&tamano=12&orden=precio-asc', 200],
   'cat_categorias': ['GET', '/producto/categorias', 200],
   'cat_marcas': ['GET', '/producto/marcas', 200],
   'cat_crear': ['POST', '/producto', 201],
@@ -190,6 +191,7 @@ function recorrer(admin, cliente, nombre, sesion) {
   enviar('cat_actualizar', { token: admin, id: producto.id, body: datosProducto });
   enviar('cat_productos');
   enviar('cat_inicio');
+  enviar('cat_lanzamientos');
   enviar('cat_producto', { id: producto.id });
   enviar('cat_explorar');
   enviar('cat_categorias');

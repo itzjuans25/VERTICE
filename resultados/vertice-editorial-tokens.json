@@ -1,0 +1,20 @@
+{
+  "base": "77c12ff",
+  "alcance": "Declaraciones CSS y estilos inline del frontend. Los anchos de @media se informan aparte porque el navegador no acepta custom properties en esa condición.",
+  "antes": {
+    "colores": 424,
+    "medidas": 881,
+    "tipografias": 2,
+    "esquemas": 1,
+    "puntosDeRuptura": 16,
+    "totalVisual": 1308
+  },
+  "despues": {
+    "colores": 0,
+    "medidas": 0,
+    "tipografias": 0,
+    "esquemas": 0,
+    "puntosDeRuptura": 16,
+    "totalVisual": 0
+  }
+}

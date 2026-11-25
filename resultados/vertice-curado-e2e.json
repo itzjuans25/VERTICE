@@ -1,0 +1,69 @@
+{
+  "curaduria": {
+    "productos": 11,
+    "lotes": 18,
+    "relatos": 29,
+    "imagenesUnicas": 29
+  },
+  "edicion": {
+    "compra": 3503,
+    "pago": {
+      "referencia": "SIM-COMPRA-3503",
+      "pagadoEn": "2026-11-25T17:42:02.998045Z"
+    },
+    "limiteVerificado": true,
+    "pagoConcurrente": true,
+    "aislamiento": true,
+    "correoPago": "0ERY4F1iHPY1kPUFUTqrId"
+  },
+  "vistas": [
+    {
+      "ancho": 390,
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "fallos": []
+        },
+        {
+          "pantalla": "ficha",
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 768,
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "fallos": []
+        },
+        {
+          "pantalla": "ficha",
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 1280,
+      "axe": []
+    },
+    {
+      "ancho": 1440,
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "fallos": []
+        },
+        {
+          "pantalla": "ficha",
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 1920,
+      "axe": []
+    }
+  ],
+  "ok": true
+}

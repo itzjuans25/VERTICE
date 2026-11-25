@@ -30,8 +30,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -147,21 +145,9 @@ public class CompraUseCase implements CompraService {
             throw new DatosInvalidosException("La compra no admite pago simulado");
         }
         if (primeraConfirmacion) {
-            for (ItemCarrito item : compra.getItems()) {
-                ediciones.porProducto(item.getProductoId()).ifPresent(edicion ->
-                        compraGateway.guardarCertificado(id, new CompraGateway.Certificado(
-                                "VT-C-" + UUID.randomUUID().toString().replace("-", "").substring(0, 24).toUpperCase(Locale.ROOT),
-                                edicion.productoId(), item.getNombreProducto(), edicion.serie(), confirmada.getPagoSimuladoEn())));
-            }
             despuesDeConfirmar.ejecutar(() -> avisarPago(confirmada, propietario));
         }
         return confirmada;
-    }
-
-    @Override
-    public List<CompraGateway.Certificado> certificados(Long id, Long propietario) {
-        exigirPropietario(obtenerCompraPorId(id), propietario);
-        return compraGateway.certificados(id);
     }
 
     private static void exigirPropietario(Compra compra, Long propietario) {

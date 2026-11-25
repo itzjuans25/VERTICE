@@ -98,7 +98,9 @@ class SubastasController {
                    BigDecimal precioActual,BigDecimal pujaMinima,Estado estado,Instant inicio,Instant fin,
                    int pujas,long version,boolean voyGanando,boolean reservaAlcanzada) {
         static Publico de(Lote l,Actor actor) {
-            return new Publico(l.id(),l.titulo(),l.descripcion(),l.categoria(),l.condicion(),l.atributos(),l.imagenes(),
+            var atributos = new java.util.LinkedHashMap<>(l.atributos());
+            atributos.remove("Certificado");
+            return new Publico(l.id(),l.titulo(),l.descripcion(),l.categoria(),l.condicion(),atributos,l.imagenes(),
                     l.precioInicial(),l.incremento(),l.precioActual(),l.pujaMinima(),l.estado(),l.inicio(),l.fin(),
                     l.pujas(),l.version(),actor!=null && Objects.equals(actor.id(),l.ganadorId()),l.reservaAlcanzada());
         }

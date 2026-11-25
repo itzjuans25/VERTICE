@@ -1,0 +1,71 @@
+{
+  "edicion": {
+    "compra": 3355,
+    "pago": {
+      "referencia": "SIM-COMPRA-3355",
+      "pagadoEn": "2026-11-25T16:59:30.478612Z"
+    },
+    "certificado": {
+      "codigo": "VT-C-9612B4FBDDC04EDEA4BCB6BF",
+      "titulo": "Grabado Sal de Bruma",
+      "productoId": 5092,
+      "edicion": "001/024",
+      "estado": "PAGO_SIMULADO_REGISTRADO",
+      "fecha": "2026-11-25T16:59:30.478612Z"
+    },
+    "limiteVerificado": true,
+    "pagoConcurrente": true,
+    "aislamiento": true,
+    "correoPago": "467HsbxPWo81OI8nIIZAwA"
+  },
+  "vistas": [
+    {
+      "ancho": 390,
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "fallos": []
+        },
+        {
+          "pantalla": "ficha",
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 768,
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "fallos": []
+        },
+        {
+          "pantalla": "ficha",
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 1280,
+      "axe": []
+    },
+    {
+      "ancho": 1440,
+      "axe": [
+        {
+          "pantalla": "inicio",
+          "fallos": []
+        },
+        {
+          "pantalla": "ficha",
+          "fallos": []
+        }
+      ]
+    },
+    {
+      "ancho": 1920,
+      "axe": []
+    }
+  ],
+  "ok": true
+}

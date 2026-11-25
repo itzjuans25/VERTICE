@@ -1,0 +1,30 @@
+{
+  "tienda": 200,
+  "mailpit": 200,
+  "apis": {
+    "Auth": {
+      "puerto": 9090,
+      "salud": "UP",
+      "rutas": 10,
+      "titulo": "VÉRTICE | Auth"
+    },
+    "Catalogo": {
+      "puerto": 9092,
+      "salud": "UP",
+      "rutas": 21,
+      "titulo": "VÉRTICE | Catálogo"
+    },
+    "Notificaciones": {
+      "puerto": 9093,
+      "salud": "UP",
+      "rutas": 6,
+      "titulo": "VÉRTICE | Notificaciones"
+    },
+    "Subastas": {
+      "puerto": 9094,
+      "salud": "UP",
+      "rutas": 10,
+      "titulo": "VÉRTICE | Subastas"
+    }
+  }
+}

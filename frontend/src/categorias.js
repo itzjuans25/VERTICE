@@ -29,6 +29,12 @@ export const vitrinas = [
   { slug:'coleccionables', nombre:'Coleccionables y arte', foto:'12' },
 ];
 
+export const categoriasTienda = categoriasMercado.filter(({ slug }) =>
+  ['relojes', 'joyeria', 'moda', 'coleccionables'].includes(slug));
+
+export const categoriasSubastas = categoriasMercado.filter(({ slug }) =>
+  vitrinas.some(vitrina => vitrina.slug === slug));
+
 export function destacadosPorCategoria(items, fecha = new Date(), limite = 8) {
   const grupos = categoriasMercado.map(c => items.filter(p => categoriaProducto(p.categoria) === c));
   const turno = Math.floor(fecha.getTime()/86400000) % grupos.length;

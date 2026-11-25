@@ -11,8 +11,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.UUID;
 
 public class GestionSubastas implements Subastas {
     private final RepositorioSubastas repo;
@@ -31,7 +29,7 @@ public class GestionSubastas implements Subastas {
         }
         Estado estado = alta.inicio().isAfter(reloj.instant()) ? Estado.PROGRAMADA : Estado.ACTIVA;
         var atributos = new LinkedHashMap<>(alta.atributos());
-        atributos.put("Certificado", "VT-S-" + UUID.randomUUID().toString().replace("-", "").substring(0,24).toUpperCase(Locale.ROOT));
+        atributos.remove("Certificado");
         var lote = new Lote(0, alta.titulo(), alta.descripcion(), alta.categoria(), alta.condicion(),
                 atributos, alta.imagenes(), alta.precioInicial(), alta.incremento(), alta.precioInicial(),
                 null, null, actor.email(), estado, alta.inicio(), alta.fin(), 0, 0);

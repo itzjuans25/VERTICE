@@ -3,12 +3,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { subastasApi as api } from '../api/subastasApi';
 import './Subastas.css';
-import { categoriasMercado, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, vitrinas } from '../categorias';
+import { categoriasSubastas, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, vitrinas } from '../categorias';
 import { Cierre, cop, tituloDelLote, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
 import PagoSimulado from './PagoSimulado';
 import { catalogoApi } from '../api/catalogoApi';
 import { useMercado } from './ExplorarMercado';
-import { Lanzamiento, Verificador } from './Ediciones';
+import { Lanzamiento } from './Ediciones';
 
 
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
@@ -91,7 +91,7 @@ export function Inicio() {
       </div>
       <figure className="hero-pieza">
         <img src="/mercado/edicion-aureola.webp" alt="Reloj de esfera marfil y correa burdeos sobre papel de taller" width="640" height="800" />
-        <figcaption>Serie · N.º 037/120 · <Link to="/verificar?codigo=VT-E-AUR68K">VT-E-AUR68K</Link></figcaption>
+        <figcaption>Serie · N.º 037/120</figcaption>
       </figure>
     </section>
     <section id="inicio-subastas"><h2>Subastas que terminan pronto</h2>
@@ -117,7 +117,6 @@ export function Inicio() {
         })}
       </div>
     </section>
-    <Verificador />
   </main>;
 }
 
@@ -147,7 +146,7 @@ export function Lista() {
     <Titulo>Subastas</Titulo>
     <p className="auction-muted">Ofertas en COP y pagos simulados.</p>
     <div className="mercado-seccion">
-      <FiltrosMercado lote valores={Object.fromEntries(params)} categorias={categoriasMercado.map(c => [c.slug,c.nombre])} alBuscar={filtrar} alLimpiar={() => cambiarParams({})}
+      <FiltrosMercado lote valores={Object.fromEntries(params)} categorias={categoriasSubastas.map(c => [c.slug,c.nombre])} alBuscar={filtrar} alLimpiar={() => cambiarParams({})}
         key={[...params].filter(([k]) => k !== 'pagina').join()} />
       <section aria-label="Resultados">
         <EstadoConsulta consulta={consulta} />
@@ -221,7 +220,6 @@ export function Detalle({ user }) {
           <div className="auction-panel">
             {tab === 'Por qué se subasta' && <div className="relato-lote">
               <p>{lote.descripcion}</p>{lote.atributos['Por qué se subasta'] && <p>{lote.atributos['Por qué se subasta']}</p>}
-              {lote.atributos.Certificado && <Link to={'/verificar?codigo=' + lote.atributos.Certificado}>Ver registro de la pieza</Link>}
             </div>}
             {tab === 'Ficha técnica' && (Object.keys(lote.atributos).length ? <dl>{Object.entries(lote.atributos).filter(([nombre]) => nombre !== 'Por qué se subasta' && nombre !== 'Visibilidad' && nombre !== 'Reserva COP').map(([nombre, dato]) => <React.Fragment key={nombre}><dt>{nombre}</dt><dd>{dato}</dd></React.Fragment>)}</dl> : <p>Este lote no tiene atributos adicionales.</p>)}
             {tab === 'Historial de pujas' && (detalle.historial.length ? <ul className="auction-records">{detalle.historial.map((puja, index) => <li key={index}><span>{puja.mia ? 'Tú' : puja.postor} · {fecha(puja.fecha)}</span><strong>{cop.format(puja.monto)}{consultaUsd.datos?.disponible ? ' · ≈ ' + usd.format(puja.monto * consultaUsd.datos.tasa) : ''}</strong></li>)}</ul> : <p>Aún no hay pujas.</p>)}
@@ -280,11 +278,6 @@ function ReferenciaUsd({ monto, cotizacion }) {
 function PagoSubasta({ orden, cotizacion }) {
   return <PagoSimulado referencia={'SIM-SUBASTA-' + orden.id} monto={orden.monto}
     referenciaUsd={cotizacion?.disponible ? orden.monto * cotizacion.tasa : null}
-    certificados={async () => {
-      const { lote } = await api.detalle(orden.loteId);
-      return lote.atributos.Certificado && lote.atributos.Visibilidad !== 'Interna'
-        ? [{ codigo: lote.atributos.Certificado }] : [];
-    }}
     pagadoEn={orden.pagada} confirmar={async () => (await api.pagar(orden.loteId)).pagada} />;
 }
 
@@ -366,7 +359,10 @@ export function AdminSubastas() {
     <form className="auction-panel auction-form admin-auction" onSubmit={crear}>
       <label>Título<input name="titulo" required maxLength="150" /></label>
       <label>Descripción<textarea name="descripcion" required maxLength="4000" /></label>
-      <label>Categoría<select name="categoria" value={categoria} onChange={e => setCategoria(e.target.value)}>{Object.entries(categorias).map(([id, label]) => <option value={id} key={id}>{label}</option>)}</select></label>
+      <label>Categoría<select name="categoria" value={categoria} onChange={e => setCategoria(e.target.value)}>
+        {categoriasSubastas.flatMap(({ lotes }) => lotes).filter(id => id !== 'OTROS').map(id =>
+          <option value={id} key={id}>{id === 'CARROS' ? 'Carros de colección' : id === 'MOTOS' ? 'Motos de colección' : categorias[id]}</option>)}
+      </select></label>
       <label>Condición<select name="condicion"><option value="NUEVO">Nuevo</option><option value="USADO">Usado</option></select></label>
       {['CARROS', 'MOTOS'].includes(categoria) && <><label>Año<input name="Año" required maxLength="4" /></label><label>Kilometraje<input name="Kilometraje" required maxLength="100" /></label></>}
       {categoria === 'JOYERIA' && <><label>Material<input name="Material" required maxLength="100" /></label><label>Quilates<input name="Quilates" required maxLength="100" /></label></>}

@@ -1,0 +1,60 @@
+\newcommand{\GaleriaLatencia}{%
+\begin{table}[!ht]
+\caption{Latencia HTTP de la galería en milisegundos}
+\centering\footnotesize
+\begin{tabular}{rrrrrrr}
+\toprule
+VU & Media & p95 & p99 & Máximo & req/s & Errores\\\midrule
+3 & 63,65 & 245,67 & 793,87 & 4360,50 & 25,91 & 0\\
+6 & 68,28 & 302,11 & 655,40 & 3268,34 & 45,58 & 1\\
+8 & 46,39 & 245,80 & 508,74 & 1056,74 & 82,77 & 0\\
+\bottomrule
+\end{tabular}
+\end{table}}
+\newcommand{\GaleriaCobertura}{%
+\begin{table}[!ht]
+\caption{JaCoCo de líneas por servicio}
+\centering\footnotesize
+\begin{tabular}{lrr}
+\toprule
+Servicio & Unidad & Con integración\\\midrule
+Auth & 20,29\,\% & 82,99\,\%\\
+Catálogo & 33,14\,\% & 85,71\,\%\\
+Notificaciones & 68,85\,\% & 82,62\,\%\\
+Subastas & 16,08\,\% & 89,28\,\%\\
+\bottomrule
+\end{tabular}
+\end{table}}
+\newcommand{\GaleriaFlujos}{El lote 1411 registró dos postores y activó la extensión de cierre. La adjudicación 48 mantuvo la orden al repetir el pago. Mailpit recibió ambos avisos. La compra 3356 agotó la última unidad y recibió el correo. La actividad mostró ambos pagos y conservó su referencia al repetirse. La compra de edición 3503 verificó cupo y reintento concurrente.}
+\newcommand{\GaleriaNewman}{Newman midió 90 peticiones con 0 errores HTTP y 11 aserciones fallidas de 269. Máximo de 1622,00 ms.}
+\newcommand{\GaleriaDiagnostico}{En la medición previa a 8 VU, cambiar la clave consumió 234,77 ms por hash en promedio. PostgreSQL ejecutó el plan aislado de la portada en 0,529 ms. Los tiempos del arranque en frío se registraron aparte. El umbral por ruta y la cobertura unitaria del 80 \% siguen pendientes.}
+\newcommand{\GaleriaPicos}{\paragraph{Picos por perfil.} 3 VU registró 7 rutas por encima de 500 ms. 6 VU registró 11 rutas por encima de 500 ms. 8 VU registró 6 rutas por encima de 500 ms. Los resultados adjuntos enumeran los máximos y p95 por ruta.}
+\newcommand{\GaleriaRutas}{%
+\begin{table}[!ht]
+\caption{Máximos superiores a 500 ms}
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrr}
+\toprule
+Servicio & Ruta & 3 VU & 6 VU & 8 VU\\\midrule
+Auth & \texttt{POST /cambiar-clave} & 1935,41 & 3268,34 & 1056,74\\
+Auth & \texttt{POST /login} & -- & -- & 799,24\\
+Auth & \texttt{POST /renovar} & -- & 3006,68 & 832,97\\
+Auth & \texttt{POST /save} & 573,64 & 3074,39 & 573,52\\
+Catálogo & \texttt{DELETE /carrito/vaciar} & -- & 1194,16 & --\\
+Catálogo & \texttt{DELETE /producto/:id} & -- & 1300,80 & --\\
+Catálogo & \texttt{GET /compras} & 1236,84 & 1601,49 & 661,80\\
+Catálogo & \texttt{GET /producto} & 994,45 & -- & --\\
+Catálogo & \texttt{GET /producto/:id} & 1361,24 & -- & --\\
+Catálogo & \texttt{GET /producto/entrega} & -- & 874,09 & --\\
+Catálogo & \texttt{POST /carrito/agregar} & 2284,46 & -- & --\\
+Catálogo & \texttt{POST /compras/realizar} & -- & -- & 591,28\\
+Catálogo & \texttt{POST /producto} & 4360,50 & 698,14 & --\\
+Catálogo & \texttt{PUT /producto/:id} & -- & 573,67 & --\\
+Subastas & \texttt{GET /:id} & -- & 543,90 & --\\
+Subastas & \texttt{GET /api/subastas/inicio} & -- & 510,15 & --\\
+
+\bottomrule
+\end{tabular}
+\end{table}
+}

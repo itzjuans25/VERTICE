@@ -153,6 +153,11 @@ async function main() {
     const repetida = await pedir(subastas + '/' + lote.id + '/pago', {method:'POST',token:loginLuis.token});
     assert.deepEqual(repetida,orden);
     estado.pagoIdempotente = true;
+    const asuntoPago = 'Pago simulado registrado · SIM-SUBASTA-' + orden.id;
+    const pagoNotificado = await correo(dos.email, asuntoPago);
+    const correosPago = await pedir(mailpit + '/api/v1/search?query=' + encodeURIComponent('to:' + dos.email));
+    assert.equal(correosPago.messages.filter(m => m.Subject === asuntoPago).length, 1);
+    estado.correos.push({ asunto: pagoNotificado.Subject, id: pagoNotificado.ID });
     estado.adjudicacion = orden.id;
     await captura(luis, 'adjudicada');
     await abrir(luis, '/cuenta/ganadas');

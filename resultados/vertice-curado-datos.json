@@ -1,0 +1,24 @@
+{
+  "zonaBase": "UTC",
+  "ediciones": 3,
+  "originales": 45,
+  "pedidosPrevios": [
+    2772,
+    2938,
+    3119,
+    3355,
+    3356
+  ],
+  "generalArchivado": 22,
+  "tecnologiaArchivada": 45,
+  "adjudicacionesPrevias": [
+    39,
+    41,
+    44,
+    46
+  ],
+  "segundaEjecucion": [
+    "UPDATE 0",
+    "UPDATE 0"
+  ]
+}

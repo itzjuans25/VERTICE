@@ -1,5 +1,26 @@
 # Auditoría VÉRTICE
 
+## Cierre curatorial · última ejecución local
+
+| Requisito | Estado | Evidencia |
+| --- | --- | --- |
+| Núcleo de comercio | Cumple | Compra 3356 agotó la unidad. Edición 3503 verificó cupo y un solo comprobante. Lote 1411 adjudicado y pagado. |
+| Mínimo tres microservicios | Cumple | Auth, Catálogo, Notificaciones y Subastas con OpenAPI y health. |
+| Base de datos | Cumple | PostgreSQL conserva 45 SKUs tecnológicos archivados, 18 lotes curados y tres ediciones. [Datos](../resultados/vertice-curado-datos.json) |
+| Notificaciones | Cumple | Mailpit recibió comprobantes y avisos de puja. RabbitMQ separa eventos y entrega. El correo externo requiere credenciales. |
+| Cinco APIs propias por servicio | Cumple | [Reglas y endpoints](../README.md#cinco-apis-no-crud-por-microservicio). |
+| Cobertura unitaria de 80 % por servicio | No cumple | Unidad 20,29 / 33,14 / 68,85 / 16,08 %. Con integración 82,99 / 85,71 / 82,62 / 89,28 %. Orden Auth, Catálogo, Notificaciones y Subastas. |
+| Dos APIs externas | Cumple | Frankfurter, Nager.Date y Open-Meteo devolvieron datos mediante las APIs de VÉRTICE. [Respuestas](../resultados/vertice-editorial-integraciones.json) |
+| Despliegue completo | Parcial | Windows nativo operativo. Compose y Blueprint validados. Publicación y pruebas en la nube pendientes. |
+| Carga y estrés | Cumple | 52 rutas con k6 por perfil. Newman comprobó 90 peticiones. |
+| Máximo de 500 ms por API | No cumple | Máximos con 3, 6 y 8 VU 4360,50 / 3268,34 / 1056,74 ms. Newman 1622,00 ms. |
+| Artículo IEEE de máximo cuatro páginas | Cumple | [Artículo corto](../output/pdf/editorial/articulo-ieee-4p.pdf) y [fuente IEEEtran](articulo/articulo-ieee-4p.tex). |
+
+[Rendimiento por ruta](../resultados/vertice-curado-rendimiento.md) · [JaCoCo](../resultados/vertice-curado-cobertura.json) · [Compra](../resultados/vertice-editorial-compra.json) · [Edición](../resultados/vertice-curado-e2e.json) · [Subasta](../resultados/vertice-curado-puja.json) · [Capturas](capturas/)
+
+## Evidencia histórica
+
+
 ## Galería editorial · ejecución local
 
 | Requisito | Estado | Evidencia |

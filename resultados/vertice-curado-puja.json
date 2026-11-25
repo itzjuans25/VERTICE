@@ -1,0 +1,84 @@
+{
+  "prueba": "Cronógrafo de archivo · Serie Boreal",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "0EIm3ARpqhX1fFvBKlPPE1"
+    },
+    {
+      "asunto": "Pago simulado registrado · SIM-SUBASTA-48",
+      "id": "2IZfP7JqlJvVTNv1iYIAu6"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "5osWrAAnJvREi21W82ZMQd"
+    }
+  ],
+  "postores": [
+    4141,
+    4142
+  ],
+  "lote": 1411,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "pagoIdempotente": true,
+  "adjudicacion": 48,
+  "ganadas": {
+    "visibleParaGanador": true,
+    "visibleParaPerdedor": false,
+    "pagoVisible": true
+  },
+  "lotesActivos": [
+    {
+      "id": 400,
+      "titulo": "Coupé clásico Serie V",
+      "precio": 57500000,
+      "pujas": 1
+    },
+    {
+      "id": 401,
+      "titulo": "Motocicleta café-racer Estudio 01",
+      "precio": 17300000,
+      "pujas": 1
+    },
+    {
+      "id": 402,
+      "titulo": "Todoterreno clásico Travesía",
+      "precio": 49200000,
+      "pujas": 1
+    }
+  ],
+  "ok": true
+}

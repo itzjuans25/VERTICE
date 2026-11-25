@@ -55,7 +55,7 @@ public class SecurityConfig {
                                         "No tienes permisos para realizar esta accion")))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/ecommerce/inicio").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/ecommerce/lanzamientos", "/api/ecommerce/certificados/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ecommerce/lanzamientos").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ecommerce/producto/**").permitAll()
                         .requestMatchers("/health", "/actuator/health", "/actuator/health/**").permitAll()

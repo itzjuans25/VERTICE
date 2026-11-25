@@ -12,6 +12,7 @@ erDiagram
   COMPRAS ||--o{ ITEM_CARRITO : FK
   PRODUCTS ||..o{ ITEM_CARRITO : "producto_id lógico"
   PRODUCTS ||--o{ FOTOS_PUBLICACION : FK
+  PRODUCTS ||..o| CATALOGO_EDICIONES : "producto_id"
   USUARIO ||..o{ SUBASTA_PUJAS : "usuario_id lógico"
   SUBASTA_LOTES ||--o{ SUBASTA_PUJAS : FK
   SUBASTA_LOTES ||--o| SUBASTA_ORDENES : "FK única por lote"
@@ -24,5 +25,7 @@ erDiagram
 La curaduría pública lee el motivo y la visibilidad desde los atributos JSON de `subasta_lotes`. Un lote interno conserva su enlace directo y sus relaciones con pujas, avisos y adjudicaciones. El script incluye el plan de consulta de la portada.
 
 La marca `compras.requiere_pago_simulado` habilita el flujo en pedidos nuevos. `pago_simulado_en` registra la primera confirmación. En Subastas, `subasta_ordenes.pagada` conserva el instante equivalente. El número de referencia se forma con el tipo y el identificador de orden. Las dos tablas conservan sus relaciones existentes y el estado de envío de Catálogo permanece separado del pago.
+
+Catálogo bloquea la fila de `catalogo_ediciones` al comprobar fecha y cupo por cliente. El inventario sigue en `products.stock`. Las compras y adjudicaciones conservan el instante del primer pago simulado. `products.estado_publicacion` controla la Tienda pública y permite conservar filas de pedidos anteriores.
 
 [Consultas para inspeccionar PostgreSQL](vertice-inspeccion.sql) · [Claves foráneas inspeccionadas](../../resultados/vertice-datos.json)

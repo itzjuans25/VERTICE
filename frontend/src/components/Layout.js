@@ -9,7 +9,7 @@ const nombres = {
   productos: 'Tienda', subastas: 'Subastas', buscar: 'Buscar', categoria: 'Categorías',
   carrito: 'Carrito', cuenta: 'Mi cuenta', compras: 'Mi cuenta', 'mis-pujas': 'Mi cuenta',
   login: 'Iniciar sesión', register: 'Registro', admin: 'Administración',
-  lanzamientos: 'Lanzamientos', verificar: 'Certificados',
+  lanzamientos: 'Lanzamientos',
 };
 
 export default function Layout({ children, user, onLogout, cartCount }) {
@@ -31,7 +31,7 @@ export default function Layout({ children, user, onLogout, cartCount }) {
   }, [hash, pathname]);
   return <>
     <a className="tech-skip" href="#contenido">Saltar al contenido</a>
-    <div className="franja-editorial">certificado verificable / pagos simulados</div>
+    <div className="franja-editorial">ediciones curadas / pagos simulados</div>
     <Navbar user={user} onLogout={onLogout} cartCount={cartCount} />
     <div id="contenido" className="mercado-layout" tabIndex={-1}>
       {despertando && <p className="tt-aviso" role="status">Despertando el servidor, puede tardar hasta 1 minuto</p>}
@@ -42,7 +42,7 @@ export default function Layout({ children, user, onLogout, cartCount }) {
       {children}
     </div>
     <footer className="tt-footer mercado-footer">
-      <Logo /><Link to="/verificar">Verificar pieza</Link>
+      <Logo />
       <details id="como-funciona"><summary>Cómo funciona</summary>
         <p>Explora un lote, revisa el mínimo y confirma tu oferta. Consulta la adjudicación y registra el pago simulado en tu cuenta.</p>
       </details><small>{marca.taller}</small>

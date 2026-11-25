@@ -8,6 +8,6 @@ Para ejecutarla en Windows con una cuenta de administración temporal, inicia el
 .\postman\ejecutar-local.ps1
 ```
 
-El HTML omite cuerpos, cabeceras y variables sensibles. Si una solicitud supera 500 ms, el informe lo registra como una aserción fallida aunque el código y la estructura sean correctos. En Render cambia las tres URLs con las que entregue el panel. Completa `adminEmail`, `adminPassword` y `notificationKey` con valores privados de Render para ejecutar las rutas protegidas. El paso Mailpit se omite cuando su URL está vacía.
+El HTML omite cuerpos, cabeceras y variables sensibles. El informe registra las respuestas que superan 500 ms como fallos de aserción. En Render ajusta las cuatro URLs del entorno al valor de cada servicio. Completa `adminEmail`, `adminPassword` y `notificationKey` con valores privados para las rutas protegidas. El paso Mailpit se omite cuando su URL está vacía.
 
-[Reporte HTML local](reporte-local.html)
+[Reporte HTML de la galería curada](reporte-curado.html) · [Resultados de Newman](../resultados/vertice-curado-postman.json)

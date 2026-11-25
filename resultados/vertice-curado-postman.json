@@ -1,0 +1,65 @@
+{
+  "peticiones": 90,
+  "peticionesFallidas": 0,
+  "aserciones": 269,
+  "asercionesFallidas": 11,
+  "promedioMs": 207.85555555555555,
+  "maximoMs": 1622.0,
+  "fallos": [
+    {
+      "caso": "Auth activo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 650 to be below 500"
+    },
+    {
+      "caso": "Auth Swagger JSON",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 722 to be below 500"
+    },
+    {
+      "caso": "Catálogo Swagger JSON",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1622 to be below 500"
+    },
+    {
+      "caso": "Notificaciones activo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 884 to be below 500"
+    },
+    {
+      "caso": "Notificaciones Swagger JSON",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 810 to be below 500"
+    },
+    {
+      "caso": "Registrar cliente",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1347 to be below 500"
+    },
+    {
+      "caso": "Cambiar contraseña",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 850 to be below 500"
+    },
+    {
+      "caso": "Listar productos",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 558 to be below 500"
+    },
+    {
+      "caso": "Listado administrativo de pedidos",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 570 to be below 500"
+    },
+    {
+      "caso": "Limpiar postor Uno",
+      "comprobacion": "Responde en máximo 500 ms",
+      "mensaje": "expected 935 to be at most 500"
+    },
+    {
+      "caso": "Inicio de tienda",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 688 to be below 500"
+    }
+  ]
+}

@@ -48,14 +48,10 @@
 .tarjeta-producto .tt-card-image img { aspect-ratio: 4/5; }
 .tarjeta-edicion .tt-card-body { min-height: auto; }
 .tarjeta-edicion progress { width: 100%; accent-color: var(--color-acento); }
-.etiqueta-edicion, .verificador a { color: var(--color-acento); }
+.etiqueta-edicion { color: var(--color-acento); }
 .cuadricula-categorias { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%, var(--medida-135px)),1fr)); gap: var(--espacio-3); }
 .cuadricula-categorias a { display: grid; grid-template-rows: minmax(0,1fr) auto; min-width: 0; aspect-ratio: 1; overflow: hidden; text-decoration: none; background: var(--color-superficie); border: var(--medida-1px) solid var(--color-borde); border-radius: var(--radio-md); }
 .cuadricula-categorias img { display: block; width: 100%; height: 100%; object-fit: cover; min-height: 0; }
 .cuadricula-categorias span, .relato-lote { display: grid; gap: var(--espacio-2); }
 .cuadricula-categorias span { padding: var(--espacio-2); color: var(--color-texto); }
 .cuadricula-categorias small { color: var(--color-texto-suave); }
-.verificador { display: grid; gap: var(--espacio-3); background: var(--color-superficie-2); border: var(--medida-1px) solid var(--color-borde); border-radius: var(--radio-lg); padding: var(--espacio-5); }
-.verificador form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--espacio-3); }
-.verificador label { display: grid; gap: var(--espacio-2); flex: 1 1 min(100%, var(--medida-240px)); }
-.verificador input { font: inherit; color: var(--color-texto); background: var(--color-superficie); border: var(--medida-1px) solid var(--tech-control); border-radius: var(--radio-sm); min-width: 0; padding: var(--espacio-3); }

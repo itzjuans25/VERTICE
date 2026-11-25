@@ -38,7 +38,13 @@ async function main() {
   const browser = await chromium.launch({ channel:'msedge' });
   const escritorio = await browser.newPage({viewport:{width:1440,height:940},reducedMotion:'reduce'});
   try {
-    const { colores } = marca;
+    await abrir(escritorio, '/');
+    const colores = await escritorio.evaluate(() => {
+      const reglas = getComputedStyle(document.documentElement);
+      const leer = token => reglas.getPropertyValue('--color-' + token).trim();
+      return {text:leer('texto'), background:leer('fondo'), muted:leer('texto-suave'),
+        surface:leer('superficie'), ink:leer('boton-texto'), accent:leer('boton')};
+    });
     salida.contraste.textoFondo = contraste(colores.text,colores.background);
     salida.contraste.textoSuaveSuperficie = contraste(colores.muted,colores.surface);
     salida.contraste.accion = contraste(colores.ink,colores.accent);
@@ -53,9 +59,10 @@ async function main() {
     for(const ancho of soloIntegracion ? [] : [390,768,1280,1440,1920]) {
       const page = await browser.newPage({viewport:{width:ancho,height:950},reducedMotion:'reduce'});
       await abrir(page,'/');
-      await page.getByRole('heading',{name:marca.lema,exact:true}).waitFor();
-      assert.equal(await page.locator('main a[href^="/productos"]').count(), 0);
-      assert.equal(await page.locator('#mercado-navigation .nav-link').first().textContent(), 'Subastas');
+      await page.getByRole('heading',{name:"Piezas que no se repiten.",exact:true}).waitFor();
+      await page.locator('#inicio-lanzamientos article').last().waitFor();
+      assert.equal(await page.locator('#inicio-lanzamientos article').count(), 3);
+      assert.equal(await page.locator('#mercado-navigation .nav-link').first().textContent(), 'Inicio');
       assert.ok(await page.getByRole('link',{name:'Explorar subastas'}).isVisible());
       const anchoDoc = await page.evaluate(()=>document.documentElement.scrollWidth);
       assert.equal(anchoDoc,ancho);

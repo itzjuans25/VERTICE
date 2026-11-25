@@ -107,7 +107,6 @@ async function main() {
 
     await page.getByRole('button', { name: 'Agregar al carrito' }).click();
     await page.getByRole('status').filter({ hasText: 'Producto agregado' }).waitFor();
-    await page.locator('.nav-archivo summary').click();
     await page.getByRole('link', { name: /Carrito/ }).click();
     await page.getByRole('button', { name: 'Realizar Compra' }).waitFor();
     const entrega = page.getByText(/\d+ días hábiles\./);

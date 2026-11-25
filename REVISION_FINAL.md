@@ -1,5 +1,19 @@
 # Revisión final de VÉRTICE
 
+## Cierre de la galería curada
+
+- Kit Cúspide v2 aplicado al tema claro. El panel de puja conserva la variante oscura. El inicio presenta cuatro cierres, tres lanzamientos y siete categorías cuyos totales se comprueban contra el listado activo. [Auditoría de tokens](resultados/vertice-editorial-tokens.json) · [Créditos](docs/CREDITOS_IMAGENES.md)
+- La edición del pedido 3503 comprobó cupo por cliente y confirmó un solo pago con dos llamadas concurrentes. La compra 3356 agotó la última unidad. El lote 1411 verificó extensión de plazo, adjudicación 48, pago y Mailpit. [Edición](resultados/vertice-curado-e2e.json) · [Compra](resultados/vertice-editorial-compra.json) · [Subasta](resultados/vertice-curado-puja.json)
+- Cuatro servicios locales. La configuración Render se validó para TLS, health, rutas de Docker y secretos externos. La publicación requiere las cuentas de destino. [Blueprint](resultados/vertice-editorial-cloud.json)
+- k6 recorrió 52 rutas. Newman ejecutó 90 peticiones y JaCoCo midió unidad e integración por separado. [Rendimiento](resultados/vertice-curado-rendimiento.md) · [Cobertura](resultados/vertice-curado-cobertura.json)
+
+## Mediciones de la primera galería editorial
+
+- Kit Cúspide v2 aplicado al tema claro. El panel de puja conserva la variante oscura. El inicio presenta cuatro cierres, tres lanzamientos y siete categorías cuyos totales se comprueban contra el listado activo. [Auditoría de tokens](resultados/vertice-editorial-tokens.json) · [Créditos](docs/CREDITOS_IMAGENES.md)
+- La edición del pedido 3355 comprobó cupo por cliente, una sola confirmación con dos llamadas concurrentes y certificado verificable. La compra 3356 agotó la última unidad. El lote 1126 verificó extensión de plazo, adjudicación 46, pago y Mailpit. [Edición](resultados/vertice-editorial-e2e.json) · [Compra](resultados/vertice-editorial-compra.json) · [Subasta](resultados/vertice-editorial-puja.json)
+- Cuatro servicios locales. La configuración Render se validó para TLS, health, rutas de Docker y secretos externos. La publicación requiere las cuentas de destino. [Blueprint](resultados/vertice-editorial-cloud.json)
+- k6 recorrió 54 rutas. Newman ejecutó 93 peticiones y JaCoCo midió unidad e integración por separado. [Rendimiento](resultados/vertice-editorial-rendimiento.md) · [Cobertura](resultados/vertice-editorial-cobertura.json)
+
 ## Galería editorial
 
 - Portada, navegación, buscador y cuenta dan prioridad a las subastas. Los lotes internos quedan fuera de vitrinas y búsquedas públicas. Los enlaces e historiales siguen disponibles.

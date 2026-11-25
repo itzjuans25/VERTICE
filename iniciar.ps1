@@ -88,7 +88,7 @@ if ($Docker) {
                 if ($LASTEXITCODE -ne 0) { throw 'No fue posible inicializar PostgreSQL.' }
             } finally { Remove-Item -LiteralPath $pwFile -ErrorAction SilentlyContinue }
         }
-        Start-EcommerceProcess postgres $postgres @('-D', ('"' + $pgData + '"'), '-p', $config.POSTGRES_PORT, '-h', '127.0.0.1') $ecommerceHome "$pgBin/pg_ctl.exe"
+        Start-EcommerceProcess postgres $postgres @('-D', ('"' + $pgData + '"'), '-p', $config.POSTGRES_PORT, '-h', '127.0.0.1', '-c', 'timezone=UTC') $ecommerceHome "$pgBin/pg_ctl.exe"
         $deadline = (Get-Date).AddSeconds(75)
         do {
             & "$pgBin/pg_isready.exe" -q -h 127.0.0.1 -p $config.POSTGRES_PORT -t 2

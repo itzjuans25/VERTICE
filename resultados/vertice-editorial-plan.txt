@@ -1,0 +1,17 @@
+Limit  (cost=8.34..8.38 rows=2 width=260) (actual time=0.457..0.460 rows=8.00 loops=1)
+  Buffers: shared hit=19
+  ->  Incremental Sort  (cost=8.34..8.38 rows=2 width=260) (actual time=0.455..0.456 rows=8.00 loops=1)
+        Sort Key: fin, id
+        Presorted Key: fin
+        Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 33kB  Peak Memory: 33kB
+        Buffers: shared hit=19
+        ->  Index Scan using ix_subasta_estado_fin on subasta_lotes  (cost=0.28..8.33 rows=1 width=260) (actual time=0.118..0.371 rows=9.00 loops=1)
+              Index Cond: (((estado)::text = 'ACTIVA'::text) AND (fin > now()))
+              Filter: (((titulo)::text !~* '^(k6-|qa-|ensayo-|ensayo curado[[:space:]]*[·–-])'::text) AND (inicio <= now()) AND (((atributos)::jsonb ->> 'Visibilidad'::text) IS DISTINCT FROM 'Interna'::text) AND (NULLIF(btrim(((atributos)::jsonb ->> 'Por qué se subasta'::text)), ''::text) IS NOT NULL))
+              Rows Removed by Filter: 2
+              Index Searches: 1
+              Buffers: shared hit=10
+Planning:
+  Buffers: shared hit=264
+Planning Time: 48.015 ms
+Execution Time: 0.529 ms

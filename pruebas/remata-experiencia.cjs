@@ -38,7 +38,13 @@ async function main() {
   const browser = await chromium.launch({ channel:'msedge' });
   const escritorio = await browser.newPage({viewport:{width:1440,height:940},reducedMotion:'reduce'});
   try {
-    const { colores } = marca;
+    await abrir(escritorio, '/');
+    const colores = await escritorio.evaluate(() => {
+      const reglas = getComputedStyle(document.documentElement);
+      const leer = token => reglas.getPropertyValue('--color-' + token).trim();
+      return {text:leer('texto'), background:leer('fondo'), muted:leer('texto-suave'),
+        surface:leer('superficie'), ink:leer('boton-texto'), accent:leer('boton')};
+    });
     salida.contraste.textoFondo = contraste(colores.text,colores.background);
     salida.contraste.textoSuaveSuperficie = contraste(colores.muted,colores.surface);
     salida.contraste.accion = contraste(colores.ink,colores.accent);

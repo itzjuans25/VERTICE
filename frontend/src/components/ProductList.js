@@ -1,10 +1,11 @@
 import { tituloMarca, pesos } from '../marca';
-import { categoriasMercado, categoriaPorSlug } from '../categorias';
+import { categoriasTienda, categoriaPorSlug } from '../categorias';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiltrosMercado, TarjetaMercado, Paginacion, EstadoMercado } from './MercadoUI';
 import { catalogoApi, contarItems } from '../api/catalogoApi';
 import { observarDisponibilidad } from '../api/observarDisponibilidad';
+import { useMercado } from './ExplorarMercado';
 import './TechTrade.css';
 
 export const condiciones = { NUEVO: 'Nuevo', USADO: 'Usado' };
@@ -50,6 +51,8 @@ export default function ProductList({ user, setCartCount }) {
   const [pagina, setPagina] = useState(0);
   const [reintento, setReintento] = useState(0);
   const [estado, setEstado] = useState({ carga: true });
+  const [lanzamientos] = useMercado(catalogoApi.lanzamientos);
+  const proximos = new Set(lanzamientos.datos?.filter(e => Date.parse(e.apertura) > Date.now()).map(e => e.productoId));
   const { agregar, ocupado, mensaje } = useAgregar({
     user, setCartCount, actualizarStock: () => setReintento(valor => valor + 1),
   });
@@ -93,11 +96,11 @@ export default function ProductList({ user, setCartCount }) {
         <h2>Nuestros productos</h2>
         {estado.resultado && <span aria-live="polite">{estado.resultado.total} resultados</span>}
       </div>
-      <FiltrosMercado key={reinicio} categorias={categoriasMercado.filter(c => c.tienda.length).map(c => [c.slug,c.nombre])} marcas={marcas} alBuscar={aplicar} alLimpiar={limpiar} />
+      <FiltrosMercado key={reinicio} categorias={categoriasTienda.map(c => [c.slug,c.nombre])} marcas={marcas} alBuscar={aplicar} alLimpiar={limpiar} />
       {mensaje && <p className="tt-aviso" role={mensaje.error ? 'alert' : 'status'}>{mensaje.texto}</p>}
       <EstadoMercado estado={{ cargando:estado.carga, error:estado.error }} reintentar={() => setReintento(v => v+1)}
         vacio={estado.resultado?.items.length === 0 ? 'No hay productos con estos filtros.' : ''} />
-      <div className="tt-grid">{estado.resultado?.items.map(producto => <TarjetaMercado key={producto.id} producto={producto} agregar={agregar} ocupado={ocupado !== null} />)}</div>
+      <div className="tt-grid">{estado.resultado?.items.map(producto => <TarjetaMercado key={producto.id} producto={producto} agregar={agregar} ocupado={ocupado !== null} proximo={proximos.has(producto.id)} />)}</div>
       <Paginacion pagina={pagina} paginas={estado.resultado?.paginas || 0} cambiar={setPagina} />
     </section>
   </main>;

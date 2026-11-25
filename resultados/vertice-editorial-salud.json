@@ -1,0 +1,31 @@
+{
+  "comprobado": "2026-11-25T12:13:48.3470053-05:00",
+  "tienda": 200,
+  "mailpit": 200,
+  "apis": {
+    "Auth": {
+      "puerto": 9090,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Auth",
+      "rutas": 10
+    },
+    "Catalogo": {
+      "puerto": 9092,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Catálogo",
+      "rutas": 23
+    },
+    "Notificaciones": {
+      "puerto": 9093,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Notificaciones",
+      "rutas": 6
+    },
+    "Subastas": {
+      "puerto": 9094,
+      "salud": "UP",
+      "openapi": "VÉRTICE | Subastas",
+      "rutas": 11
+    }
+  }
+}

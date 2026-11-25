@@ -1,0 +1,21 @@
+{
+  "perfiles": [
+    3820,
+    3821
+  ],
+  "avisos": [
+    {
+      "id": 1423,
+      "estado": "ENVIADO"
+    },
+    {
+      "id": 1424,
+      "estado": "ENVIADO"
+    }
+  ],
+  "sinJwt": [
+    401,
+    401
+  ],
+  "aislamiento": true
+}

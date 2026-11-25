@@ -7,11 +7,11 @@
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
 
-\input{metricas-pagos.tex}
+\input{metricas-editorial.tex}
 \begin{document}
 \maketitle
 \begin{abstract}
-VÉRTICE es una casa editorial de subastas académicas. La compra directa permanece como canal complementario. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La galería se validó con 51 rutas en k6, dos postores, cierre, adjudicación y pago simulado en compras y subastas. El análisis revela tiempos superiores al umbral académico en las pruebas de estrés. El pago de adjudicaciones es simulado.
+VÉRTICE es una casa editorial de subastas académicas. La compra directa permanece como canal complementario. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. Se validaron 52 rutas en k6, dos postores, cierre, adjudicación y pagos simulados. PostgreSQL limita la disponibilidad por cliente y conserva el primer pago. El análisis revela tiempos superiores al umbral académico en las pruebas de estrés. El pago de adjudicaciones es simulado.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
@@ -83,7 +83,7 @@ La aplicación publica fichas con descripción corta y larga, marca, modelo, gar
 
 El stock se descuenta en una escritura condicionada a disponibilidad y existencia de una referencia activa. Se confirma el pedido y se conservan el nombre y precio de ese momento. La modificación posterior del precio no reemplaza los valores del historial. El carrito de dos clientes puede contener la misma unidad. La revisión de inventario al confirmar evita vender esa unidad una segunda vez.
 
-Los seeds históricos de cosmética y compraventa quedan archivados. Las consultas operativas publican solo productos activos. El seed de tecnología conserva ediciones y stock, porque insertar una clave existente no sustituye la fila. Las imágenes se sirven como WebP desde el sitio. Los recursos de muestra tienen una proporción uniforme de 1:1 y son ilustrativos del tipo de artículo.
+Los seeds históricos de cosmética y compraventa quedan archivados. Las consultas operativas publican productos activos. El seed conserva los precios y el stock de los productos existentes. Las imágenes ilustrativas se sirven en WebP. La galería de subastas usa encuadre 4:3 y ofrece un recorte de detalle, mientras los lanzamientos y las tarjetas de tienda usan 4:5.
 
 \subsection{Identidad y cambio de contraseña}
 El login verifica el hash y entrega un JWT. Cambiar contraseña consulta el hash actual, verifica la clave anterior y calcula un hash nuevo con sal aleatoria. La escritura condiciona la operación al hash leído. Así se evita que dos cambios simultáneos se sobrescriban. El cómputo se hace fuera de la transacción de escritura. La identificación de cuenta usa clave primaria y el correo tiene restricción única.
@@ -144,11 +144,11 @@ El cambio de clave realiza una verificación y deriva otra contraseña. El login
 El listado paginado de productos controla la cardinalidad de respuesta y aplica los filtros en la base de datos. El listado heredado de productos y el listado de compras administrativas se mantienen para compatibilidad. Si se desea comparar esos recorridos entre entornos, debe controlarse la cantidad acumulada de registros. Las compras de k6 se guardan en una base de desarrollo y no se reutilizan como evidencia comercial.
 
 \subsection{Evidencia del catálogo}
-\captura{../capturas/vertice-pagos-inicio-1440.png}{Fig. 3. Nueva galería de subastas en Windows.}
+\captura{../capturas/vertice-curado-portada.png}{Fig. 3. Nueva galería de subastas en Windows.}
 La búsqueda en servidor permite comprobar marca, categoría y condición sin depender de la página que estaba visible. El recorrido abre una ficha de segunda mano y cambia a la vista secundaria. Antes de confirmar, el carrito consolida unidades y calcula el total en pesos colombianos.
 
 \subsection{Evidencia de correo}
-\captura{../capturas/vertice-pagos-compra-pago.png}{Fig. 4. Pago de compra confirmado desde la actividad.}
+\captura{../capturas/vertice-editorial-compra-pago.png}{Fig. 4. Pago de compra confirmado desde la actividad.}
 El pedido confirma el stock y deja pendiente el pago simulado. Su referencia identifica la orden. PostgreSQL registra el primer pago con una actualización condicional. Newman confirma el asunto mediante la API de Mailpit y el recorrido de navegador conserva una captura de la bandeja.
 
 \clearpage
@@ -202,8 +202,8 @@ VÉRTICE ejecuta el recorrido de búsqueda, compra e historial con avisos al cli
 Las siguientes tareas comprenden estudiar la publicación de lotes desiertos como venta directa mediante un evento idempotente por identificador de lote, verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
 
 \clearpage
-\section{Galería y verificación de Subastas}
-La galería publica 18 piezas en cinco vitrinas. Las fichas internas conservan sus relaciones con los recorridos de prueba. Las columnas incluyen condición, precio inicial, incremento, precio actual, plazo y versión. Cada puja y adjudicación referencia un lote. La bandeja de avisos usa claves de evento únicas. El identificador del postor se conserva como referencia lógica a Auth. La API pública muestra alias y abre la adjudicación exclusivamente al ganador.
+\section{Galería y curaduría de Subastas}
+La galería publica 18 piezas en siete categorías y tres lanzamientos con cupo. La Tienda publica objetos de diseño y colección. Las fichas internas conservan sus relaciones con los recorridos de prueba. Las columnas incluyen condición, precio inicial, incremento, precio actual, plazo y versión. Cada puja y adjudicación referencia un lote. La bandeja de avisos usa claves de evento únicas. El identificador del postor se conserva como referencia lógica a Auth. La API pública muestra alias y abre la adjudicación exclusivamente al ganador.
 
 Un lote programado pasa a activo cuando llega su inicio. El administrador puede cancelar una subasta programada o activa antes del vencimiento. El cierre deja el lote en estado cerrado. Si hay ganador, la misma transacción crea una orden y cambia el estado a adjudicada. El pago simulado es idempotente.
 
@@ -211,15 +211,16 @@ El repositorio bloquea la fila actual del lote antes de comparar el monto con el
 
 La transacción escribe los avisos en PostgreSQL. El publicador espera confirmación de RabbitMQ y calcula un nuevo plazo si hay un fallo. El consumidor mantiene reintentos y cola de errores. La entrega al menos una vez admite duplicados si se pierde el registro de la confirmación.
 
-\captura{../capturas/vertice-pagos-puja-ganadas-pagada.png}{Fig. 6. Adjudicación y pago simulado desde la actividad en Windows.}
-\captura{../capturas/vertice-pagos-puja-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
+\captura{../capturas/vertice-curado-puja-ganadas-pagada.png}{Fig. 6. Adjudicación y pago simulado desde la actividad en Windows.}
+\captura{../capturas/vertice-curado-puja-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
 
 \GaleriaLatencia
 \GaleriaFlujos
+
 \GaleriaNewman
 
 \subsection{Curaduría y referencias externas}
-Tres secciones explican el motivo de subasta, la ficha técnica y el historial. El panel muestra COP y referencia USD, estado, incremento, cierre y extensión. La entrega estimada de Nager.Date y la observación climática de Open-Meteo tienen espacios propios. Los pagos, entregas, procedencias y traspasos se simulan. Las vitrinas usan fotografías locales.
+Tres secciones explican el motivo de subasta, la ficha técnica y el historial. El panel muestra COP y referencia USD, estado, incremento, cierre y extensión. La entrega estimada de Nager.Date y la observación climática de Open-Meteo tienen espacios propios. Los pagos, entregas, procedencias y traspasos se simulan. PostgreSQL conserva los códigos y la primera confirmación. Las vitrinas usan fotografías locales.
 
 \clearpage
 \GaleriaCobertura

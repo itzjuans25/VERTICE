@@ -103,17 +103,11 @@ export const catalogoApi = {
     pagar(compraId) {
       return request(BASE, `${COMPRAS}/${compraId}/pago`, { method: 'POST', requiereSesion: true });
     },
-    certificados(compraId) {
-      return request(BASE, `${COMPRAS}/${compraId}/certificados`, { requiereSesion: true });
-    },
     obtener(compraId) {
       return request(BASE, `${COMPRAS}/${compraId}`);
     },
   },
   lanzamientos() {
     return request(BASE, '/api/ecommerce/lanzamientos', { auth: false });
-  },
-  certificado(codigo) {
-    return request(BASE, '/api/ecommerce/certificados/' + encodeURIComponent(codigo), { auth: false });
   },
 };

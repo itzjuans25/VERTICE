@@ -6,6 +6,7 @@ La tienda React se aloja en Vercel Hobby. Render ejecuta los cuatro JAR, Neon gu
 
 1. Sube la rama `subastas` a un repositorio propio en GitHub. Conserva la etiqueta `version-estable` como respaldo.
 2. En Neon crea un proyecto PostgreSQL. En **Connect**, desactiva **Connection pooling** y copia el host directo, el nombre de la base y el rol. Guarda la contraseña en el panel, con SSL obligatorio.
+   En el editor SQL comprueba `SHOW timezone`. Si la base usa otra zona, configura `ALTER DATABASE nombre_de_la_base SET timezone TO 'UTC';` y vuelve a conectar.
 3. En CloudAMQP crea una instancia RabbitMQ de demostración y obtiene el URI TLS completo que comienza por `amqps://`, incluido su vhost.
 4. En Brevo configura un remitente verificado y obtén el usuario y la clave SMTP en **SMTP & API**. El Blueprint usa `smtp-relay.brevo.com:2525` con STARTTLS. Verifica la entrega después de publicar. [Configuración SMTP de Brevo](https://developers.brevo.com/docs/smtp-integration) · [Puertos restringidos en Render Free](https://render.com/docs/free)
 
@@ -17,12 +18,22 @@ En Render abre **New → Blueprint**, autoriza el repositorio, selecciona la ram
 | --- | --- | --- |
 | `DB_HOST` | Los 4 | Host directo de Neon, sin `-pooler`. |
 | `DB_NAME` | Los 4 | Base del proyecto Neon. |
+| `DB_URL` | Los 4 | El Blueprint construye el JDBC con `sslmode=require` y 5 s de conexión. |
 | `DB_USERNAME` y `DB_PASSWORD` | Los 4 | Rol y contraseña de Neon. |
 | `SPRING_RABBITMQ_ADDRESSES` | Los 4 | URI AMQPS de CloudAMQP. |
+| `SPRING_RABBITMQ_SSL_ENABLED` | Los 4 | `true` en el Blueprint. |
 | `CORS_ALLOWED_ORIGINS` | Los 4 | URL pública de Vercel, sin barra final. Si aún falta Vercel, usa temporalmente `https://localhost.invalid` y corrígelo después. |
 | `AUTH_SERVICE_URL` | Catálogo | URL HTTPS pública de Auth, sin barra final. Ajusta tras crear el Blueprint con las URLs definitivas. |
 | `MAIL_USERNAME` y `MAIL_PASSWORD` | Notificaciones | Usuario y clave SMTP de Brevo. |
 | `MAIL_FROM` | Notificaciones | Correo de un remitente verificado en Brevo. |
+| `MAIL_FROM_NAME` | Notificaciones | Nombre que muestra el remitente. El Blueprint usa VÉRTICE. |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_STARTTLS` | Notificaciones | El Blueprint usa el relay de Brevo, puerto 2525 y STARTTLS. |
+| `MAIL_SMTP_AUTH` | Notificaciones | `true` en el Blueprint. |
+| `SMS_PROVIDER` | Notificaciones | `log` registra la simulación. |
+| `NOTIFICACIONES_API_KEY` | Notificaciones | Render genera una clave para el endpoint de encolado administrativo. |
+| `JWT_SECRET`, `JAVA_TOOL_OPTIONS` | Grupo `vertice-config` | Render genera la firma compartida y limita los procesadores visibles al JVM a 2. |
+| `SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE`, `SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE` | Grupo `vertice-config` | 4 conexiones máximas, 0 obligatorias inactivas. |
+| `SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT`, `SPRING_DATASOURCE_HIKARI_MAX_LIFETIME` | Grupo `vertice-config` | 30 s de espera y 4 min de vida por conexión. |
 
 `JWT_SECRET` se genera una vez en el grupo `vertice-config`. Cada JAR comparte esa firma y toma `PORT` de Render. Spring resuelve el JDBC desde el host y la base indicados, con `sslmode=require`. Hikari usa hasta 4 conexiones, mínimo 0 inactivas, espera de 30 s y vida máxima de 4 min. El arranque tolera hasta 60 s ante fallos de conexión iniciales. Los servicios se llaman `vertice-auth`, `vertice-catalogo`, `vertice-subastas` y `vertice-notificaciones`. Los cuatro servicios exponen `/health`.
 
@@ -35,6 +46,7 @@ Para tener un administrador, registra tu cuenta desde el frontend y, en la conso
 3. Configura `REACT_APP_AUTH_URL`, `REACT_APP_CATALOGO_URL` , `REACT_APP_SUBASTAS_URL` y `REACT_APP_NOTIFICACIONES_URL` con las URLs HTTPS de Render, sin barra final. Cambiar una de ellas requiere un nuevo despliegue.
 4. Añade la URL final de Vercel a `CORS_ALLOWED_ORIGINS` en Render y vuelve a desplegar los servicios si el panel lo solicita. Abre directamente `/productos` y `/subastas` para verificar el fallback de la SPA.
 5. Verifica los cuatro `/health`, registro, login, carrito, compra y puja con `scripts/smoke-nube.ps1` o `scripts/smoke-nube.sh`. Usa un producto y un lote de demostración, porque el smoke cambia el stock y el precio. Para ver PostgreSQL usa [pgAdmin con Neon](pgadmin/README.md).
+6. Desde la URL de Vercel, usa **Mi cuenta → Actividad** y confirma el pago simulado de la compra de demostración. Verifica el recibo SMTP, el cupo de los lanzamientos y que repetir el pago devuelve la misma referencia. En Render revisa Auth, Catálogo, Subastas y Notificaciones por separado.
 
 ## Límites del alojamiento
 

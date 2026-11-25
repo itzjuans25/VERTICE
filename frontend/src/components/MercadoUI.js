@@ -28,13 +28,14 @@ export function Cierre({ lote }) {
   return <span className={'auction-chip ' + color}>{programada ? 'Inicia en ' : 'Cierra en '}{horas ? horas + ' h ' : ''}{minutos} min {segundos} s</span>;
 }
 
-export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
+export function TarjetaMercado({ lote, producto, agregar, ocupado = false, proximo = false }) {
   const item = lote || producto;
   const nombre = lote ? tituloDelLote(lote.titulo) : producto.nombre;
   const enlace = (lote ? '/subastas/' : '/productos/') + item.id;
   const condicion = item.condicion === 'USADO' ? 'Usado' : 'Nuevo';
   const precio = lote?.precioActual ?? producto?.precio;
   const ficha = lote ? nombresCategorias[item.categoria] : producto.categoria;
+  const accion = proximo ? 'Próximamente' : producto?.stock > 0 ? 'Agregar' : 'Agotado';
   return <article className={'tt-card product-card mercado-card ' + (lote ? 'tarjeta-lote' : 'tarjeta-producto')}>
     <Link className="tt-card-image" to={enlace} tabIndex={-1} aria-hidden="true">
       <img src={lote ? lote.imagenes[0] : imagenProducto(producto.imagenUrl,producto.nombre)} alt={'Vista de ' + nombre} width="424" height="318" loading="lazy" />
@@ -46,8 +47,8 @@ export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
       <div className="tt-card-footer">
         <strong>{cop.format(precio)}</strong>
         {lote ? <span>{lote.pujas} {lote.pujas === 1 ? 'puja' : 'pujas'}</span> : agregar &&
-          <button className="tt-button tt-secondary" aria-label={(producto.stock > 0 ? 'Agregar ' : 'Agotado: ') + nombre}
-            disabled={ocupado || producto.stock < 1} onClick={() => agregar(producto)}>{producto.stock > 0 ? 'Agregar' : 'Agotado'}</button>}
+          <button className="tt-button tt-secondary" aria-label={accion + ': ' + nombre}
+            disabled={ocupado || proximo || producto.stock < 1} onClick={() => agregar(producto)}>{accion}</button>}
       </div>
       {lote && <div className="auction-tarjeta-datos">
         <span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]}</span>

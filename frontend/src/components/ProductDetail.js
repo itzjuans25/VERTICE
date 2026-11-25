@@ -1,5 +1,5 @@
 import { categoriaProducto } from '../categorias';
-import { Recomendados } from './ExplorarMercado';
+import { Recomendados, useMercado } from './ExplorarMercado';
 import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -13,6 +13,7 @@ export default function ProductDetail({ user, setCartCount }) {
   const [estado, setEstado] = useState({});
   const [seleccion, setSeleccion] = useState(0);
   const [reintento, setReintento] = useState(0);
+  const [lanzamientos] = useMercado(catalogoApi.lanzamientos);
   const { agregar, ocupado, mensaje } = useAgregar({
     user, setCartCount, actualizarStock: () => setReintento(valor => valor + 1),
   });
@@ -51,7 +52,9 @@ export default function ProductDetail({ user, setCartCount }) {
   const primera = imagenProducto(producto.imagenUrl,producto.nombre);
   const galeriaOriginal = imagenProducto(producto.imagenUrl) === primera;
   const fotos = [primera, galeriaOriginal && producto.imagenSecundariaUrl].filter(Boolean);
-  const disponible = producto.stock > 0;
+  const edicion = lanzamientos.datos?.find(e => e.productoId === producto.id);
+  const proximo = edicion && Date.parse(edicion.apertura) > Date.now();
+  const disponible = producto.stock > 0 && !proximo;
   return <main className="tt-shell tt-section">
     <Link to="/productos">Volver al catálogo</Link>
     <div className="tt-detail">
@@ -74,7 +77,7 @@ export default function ProductDetail({ user, setCartCount }) {
           <div><dt>Marca</dt><dd>{producto.marca}</dd></div>
           {producto.modelo && <div><dt>Modelo</dt><dd>{producto.modelo}</dd></div>}
           <div><dt>Garantía</dt><dd>{producto.garantiaDias ? producto.garantiaDias + ' días' : 'Sin garantía declarada'}</dd></div>
-          <div><dt>Stock</dt><dd>{textoStock(producto.stock)}</dd></div>
+          <div><dt>{proximo ? 'Apertura' : 'Stock'}</dt><dd>{proximo ? new Date(edicion.apertura).toLocaleString('es-CO') : textoStock(producto.stock)}</dd></div>
         </dl>
         {producto.incluye && <p><strong>Incluye</strong> {producto.incluye}</p>}
         {producto.compatibilidad && <p><strong>Compatibilidad</strong> {producto.compatibilidad}</p>}
@@ -85,7 +88,7 @@ export default function ProductDetail({ user, setCartCount }) {
             <tr key={clave}><th scope="row">{clave}</th><td>{valor}</td></tr>)}</tbody>
         </table>}
         <button className="tt-button" onClick={() => agregar(producto)} disabled={!disponible || ocupado !== null}>
-          {disponible ? 'Agregar al carrito' : 'Agotado'}
+          {proximo ? 'Próximamente' : disponible ? 'Agregar al carrito' : 'Agotado'}
         </button>
         {mensaje && <p className="tt-aviso" role={mensaje.error ? 'alert' : 'status'}>{mensaje.texto}</p>}
       </section>

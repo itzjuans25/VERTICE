@@ -1,0 +1,14 @@
+Hash Right Join  (cost=115.66..209.88 rows=3502 width=139) (actual time=1.859..5.323 rows=3504.00 loops=1)
+  Hash Cond: (i.compra_id = c.id)
+  Buffers: shared hit=87
+  ->  Seq Scan on item_carrito i  (cost=0.00..85.02 rows=3502 width=92) (actual time=0.044..0.788 rows=3506.00 loops=1)
+        Buffers: shared hit=50
+  ->  Hash  (cost=71.96..71.96 rows=3496 width=47) (actual time=1.778..1.780 rows=3500.00 loops=1)
+        Buckets: 4096  Batches: 1  Memory Usage: 288kB
+        Buffers: shared hit=37
+        ->  Seq Scan on compras c  (cost=0.00..71.96 rows=3496 width=47) (actual time=0.038..0.716 rows=3500.00 loops=1)
+              Buffers: shared hit=37
+Planning:
+  Buffers: shared hit=229
+Planning Time: 27.235 ms
+Execution Time: 5.819 ms

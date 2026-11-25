@@ -2,9 +2,9 @@
 
 Casa de subastas editorial con 18 piezas ilustrativas. Las vitrinas reúnen moda de autor, relojería, joyería, arte y colección, y vehículos de exhibición. Cada lote tiene fotografía propia, atributos y un motivo curatorial. Los pagos, las entregas, las procedencias y los traspasos son simulados.
 
-Subastas encabeza la navegación, la portada y la búsqueda. El menú Catálogo conserva el acceso a la compra directa, Tecnología y carrito. Auth, Catálogo y pedidos, Subastas y Notificaciones mantienen cuatro servicios hexagonales. El POM de la raíz permite importar los cuatro en IntelliJ IDEA.
+La portada usa el tema claro del kit Cúspide v2. Presenta cuatro cierres próximos, tres lanzamientos y siete categorías con el conteo de lotes activos. Tienda reúne objetos de autor, joyería, accesorios y piezas de colección. El inventario histórico de tecnología y de comercio general queda archivado para conservar sus pedidos. Auth, Catálogo, Subastas y Notificaciones mantienen cuatro servicios hexagonales. El POM de la raíz permite importar los cuatro en IntelliJ IDEA.
 
-[Guion y pasos de sustentación](docs/Sustentacion-Vertice.md) · [Modelo entidad-relación](docs/pgadmin/vertice-mer.md) · [Evidencias de la corrida](REVISION_FINAL.md)
+[Guion y pasos de sustentación](docs/Sustentacion-Vertice.md) · [Modelo entidad-relación](docs/pgadmin/vertice-mer.md) · [Evidencias de la corrida](REVISION_FINAL.md) · [Portada actual](docs/capturas/vertice-curado-portada.png) · [Tienda actual](docs/capturas/vertice-curado-tienda.png)
 
 ## Arranque en Windows
 
@@ -32,6 +32,8 @@ Abre **Mi cuenta → Actividad**. Pujas muestra el historial, Subastas ganadas r
 
 La compra nueva descuenta el stock al confirmar el pedido. Su pago simulado se registra desde la cuenta y conserva la primera fecha al repetirse. La adjudicación registra el pago con la misma interacción. Los pedidos históricos conservan sus datos y estados. Se excluyen de la búsqueda, los conteos y las vitrinas los nombres reservados de QA, k6 y ensayo. El acceso por identificador conserva la trazabilidad de pruebas e historiales.
 
+En un lanzamiento, Catálogo bloquea la edición al validar apertura, cupo por cliente y stock. En Subastas, el cierre exige la reserva cuando se configuró y el pago registra un aviso único en su bandeja de salida. La referencia identifica una operación de pago por orden. La serie de cada lanzamiento se presenta como parte de su ficha.
+
 Los pagos, la entrega y el traspaso son de demostración académica. El sistema no solicita tarjetas ni contacta proveedores de pago.
 
 ## Recorrido de compra
@@ -43,6 +45,8 @@ El catálogo, la ficha y el carrito muestran el stock actual y lo consultan al v
 Los precios del seed se expresan en COP. Las imágenes locales son ilustrativas y las notas de usados describen ejemplos de grado y comprobaciones. Las fotografías no identifican unidades físicas. [Ejemplos de precios de periféricos en Colombia](https://www.alkosto.com/accesorios-electronica/accesorios-computadores/perifericos/webcam/c/BI_A46_ALKOS)
 
 ## Arquitectura y datos
+
+Las operaciones públicas conservan sus contratos JSON y rutas de OpenAPI. La compra y la puja validan montos y reglas con HTTP 400, las rutas privadas requieren JWT y una orden ajena devuelve 404. Los instantes de pago y cierre se intercambian en UTC. React los presenta en `es-CO` con la zona del navegador. [Modelo de datos](docs/pgadmin/vertice-mer.md) · [Créditos](docs/CREDITOS_IMAGENES.md)
 
 ```mermaid
 flowchart LR
@@ -64,6 +68,7 @@ flowchart LR
   C --> F[Nager.Date]
   S --> FX
   S --> F
+  S --> M[Open-Meteo]
 ```
 
 ## Recorrido de subasta
@@ -86,7 +91,7 @@ Bajo concurrencia, PostgreSQL bloquea la fila del lote y el `UPDATE` comprueba l
 
 [Captura del listado](docs/capturas/subastas-lista-1440.png) · [Adjudicación local](docs/capturas/subastas-adjudicada.png) · [Correo en Mailpit](docs/capturas/subastas-correo-ganada.png) · [Guía de Neon y pgAdmin](docs/pgadmin/README.md)
 
-La [revisión de entrega](REVISION_FINAL.md) reúne cobertura, Newman, k6 y capturas. La [guía PDF](output/pdf/galeria/guia-vertice.pdf) resume la explicación y el arranque. Las dos ediciones IEEE se pueden recompilar desde [docs/articulo](docs/articulo).
+La [revisión de entrega](REVISION_FINAL.md) reúne cobertura, Newman, k6 y capturas. La [guía PDF](output/pdf/editorial/guia-vertice.pdf) resume la explicación y el arranque. Las dos ediciones IEEE se pueden recompilar desde [docs/articulo](docs/articulo).
 
 Auth valida credenciales y emite JWT. Catálogo administra productos, carrito e inventario de pedidos. Notificaciones entrega correos de registro, compra y estado. El consumidor tiene reintentos y cola de errores. El envío después del commit evita revertir el pedido si falla el aviso.
 
@@ -103,6 +108,7 @@ En pgAdmin usa host `127.0.0.1`, puerto `55432`, base `ecommerce` y usuario `eco
 | Auth | `POST /login` emite JWT, `GET /sesion` comprueba la cuenta activa, `POST /evaluar-clave` revisa la política, `POST /renovar` emite otro JWT y `POST /cambiar-clave` verifica y gira la credencial. Prefijo `/api/ecommerce/usuario`. |
 | Catálogo | `GET /producto/explorar` filtra y pagina, `GET /producto/{id}/precio-usd` convierte moneda, `GET /producto/entrega` estima días hábiles, `GET /carrito/resumen` calcula totales y `POST /compras/realizar` aplica inventario y registra el pedido. Prefijo `/api/ecommerce`. |
 | Notificaciones | `POST /validar` revisa el mensaje, `POST /previsualizar/bienvenida` y `POST /previsualizar/compra` renderizan correos, `GET /plan-reintentos` devuelve esperas y `POST /encolar` acepta y guarda el aviso con clave de servicio. Prefijo `/api/ecommerce/notificaciones`. |
+| Subastas | `POST /{id}/pujas` valida y registra ofertas, `GET /mias` reúne actividad propia, `POST /{id}/cancelar` valida el cierre anticipado y `POST /{id}/pago` liquida la adjudicación. Prefijo `/api/ecommerce/subastas`. Además, `GET /api/subastas/lote/{id}/precio-usd` calcula la referencia en dólares. |
 
 | Proveedor | Dónde se usa | Vigencia y fallback |
 | --- | --- | --- |
@@ -125,6 +131,14 @@ El correo de Windows se puede verificar en Mailpit. Para Brevo se configuran `MA
 ## Postman y rendimiento
 
 Importa la colección y elige **Local**. Guarda credenciales administrativas y claves solo como valores locales del entorno. El script de Newman crea la cuenta administrativa temporal y conserva un reporte sin cuerpos ni cabeceras. [Colección, entornos e informe](postman/README.md)
+
+La galería editorial comprobó 52 rutas k6. Los máximos con 3, 6 y 8 usuarios fueron 4360,50 / 3268,34 / 1056,74 ms. Newman hizo 90 peticiones y 269 aserciones, con 11 fallos. JaCoCo en unitarias 20,29 / 33,14 / 68,85 / 16,08 % y suite conjunta 82,99 / 85,71 / 82,62 / 89,28 %, en orden Auth, Catálogo, Notificaciones y Subastas. [Rendimiento por ruta](resultados/vertice-curado-rendimiento.md)
+
+### Mediciones anteriores a la galería editorial
+
+La galería editorial comprobó 54 rutas k6. Los máximos con 3, 6 y 8 usuarios fueron 1139,82 / 1359,34 / 1270,45 ms. Newman hizo 93 peticiones y 278 aserciones, con 6 fallos. JaCoCo en unitarias 20,29 / 32,71 / 68,85 / 16,08 % y suite conjunta 82,99 / 84,77 / 82,62 / 88,81 %, en orden Auth, Catálogo, Notificaciones y Subastas. [Rendimiento por ruta](resultados/vertice-editorial-rendimiento.md)
+
+### Mediciones anteriores a la galería editorial
 
 La galería editorial verificó la compra 2938 y la adjudicación 41 del lote 661, con confirmaciones en Mailpit. Newman midió 88 peticiones, 0 aserciones fallidas de 263 y máximo 266,00 ms. En k6, los máximos fueron 3 VU 417,65 ms, 6 VU 2404,86 ms, 8 VU 2494,37 ms. La cobertura de líneas unitarias fue 20,04 / 34,56 / 68,61 / 16,90 % y con integración 82,44 / 86,97 / 81,88 / 92,14 %, en orden Auth, Catálogo, Notificaciones y Subastas. [Medición actual por ruta](resultados/vertice-galeria-rendimiento.md) · [Auditoría](docs/Auditoria.md)
 
@@ -170,4 +184,4 @@ La demo de Windows incluye cuatro servicios. Para publicar, conecta Vercel a Rea
 
 **¿Por qué tarda el cambio de contraseña?** Verifica la credencial anterior y deriva otro hash. Las dos operaciones compiten por recursos bajo concurrencia.
 
-[Guía PDF](output/pdf/galeria/guia-vertice.pdf) · [IEEE corto](output/pdf/galeria/articulo-ieee-4p.pdf) · [IEEE extendido](output/pdf/galeria/articulo-ieee.pdf) · [Auditoría](docs/Auditoria.md) · [Capturas](docs/capturas/)
+[Guía PDF](output/pdf/editorial/guia-vertice.pdf) · [IEEE corto](output/pdf/editorial/articulo-ieee-4p.pdf) · [IEEE extendido](output/pdf/editorial/articulo-ieee.pdf) · [Auditoría](docs/Auditoria.md) · [Capturas](docs/capturas/)

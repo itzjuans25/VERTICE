@@ -1,0 +1,16 @@
+{
+  "ediciones": 3,
+  "originalesTecnologia": 45,
+  "catalogoCertificados": 1,
+  "lotesCertificados": 18,
+  "pedidosPrevios": [
+    2772,
+    2938,
+    3119
+  ],
+  "adjudicacionesPrevias": [
+    39,
+    41,
+    44
+  ]
+}

@@ -28,16 +28,18 @@ async function main() {
   ];
   const existentes = new Map();
   const repetidas = [];
+  const huellas = [];
   for (const [nombre,ruta] of rutas) {
     assert.ok(ruta && /^\/(mercado|techtrade|subastas)\//.test(ruta),nombre + ' sin ruta de imagen local');
     const sha256 = createHash('sha256').update(readFileSync('frontend/public'+ruta)).digest('hex');
+    huellas.push({nombre,ruta,sha256});
     if (existentes.has(sha256)) repetidas.push([existentes.get(sha256),nombre]);
     existentes.set(sha256,nombre);
   }
   const salida = {
     productos:productos.length,lotesVisibles:visibles.length,lotesActivos:activos.length,imagenes:rutas.length,duplicadas:repetidas,
     categoriasTienda:[...new Set(productos.map(p => p.categoria))].sort(),
-    categoriasSubastas:[...new Set(visibles.map(l => l.categoria))].sort(),
+    categoriasSubastas:[...new Set(visibles.map(l => l.categoria))].sort(), huellas,
   };
   writeFileSync(process.env.IMAGENES_REPORTE || 'resultados/vertice-imagenes.json',JSON.stringify(salida,null,2)+'\n');
   console.log(JSON.stringify(salida));

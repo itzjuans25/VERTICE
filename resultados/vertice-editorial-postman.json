@@ -1,0 +1,40 @@
+{
+  "peticiones": 93,
+  "peticionesFallidas": 0,
+  "aserciones": 278,
+  "asercionesFallidas": 6,
+  "promedioMs": 136.78494623655905,
+  "maximoMs": 1370.0,
+  "fallos": [
+    {
+      "caso": "Auth activo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1078 to be below 500"
+    },
+    {
+      "caso": "Auth Swagger JSON",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 797 to be below 500"
+    },
+    {
+      "caso": "Catálogo activo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 515 to be below 500"
+    },
+    {
+      "caso": "Catálogo Swagger JSON",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 554 to be below 500"
+    },
+    {
+      "caso": "Registrar cliente",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1370 to be below 500"
+    },
+    {
+      "caso": "Cambiar contraseña",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 634 to be below 500"
+    }
+  ]
+}

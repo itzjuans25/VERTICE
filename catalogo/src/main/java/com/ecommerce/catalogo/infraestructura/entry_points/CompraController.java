@@ -2,7 +2,6 @@ package com.ecommerce.catalogo.infraestructura.entry_points;
 
 import com.ecommerce.catalogo.application.port.in.CompraService;
 import com.ecommerce.catalogo.domain.model.Compra;
-import com.ecommerce.catalogo.domain.port.out.CompraGateway.Certificado;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.CompraResponse;
 import com.ecommerce.catalogo.infraestructura.entry_points.mapper.TiendaDtoMapper;
 import com.ecommerce.catalogo.infraestructura.security.AuthenticatedUser;
@@ -49,11 +48,6 @@ public class CompraController {
         return mapper.toResponse(compraService.pagarSimulado(compraId, usuarioId(usuario)));
     }
 
-    @GetMapping("/{compraId}/certificados")
-    public List<Certificado> certificados(
-            @AuthenticationPrincipal AuthenticatedUser usuario, @PathVariable Long compraId) {
-        return compraService.certificados(compraId, usuarioId(usuario));
-    }
 
     @GetMapping("/usuario/{usuarioId}")
     public List<CompraResponse> obtenerComprasPorUsuario(

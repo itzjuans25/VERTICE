@@ -26,7 +26,7 @@ Se conservan la base y los correos en `%LOCALAPPDATA%\EcommerceDev`. Las instanc
 | Mailpit SMTP / web | 1025 / 8025 | 1025 / 8025 | [Bandeja](http://localhost:8025) |
 
 En pgAdmin usa `127.0.0.1:55432`, base `ecommerce`, usuario `ecommerce_dev` y `POSTGRES_PASSWORD` de tu `.env.native`.
-El arranque conserva los 45 productos históricos de Tecnología, incorpora el catálogo general y prepara 18 lotes curados sin duplicarlos. La exploración es pública. Comprar y pujar requieren sesión.
+El arranque conserva los 45 productos históricos de Tecnología en archivo, prepara 18 lotes curados y añade tres lanzamientos numerados. La Tienda ofrece compra directa de objetos de diseño y colección. La exploración es pública. Comprar y pujar requieren sesión.
 
 ## Requisitos locales
 
@@ -78,11 +78,19 @@ Cuando aparezca `UPDATE 1`, cierra sesión y vuelve a entrar para que el nuevo J
 Con el entorno Windows nativo en ejecución y k6 instalado:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo carga -Resultado resultados/remata-k6-3.json
-powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 6 -Resultado resultados/remata-k6-6.json
-powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 8 -Resultado resultados/remata-k6-8.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo carga -Resultado resultados/repeticion-k6-3.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 6 -Resultado resultados/repeticion-k6-6.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\ejecutar-k6.ps1 -Modo estres -VusEstres 8 -Resultado resultados/repeticion-k6-8.json
+powershell -ExecutionPolicy Bypass -File .\pruebas\medir-cobertura-vertice.ps1 -Resultado resultados/repeticion-cobertura.json
 ```
 
 Los perfiles crean datos sintéticos, incluidos pedidos. Ejecútalos en la base de desarrollo. Los JSON en `resultados` contienen una fila por ruta. Para cobertura ejecuta `mvnw.cmd clean verify` desde cada carpeta Java y abre `target/site/jacoco/index.html`.
 
-Para regenerar los datos del artículo Remata ejecuta `python pruebas/generar-techstore.py` con Pillow, después de Maven, k6, Newman y la prueba de navegador. La fuente IEEEtran y sus tablas están en `docs/articulo`.
+La fuente IEEEtran y sus tablas están en `docs/articulo`. `python pruebas/generar-editorial.py` incorpora los JSON de la ejecución editorial a las tablas y al informe de rendimiento.
+
+```powershell
+Push-Location .\docs\articulo
+tectonic -X compile articulo-ieee-4p.tex
+tectonic -X compile articulo-ieee.tex
+Pop-Location
+```

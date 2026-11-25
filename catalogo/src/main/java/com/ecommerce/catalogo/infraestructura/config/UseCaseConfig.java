@@ -54,12 +54,12 @@ public class UseCaseConfig {
         var caso = new CompraUseCase(compraGateway, carritoGateway, productoGateway, usuarioGateway,
                 notificacionGateway, confirmacion, ediciones);
         return transaccional(CompraService.class, caso, gestor, new String[]{"realizarCompra", "cambiarEstado", "pagarSimulado"},
-                "obtenerComprasPorUsuario", "obtenerCompraPorId", "obtenerTodasLasCompras", "certificados");
+                "obtenerComprasPorUsuario", "obtenerCompraPorId", "obtenerTodasLasCompras");
     }
 
     @Bean
-    ConsultarEdiciones consultarEdiciones(EdicionGateway ediciones, ProductoGateway productos, CompraGateway compras) {
-        return new ConsultarEdiciones(ediciones, productos, compras);
+    ConsultarEdiciones consultarEdiciones(EdicionGateway ediciones, ProductoGateway productos) {
+        return new ConsultarEdiciones(ediciones, productos);
     }
 
     @Bean

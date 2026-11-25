@@ -1039,7 +1039,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": "{{catalogoUrl}}/api/ecommerce/compras/{{compraId}}/pago"
           }
         },
@@ -1061,7 +1066,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": "{{catalogoUrl}}/api/ecommerce/compras/{{compraId}}/pago"
           }
         },
@@ -2121,6 +2131,33 @@
             "method": "GET",
             "header": [],
             "url": "{{subastasUrl}}/api/subastas/entrega?diasHabiles=3"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lanzamientos",
+      "item": [
+        {
+          "name": "Lanzamientos activos y programados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
+                  "const ediciones = pm.response.json();",
+                  "pm.test('Cupos persistidos', () => { pm.expect(ediciones.length).to.be.at.least(3); pm.expect(ediciones.every(x => x.restantes <= x.total && x.maximoPorCliente > 0)).to.be.true; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{catalogoUrl}}/api/ecommerce/lanzamientos"
           }
         }
       ]

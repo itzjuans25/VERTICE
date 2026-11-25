@@ -1,0 +1,486 @@
+{
+  "calidadWebP": 82,
+  "derivadas": [
+    {
+      "archivo": "vertice-01-editorial.webp",
+      "sha256": "4dcb40cb677f01dea781e54699a3dd00492f5de2915babd3c88e7f46f5e3871c",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-01-mini.webp",
+      "sha256": "d6cc5a8ebea0b1e7b4ae358532692d1b98fa853f53e182b70666b6c855e5d8f3",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-01-detalle.webp",
+      "sha256": "12a41fb2d47e56b3855e311cdeacd58c1b9ad00da9241778d18ba361361dbd45",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-02-editorial.webp",
+      "sha256": "06ce3b3caf1a0959912ecf1247d0bb9292b6bd985fb2bfe14baddee9d45cccf0",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-02-mini.webp",
+      "sha256": "2ce61162d2027f2af3d6fd520eaa55ac8814fe933881f2d3bb25ebb85910d17a",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-02-detalle.webp",
+      "sha256": "d0a50670607234882f9b91b18290c653e3998af0a47532b4034098f743e6b503",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-03-editorial.webp",
+      "sha256": "4d17c89d4eb47ab43365a57c4fc78095e130e45f0f40e9d054f069d0b70d74f3",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-03-mini.webp",
+      "sha256": "64353bf254483b3b859dbef41405e8e4cde96e8fb6ea5de9ca8188076da60bd4",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-03-detalle.webp",
+      "sha256": "063808af9052b6ecc67fbcc5b9001838a99037e016c8c7e4a30939b3e2562ce5",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-04-editorial.webp",
+      "sha256": "2fd015de8f11ee36342e4415c83c303c8c8c82fc3c06db01994af2f023ef8390",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-04-mini.webp",
+      "sha256": "3e1ce2a372f45bba8a162a37d1e97513a72627c7225194b654d92c563a0a7e2c",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-04-detalle.webp",
+      "sha256": "3415bd84e13c0b9f0398178611e1048f551fdfeee31924eb85efee6b5032acda",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-05-editorial.webp",
+      "sha256": "2a936f9a49aaa6f816a6dfeac6751c0830c7ef5e12e885165fd3ed099e45bf58",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-05-mini.webp",
+      "sha256": "f436f7474302d4c1b67ed61a2e84416540a49ea3464be328667a548461d701bc",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-05-detalle.webp",
+      "sha256": "198492960a819f00bbed46975d49ab8f921e4d4c0bd688404308c9d9d0adb468",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-06-editorial.webp",
+      "sha256": "2620c4793a5d350f0555b9a89bee4707d735c151a08c9d2e257871b873b82a25",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-06-mini.webp",
+      "sha256": "9ae535e2f790ce232aba69135a656bc485ee12f42143919424d1d0c4a44b328f",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-06-detalle.webp",
+      "sha256": "a196ac1f66bff34b978a7a727386d55ae6acf2483c78208784d8b06137c05013",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-07-editorial.webp",
+      "sha256": "64031c6838eaa9039a35e1dac6d72dc75014a6097fe3d88243505267ca658c63",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-07-mini.webp",
+      "sha256": "02610714367a01e97c289a7b7e42228db3b42342544dec411d95d687a3d68792",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-07-detalle.webp",
+      "sha256": "72c8895da22278aa1814eb26cd7889f32044609da60909e076e5a9a08a7b2093",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-08-editorial.webp",
+      "sha256": "08aa4f69e44f72b212ee07f4f228436aea36391d5d13e0aba091570322d8e0b3",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-08-mini.webp",
+      "sha256": "7b1d7126a7ec3cdaf6c641d1b4b7d16d26dfe48eaf88feb1be1db4be4771172f",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-08-detalle.webp",
+      "sha256": "dacfb8c57688f8a50ee704df3d492d6b437d189263faa87ca9dcc3ddcf33667c",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-09-editorial.webp",
+      "sha256": "fa4a67d5e986bd74769979375f5d7613896de8ef6d575540787bafd3f4a6e9c5",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-09-mini.webp",
+      "sha256": "0252a7876ca6dd05f0ec221f20e535340d96986f53493ea81d38c65af5176813",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-09-detalle.webp",
+      "sha256": "0eeb7a09b6300b2022504a3e7589aa6ba3130e0617aa52afab7f2b5565f7f794",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-10-editorial.webp",
+      "sha256": "3dd224408443f25b6d37b10b7ab72ce3cfbe04f1b0dccdf64287ca5c0c21a054",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-10-mini.webp",
+      "sha256": "7ecfa2ce17e883392343dce8ceb740b707b0c6c81b8b19a4e2c21b825b2419fa",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-10-detalle.webp",
+      "sha256": "09b7a06f24e989daf72aa24888acc35461d25ae35589142f771be745b598f9d0",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-11-editorial.webp",
+      "sha256": "daa95e0acd40ad3f0a0be6db31c1f86e9a2a0211d1f765212c9cf4f726318e7d",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-11-mini.webp",
+      "sha256": "966ba8c742567fc89fa1a7a048b1ba5edc9661989a127eabee7d8776caab3315",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-11-detalle.webp",
+      "sha256": "b38d159ae19afb1cd6e9c31169f4648f7ce797bce957995645e4a6eff05f8df2",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-12-editorial.webp",
+      "sha256": "55fdef2e257ec9625531ded5c69ad846555f5686b249bf842c7b40b84dd14b24",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-12-mini.webp",
+      "sha256": "bc8a41140341477ee0fccf419ad4142da1c3d0596dcc7426312a0a3f6f2b62d6",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-12-detalle.webp",
+      "sha256": "8545e6671d69c91e0d1b6f1bb5806ac9706cd1c772985667a4a963465575002b",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-13-editorial.webp",
+      "sha256": "387f22a3e74be16664936619600cf4cd91f292091ec1c72f842956e56ffd94aa",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-13-mini.webp",
+      "sha256": "f7ab734dbec0cde6ff23e67f6372f3c6998e1dcdd4383cccc6018ee23c2d722d",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-13-detalle.webp",
+      "sha256": "46572eeaba50d5ec2e9c66e6438f5c36a58320aa697732cfe7fbe86430e011b7",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-14-editorial.webp",
+      "sha256": "42963d9ded2e033ae277873c00ef7a5ef65d01f8f99fc066546ee517761785c9",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-14-mini.webp",
+      "sha256": "96997378bbee83d4510bfc6196ebf86ef7d1e405dd9f2b3b20e29ec2633d910f",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-14-detalle.webp",
+      "sha256": "7e45c60145c602f39fad75d4476db024c10d0bf10efe3c4b8391cba06e666aac",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-15-editorial.webp",
+      "sha256": "ed294e0dffa0a3416df6f8cf541280b666be8f2af37969690a0d60f72ea24e2e",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-15-mini.webp",
+      "sha256": "cf2f7caa4abc16ef93765da1e30b804e610198371fa1b9964028002774ca8614",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-15-detalle.webp",
+      "sha256": "634c73f740d06031712818135d24c24994c49049baf94356c1e5d850b585c6e5",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-16-editorial.webp",
+      "sha256": "abb79d3fb1c3e1ec4e9a5357ea6d493e8f97531d065e5b472f634199efaa941d",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-16-mini.webp",
+      "sha256": "addf295ddacd2b353919a2f667b766e546291915cc681d3c26b654656c5bdec5",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-16-detalle.webp",
+      "sha256": "81874f8a962117a3c7d2f1436752d4950324b694fd6892d01536dcb4a756e08d",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-17-editorial.webp",
+      "sha256": "d162b6c20f39ec470c4941fb1a46110a623370494987d3cf04122dd5e9faac8d",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-17-mini.webp",
+      "sha256": "fd73fce4fdaf7e94fbb6b46a5a4e0708aae316b7343126cffcb54d9d733c86b0",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-17-detalle.webp",
+      "sha256": "8b44a45d9b5c397f8cd25837509d7fdf660c14c101c8dd9708a4ad64237ae132",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-18-editorial.webp",
+      "sha256": "5b64937d8f7b25528d37965038c2758f10acd237b5cbd443365a0f4e845e5156",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "vertice-18-mini.webp",
+      "sha256": "2792dbc8ede1fac54d7bd5e5cced77c4fdd274c266550c47b6f625441b7719f4",
+      "dimensiones": [
+        600,
+        450
+      ]
+    },
+    {
+      "archivo": "vertice-18-detalle.webp",
+      "sha256": "8bd7a4ff92b85891e5562d7744e0617e9d05b0991a1f97d86a2707e734a7e06f",
+      "dimensiones": [
+        1600,
+        1200
+      ]
+    },
+    {
+      "archivo": "edicion-sal.webp",
+      "sha256": "02a60381f8a19a0ceb4f9ef70248ea8977120ae68c505786ea8e4ed9227cdb76",
+      "dimensiones": [
+        1280,
+        1600
+      ]
+    },
+    {
+      "archivo": "edicion-sal-mini.webp",
+      "sha256": "9a0949170af5c75de79c5e62d539a0cd0f8d17a20e21ea027b71bd7fb2240536",
+      "dimensiones": [
+        480,
+        600
+      ]
+    },
+    {
+      "archivo": "edicion-aureola.webp",
+      "sha256": "86e041e06f4f4321b87055912cbf8e8fa95e931b456f4876c360c81e62b64d27",
+      "dimensiones": [
+        1280,
+        1600
+      ]
+    },
+    {
+      "archivo": "edicion-aureola-mini.webp",
+      "sha256": "1427afa2a637a8b81c587a121132ab0e303daa3f2787ba2d98adc566ccbc0fa5",
+      "dimensiones": [
+        480,
+        600
+      ]
+    },
+    {
+      "archivo": "edicion-pliegue.webp",
+      "sha256": "e485251b81bd26e91678c4ea166caf2e79c3b67c5e110e17f92b15d1b8d32a75",
+      "dimensiones": [
+        1280,
+        1600
+      ]
+    },
+    {
+      "archivo": "edicion-pliegue-mini.webp",
+      "sha256": "7e55995e9dfc231cdb2ea1653b348b048ff363108ba2b99ffe896406f44e233a",
+      "dimensiones": [
+        480,
+        600
+      ]
+    }
+  ],
+  "duplicadas": 0
+}

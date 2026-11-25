@@ -1,0 +1,84 @@
+{
+  "prueba": "Cronógrafo de archivo · Serie Boreal",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": []
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "1nNShcmoN1TAkM6xrJrhRv"
+    },
+    {
+      "asunto": "Pago simulado registrado · SIM-SUBASTA-46",
+      "id": "73NGV3TzT4vpHncceGky36"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "1njRHlLg91jEGv5VetozAF"
+    }
+  ],
+  "postores": [
+    3816,
+    3817
+  ],
+  "lote": 1126,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "pagoIdempotente": true,
+  "adjudicacion": 46,
+  "ganadas": {
+    "visibleParaGanador": true,
+    "visibleParaPerdedor": false,
+    "pagoVisible": true
+  },
+  "lotesActivos": [
+    {
+      "id": 397,
+      "titulo": "Escultura cinética Órbita baja",
+      "precio": 1415000,
+      "pujas": 1
+    },
+    {
+      "id": 398,
+      "titulo": "Lámpara escultórica Penumbra",
+      "precio": 1025000,
+      "pujas": 1
+    },
+    {
+      "id": 399,
+      "titulo": "Cámara telemétrica M-7",
+      "precio": 2400000,
+      "pujas": 1
+    }
+  ],
+  "ok": true
+}
