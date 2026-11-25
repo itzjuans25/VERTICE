@@ -3,14 +3,14 @@
 \usepackage[T1]{fontenc}
 \usepackage{booktabs,tabularx,graphicx,url}
 \input{metricas-techstore.tex}
-\title{TechStore: diseño y evaluación de un tienda colombiana con microservicios}
+\title{TechStore: comercio electrónico y subastas con cuatro microservicios}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-TechStore combina una tienda colombiana de tecnología con un catálogo de productos nuevos y usados. Tres microservicios separan identidad, transacciones y avisos mediante PostgreSQL, RabbitMQ y Mailpit. Se evaluaron el catálogo filtrado, el descuento de inventario, la entrega de correos, la cobertura Java y la latencia de 36 rutas mediante k6 y Newman con 3, 6 y 8 usuarios virtuales. El análisis incluye el cambio de contraseña y el alcance del objetivo de 500 ms en Windows.
+TechStore reúne una tienda colombiana de tecnología y un mercado de subastas administrado por la tienda. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
@@ -36,20 +36,20 @@ PostgreSQL proporciona operadores e índices por trigramas para apoyar búsqueda
 \begin{center}
 \small
 \begin{tabular}{c}
-\fbox{React: catálogo y flujo de compra}\\[2pt]
+\fbox{React: tienda y subastas}\\[2pt]
 $\downarrow$ REST y JWT\\[2pt]
-\fbox{Auth}\quad$\leftrightarrow$\quad\fbox{Catálogo}\\[2pt]
+\fbox{Auth}\quad\fbox{Catálogo}\quad\fbox{Subastas}\\[2pt]
 $\downarrow$ eventos de negocio\\[2pt]
 \fbox{RabbitMQ}\ $\longrightarrow$\ \fbox{Notificaciones}\\[2pt]
 \hfill$\downarrow$ SMTP/SMS\hspace{25pt}\\
 \hfill\fbox{Mailpit / proveedor externo}\\[4pt]
-Los tres servicios $\rightarrow$ PostgreSQL\\
+Los cuatro servicios $\rightarrow$ PostgreSQL\\
 Catálogo $\rightarrow$ Frankfurter y Nager.Date
 \end{tabular}\\[4pt]
 \footnotesize Fig. 1. Servicios, almacenamiento y dependencias.
 \end{center}
 
-Auth se ocupa del registro, las credenciales y el JWT. Catálogo aplica filtros y reglas de inventario y administra productos y pedidos. Notificaciones valida destinos, renderiza vistas previas y entrega avisos. Los tres usan Java y Spring Boot \cite{spring}. Swagger describe los contratos y Actuator expone el estado de las aplicaciones.
+Auth se ocupa del registro, las credenciales y el JWT. Catálogo aplica filtros y reglas de inventario y administra productos y pedidos. Subastas valida pujas y adjudica lotes. Notificaciones valida destinos, produce vistas previas y entrega avisos. Los cuatro usan Java y Spring Boot \cite{spring}. Swagger describe los contratos y Actuator expone el estado de las aplicaciones.
 
 Los controladores traducen solicitudes y respuestas. Los adaptadores implementan persistencia JPA, mensajería y llamadas HTTP. La tienda React consume el catálogo paginado y usa el contexto de autenticación para habilitar carrito e historial. El servidor verifica los permisos sin depender de qué botones haya mostrado la interfaz.
 
@@ -161,12 +161,12 @@ El diagrama se construyó consultando \texttt{information\_schema} en la base na
 
 La verificación de datos agrupa inventario por categoría y condición, detecta fichas sin imagen o descripción y marca stock bajo. También lista pedidos recientes y cuenta SMS simulados y mensajes pendientes. Mailpit registra los correos que recibe. PostgreSQL no conserva un historial de correos SMTP entregados. Mantener estas evidencias separadas permite interpretar con precisión lo que muestra cada herramienta.
 
-\subsection{Opcional: despliegue en Render}
-El Blueprint describe un frontend estático, tres servicios Docker y una base PostgreSQL administrada \cite{renderbp}. La migración y la carga inicial arrancan con Catálogo. Los microservicios reciben los parámetros de base desde el Blueprint. Se aplican orígenes permitidos para el navegador y URLs HTTPS para las llamadas entre la interfaz y los servicios. Los valores privados se completan en el panel de cada despliegue.
+\subsection{Configuración de nube}
+Vercel sirve React y resuelve las rutas del navegador. El Blueprint describe cuatro contenedores Docker en Render \cite{renderbp}. Los servicios se conectan por JDBC al host directo de Neon con TLS y un pool acotado. La carga inicial corre en Catálogo y Subastas. CORS restringe las llamadas al origen de Vercel y la firma JWT se comparte en variables de entorno.
 
 CloudAMQP ofrece un plan RabbitMQ compartido para pequeñas aplicaciones \cite{cloudamqp}. Brevo recibe correos SMTP en el puerto 2525 \cite{brevo}. El Blueprint usa ese puerto por las restricciones de egress SMTP de Render Free. En Windows, Compose conserva RabbitMQ y Mailpit locales. Esta preparación no sustituye la prueba de entrega con credenciales reales.
 
-Render documenta suspensión de servicios Free tras 15 minutos sin tráfico y un arranque cercano a un minuto \cite{renderfree}. La base gratuita expira a los 30 días. Si se requiere un enlace público, el primer request en frío debe medirse aparte. El objetivo académico de latencia se evalúa aquí con procesos locales activos y los resultados tampoco caracterizan la red Render.
+Render documenta suspensión de servicios Free tras 15 minutos sin tráfico y un arranque cercano a un minuto \cite{renderfree}. Neon Free suspende el cómputo tras cinco minutos sin actividad \cite{neon}. El cron de subastas requiere un proceso despierto. El primer request en frío requiere una medición aparte. El objetivo de latencia se evaluó con procesos locales activos.
 
 \subsection{Reproducción de Postman}
 La colección agrupa tres servicios y conserva dos entornos de ejemplo. El registro genera un correo sintético. El login guarda temporalmente el token. La prueba filtra por condición, verifica la estructura de la ficha, prepara un producto de mantenimiento, compra y consulta el correo. Las rutas administrativas reciben una cuenta temporal para ejercer las operaciones protegidas. Los reportes públicos omiten cuerpos y encabezados sensibles.
@@ -200,6 +200,37 @@ TechStore ejecuta el recorrido de búsqueda, compra e historial con avisos al cl
 
 Las siguientes tareas comprenden verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
 
+\clearpage
+\section{Ampliación y verificación de Subastas}
+La tienda publica lotes de ocho categorías y conserva dos ejemplos por categoría. Las columnas incluyen condición, precio inicial, incremento, precio actual, plazo y versión. Cada puja y adjudicación referencia un lote. La bandeja de avisos usa claves de evento únicas. El identificador del postor se conserva como referencia lógica a Auth. La API pública muestra alias y abre la adjudicación exclusivamente al ganador.
+
+Un lote programado pasa a activo cuando llega su inicio. La tienda puede cancelar una subasta programada o activa antes del vencimiento. El cierre deja el lote en estado cerrado. Si hay ganador, la misma transacción crea una orden y cambia el estado a adjudicada. El pago simulado es idempotente.
+
+El repositorio bloquea la fila actual del lote antes de comparar el monto con el precio más el incremento. El \texttt{UPDATE} comprueba también la versión. Un test con dos hilos y el mismo monto aceptó una de las dos solicitudes y registró una puja. Una oferta aceptada durante los dos minutos finales extiende el plazo. El proceso de cierre produce avisos de puja superada, vencimiento próximo, adjudicación o cierre sin ganador.
+
+La transacción escribe los avisos en PostgreSQL. El publicador espera confirmación de RabbitMQ y calcula un nuevo plazo si hay un fallo. El consumidor mantiene reintentos y cola de errores. La entrega al menos una vez admite duplicados si se pierde el registro de la confirmación.
+
+\captura{../capturas/subastas-adjudicada.png}{Fig. 6. Pantalla de adjudicación y pago simulado en Windows.}
+\captura{../capturas/subastas-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
+
+\begin{table}[!ht]
+\caption{Ampliación de la evaluación local a 43 rutas}
+\centering\footnotesize
+\begin{tabular}{rrrrrr}
+\toprule
+VU & Media & p95 & p99 & Máx. & req/s\\\midrule
+3 & 98,82 & 309,94 & 873,52 & 5616,10 & 15,07\\
+6 & 49,45 & 241,46 & 469,38 & 1064,97 & 61,03\\
+8 & 58,21 & 275,16 & 739,62 & 1701,67 & 69,22\\
+\bottomrule
+\end{tabular}
+\end{table}
+La tabla usa milisegundos y hubo cero códigos inesperados. En 3 usuarios el máximo de Subastas fue 509,93 ms en una puja. En 6 y 8 usuarios los máximos de Subastas fueron 221,31 y 196,47 ms. En 8 usuarios Auth alcanzó 1701,67 ms al cambiar contraseña. Por operación hash, Micrometer midió 269,47 ms de media, con 30,73 ms de espera. Por solicitud de cambio, la escritura promedió 21,45 ms y la consulta 2,51 ms. Los máximos por fase corresponden a ventanas y no se suman al máximo HTTP. La corrida anterior cubría 36 rutas y conserva sus resultados por separado.
+
+Newman ejecutó 80 peticiones y 238 aserciones. Nueve superaron el umbral, con un máximo de 3087 ms. Los códigos esperados y el flujo de dos postores, adjudicación, pago y avisos pasaron. La prueba de navegador adelantó el reloj de un lote sintético y verificó ambos correos. Axe no detectó infracciones en 21 comprobaciones del listado a 390, 768 y 1440 píxeles.
+
+La verificación final ejecutó 86 pruebas Java y 12 pruebas React sin fallos. JaCoCo midió 84,00\,\% de líneas en Auth, 88,39\,\% en Catálogo, 82,95\,\% en Notificaciones y 98,97\,\% en Subastas. Estas cifras combinan pruebas de unidad e integración.
+
 \begin{thebibliography}{00}
 \bibitem{micro} J. Lewis y M. Fowler, \emph{Microservices}, 2014. \url{https://martinfowler.com/articles/microservices.html}
 \bibitem{outbox} C. Richardson, \emph{Transactional outbox}. \url{https://microservices.io/patterns/data/transactional-outbox.html}
@@ -215,6 +246,7 @@ Las siguientes tareas comprenden verificar Render y proveedores reales cuando se
 \bibitem{k6} Grafana Labs, \emph{Built-in Metrics}. \url{https://grafana.com/docs/k6/latest/using-k6/metrics/reference/}
 \bibitem{renderbp} Render, \emph{Blueprint YAML Reference}. \url{https://render.com/docs/blueprint-spec}
 \bibitem{renderfree} Render, \emph{Deploy for Free}. \url{https://render.com/docs/free}
+\bibitem{neon} Neon, \emph{Scale to Zero}. \url{https://neon.com/docs/introduction/scale-to-zero}
 \bibitem{cloudamqp} CloudAMQP, \emph{Plans and Pricing}. \url{https://www.cloudamqp.com/plans/}
 \bibitem{brevo} Brevo, \emph{Which SMTP Port Should I Use?} \url{https://help.brevo.com/hc/en-us/articles/10905415650322}
 \end{thebibliography}

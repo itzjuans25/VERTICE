@@ -1,6 +1,6 @@
 # TechStore
 
-Tienda colombiana de computadores, componentes y electrónica nueva y usada. La tienda administra el inventario y atiende todos los pedidos. El nombre del repositorio sigue siendo ECOMMERCE_FRANK.
+Tienda colombiana de computadores, componentes y electrónica nueva y usada, con subastas de ocho categorías. La tienda administra el inventario, publica los lotes y atiende los pedidos. El nombre del repositorio sigue siendo ECOMMERCE_FRANK.
 
 ## Arranque en Windows
 
@@ -17,6 +17,7 @@ El inicio prepara la base, verifica la salud de las APIs y abre la tienda, Mailp
 | Auth | 9090 | [Swagger](http://localhost:9090/swagger-ui.html) |
 | Catálogo | 9092 | [Swagger](http://localhost:9092/swagger-ui.html) |
 | Notificaciones | 9093 | [Swagger](http://localhost:9093/swagger-ui.html) |
+| Subastas | 9094 | [Swagger](http://localhost:9094/swagger-ui.html) |
 | PostgreSQL | 55432 | pgAdmin |
 | RabbitMQ | 5673 | Health de Notificaciones |
 | Mailpit | 8025 web / 1025 SMTP | [Bandeja](http://localhost:8025) |
@@ -35,17 +36,42 @@ Los precios del seed se expresan en COP. Las imágenes locales son ilustrativas 
 flowchart LR
   UI[React] --> A[Auth]
   UI --> C[Catálogo]
+  UI --> S[Subastas]
   C --> A
   A --> PG[(PostgreSQL)]
   C --> PG
+  S --> PG
   A --> MQ[RabbitMQ]
   C --> MQ
+  S --> MQ
   MQ --> N[Notificaciones]
   N --> PG
   N --> SMTP[Mailpit o Brevo]
   C --> FX[Frankfurter]
   C --> F[Nager.Date]
 ```
+
+## Recorrido de subasta
+
+Abre **Subastas** y filtra por nombre, categoría, condición o rango de precio. En la ficha puedes consultar la puja mínima y el historial anonimizado. Con una cuenta inicia una puja. Si otra cuenta ofrece un monto superior, el primer postor recibe un correo. Cada oferta aceptada en los últimos 2 minutos extiende el cierre otros 2 minutos. En **Mis pujas** se muestran las ofertas propias y las adjudicaciones. El ganador confirma un pago simulado. Las fotos locales son ilustrativas y los vehículos y joyas son lotes ficticios. Hay dos lotes por cada una de las ocho categorías.
+
+Las rutas se agrupan bajo `/api/ecommerce/subastas`.
+
+| API | Lógica |
+| --- | --- |
+| `POST /` | Crea un lote con fecha válida y calcula su estado inicial. Requiere administrador. |
+| `GET /` | Aplica filtros, orden de cierre y paginación del servidor. |
+| `GET /{id}` | Incluye historial anonimizado, puja mínima y adjudicación según la sesión. |
+| `POST /{id}/pujas` | Valida plazo y monto, actualiza precio de forma atómica y registra historial. |
+| `GET /mias` | Agrupa las ofertas propias y las adjudicaciones. |
+| `POST /{id}/cancelar` | Valida el estado y plazo antes de cancelar. Requiere administrador. |
+| `POST /{id}/pago` | Confirma el pago del ganador. Repetirlo conserva el mismo resultado. |
+
+Bajo concurrencia, PostgreSQL bloquea la fila del lote y el `UPDATE` comprueba la versión. La misma transacción guarda el historial y los avisos. Un proceso separado confirma la publicación en RabbitMQ. Notificaciones conserva sus reintentos y la cola de errores y entrega por SMTP. La publicación ofrece entrega al menos una vez. Una caída entre la confirmación y el registro en PostgreSQL puede repetir el correo.
+
+[Captura del listado](docs/capturas/subastas-lista-1440.png) · [Adjudicación local](docs/capturas/subastas-adjudicada.png) · [Correo en Mailpit](docs/capturas/subastas-correo-ganada.png) · [Guía de Neon y pgAdmin](docs/pgadmin/README.md)
+
+La [revisión de entrega](REVISION_FINAL.md) reúne cobertura, Newman, k6 y capturas. La [guía PDF](output/pdf/guia-ecommerce-frank.pdf) resume la explicación y el arranque. Las dos ediciones IEEE se pueden recompilar desde [docs/articulo](docs/articulo).
 
 Auth valida credenciales y emite JWT. Catálogo administra productos, carrito e inventario de pedidos. Notificaciones entrega correos de registro, compra y estado. El consumidor tiene reintentos y cola de errores. El envío después del commit evita revertir el pedido si falla el aviso.
 
@@ -69,7 +95,7 @@ Para verlas en la tienda, abre cualquier ficha y mira la **referencia en USD** d
 
 ## Seguridad y notificaciones
 
-**Cambiar contraseña** está en el menú de la cuenta. Auth exige la clave anterior y limita los intentos repetidos de login. Las contraseñas nuevas usan Argon2id. El JWT se configura mediante `JWT_SECRET`. Render genera un secreto de entorno independiente y compartido entre Auth y Catálogo.
+**Cambiar contraseña** está en el menú de la cuenta. Auth exige la clave anterior y limita los intentos repetidos de login. Las contraseñas nuevas usan Argon2id. Los servicios validan el JWT con `JWT_SECRET`, compartido por entorno.
 
 El correo de Windows se puede verificar en Mailpit. Para Brevo se configuran `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM`, `MAIL_SMTP_AUTH` y `MAIL_STARTTLS`. Si faltan credenciales en modo autenticado, Notificaciones lo avisa y los correos pasan por el mecanismo de reintentos. Render Free usa el puerto alternativo 2525 con STARTTLS. [Pasos de Render](docs/Render.md)
 
@@ -97,9 +123,9 @@ Newman ejecutó 48 peticiones y 145 aserciones. Hubo 0 aserciones fallidas en la
 
 Para reproducir los perfiles usa `pruebas/ejecutar-k6.ps1` con modos carga y estrés. Cada perfil mide la aplicación en Windows. El máximo por ruta es el criterio para los 500 ms. [Informe por ruta](resultados/latencias-techstore.md)
 
-## Render opcional
+## Despliegue público
 
-La sustentación funciona en Windows. Si necesitas un enlace público, Render ofrece un frontend estático, tres servicios web y PostgreSQL en el Blueprint. Configura RabbitMQ con CloudAMQP y el remitente con Brevo SMTP. La primera visita en frío no comparte las latencias medidas en Windows. [Pasos de Render](docs/Render.md)
+La demo de Windows incluye cuatro servicios. Para publicar, conecta Vercel a React, Render a los servicios Java, Neon a PostgreSQL, CloudAMQP a RabbitMQ y Brevo al correo. Los procesos gratuitos pueden suspenderse y el cron de subastas reanuda al despertar el servicio. El despliegue público requiere cuentas del propietario. [Guía de publicación](docs/Render.md)
 
 ## Guion de sustentación
 

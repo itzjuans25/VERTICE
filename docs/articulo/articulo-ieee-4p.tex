@@ -1,0 +1,86 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs,tabularx,graphicx,url}
+\title{TechStore: comercio electrónico y subastas con cuatro microservicios}
+\author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
+\begin{document}
+\maketitle
+\begin{abstract}
+TechStore integra una tienda de tecnología y subastas administradas por la tienda. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 43 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales devolvieron los códigos esperados y excedieron el máximo académico de 500 ms.
+\end{abstract}
+\begin{IEEEkeywords}
+comercio electrónico, subastas, microservicios, concurrencia, PostgreSQL
+\end{IEEEkeywords}
+\section{Introducción}
+El inventario de una tienda necesita preservar el precio de una compra y evitar que dos personas adquieran la misma unidad. Una subasta exige resolver además quién ofrece el monto más alto en un plazo limitado. TechStore reúne ambos recorridos en un sitio React con precios en COP. En la tienda, la confirmación registra una compra y descuenta inventario en la misma transacción. En las subastas, la orden de adjudicación habilita un pago simulado. Los lotes de vehículos y joyería son ejemplos ficticios.
+
+\section{Arquitectura y tecnologías}
+Auth valida contraseñas, controla intentos de login y emite JWT. Catálogo administra información, filtros, inventario, carrito y compras. Subastas administra lotes, pujas, adjudicaciones y el pago simulado. Notificaciones prepara y envía avisos y conserva reintentos y cola de errores. Los cuatro servicios se ejecutan con Java 17 y Spring Boot. Los adaptadores permiten que el dominio y los casos de uso prescindan de dependencias Spring, JPA o AMQP. ArchUnit comprueba esa separación.
+
+\begin{center}
+\begin{tabular}{c}
+React $\rightarrow$ Auth, Catálogo, Subastas\\
+Auth, Catálogo, Subastas $\rightarrow$ RabbitMQ\\
+RabbitMQ $\rightarrow$ Notificaciones $\rightarrow$ Mailpit/Brevo\\
+Los cuatro servicios $\rightarrow$ PostgreSQL
+\end{tabular}\\
+Fig. 1. Componentes de TechStore.
+\end{center}
+
+PostgreSQL conserva cuenta, producto, carrito, compra, lote, puja, adjudicación y avisos. La tabla de pujas y la orden referencian al lote. Los identificadores de usuario se usan como referencias lógicas a Auth. Catálogo usa Frankfurter para mostrar un equivalente en USD y Nager.Date para excluir festivos al calcular la entrega. Las consultas externas fallidas generan una respuesta con datos parciales o un aviso en la ficha.
+
+\section{Reglas y concurrencia}
+La tienda publica y cancela lotes. Las personas autenticadas pueden pujar. Una oferta debe alcanzar el precio vigente más el incremento y no puede superar la oferta propia cuando ya lidera. En los últimos dos minutos, una oferta aceptada prolonga el plazo dos minutos. La consulta pública devuelve precios y alias. Las órdenes se revelan únicamente al ganador.
+
+El repositorio bloquea la fila del lote y comprueba la versión al modificarla. En una prueba con dos hilos y el mismo monto se registró una sola puja. La máquina de estados admite programada, activa, cerrada, adjudicada y cancelada. El cierre sin postores permanece cerrado. Si hay ganador, el proceso crea su orden y conserva el precio final. Confirmar nuevamente el pago simulado devuelve el mismo resultado.
+
+El aviso de puja superada, salida próxima, ganadora o cierre sin ganador nace en la misma transacción que el cambio. El proceso de publicación espera confirmación de RabbitMQ y reintenta con espera creciente. La entrega al menos una vez admite duplicados si el proceso cae tras la confirmación del broker. Notificaciones consume la cola compartida y envía el correo.
+
+\section{Metodología}
+La evaluación usó una instalación Windows con PostgreSQL, RabbitMQ y Mailpit en ejecución. JaCoCo comprobó líneas ejecutadas por pruebas unitarias y de integración. Newman cubrió validación de contrato, tiempos y el flujo de dos postores. La prueba de navegador aceleró solo el reloj de un lote sintético para observar la tarea programada. Axe analizó el listado de lotes en tres anchos. k6 ejecutó carga con 3 usuarios y rampas a 6 y 8, con 43 rutas. El máximo por ruta evalúa el umbral académico.
+
+\section{Resultados}
+\begin{table}[!ht]
+\caption{Latencia local en milisegundos}
+\centering\footnotesize
+\begin{tabular}{rrrrrr}
+\toprule
+VU & Media & p95 & p99 & Máximo & req/s\\\midrule
+3 & 98,82 & 309,94 & 873,52 & 5616,10 & 15,07\\
+6 & 49,45 & 241,46 & 469,38 & 1064,97 & 61,03\\
+8 & 58,21 & 275,16 & 739,62 & 1701,67 & 69,22\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En las tres corridas hubo cero errores según el código HTTP esperado. Subastas registró máximos de 509,93, 221,31 y 196,47 ms. A 8 usuarios, el cambio de contraseña alcanzó 1701,67 ms. Micrometer midió medias de 269,47 ms por hash, 30,73 ms de espera por hash, 2,51 ms en consulta y 21,45 ms en escritura por cambio. Estos valores son agregados. Las fases conservan Argon2id de 19 MiB, dos iteraciones y paralelismo uno.
+
+Newman reportó 80 peticiones, 238 aserciones y nueve fallos de tiempo, con un máximo de 3087 ms. El lote de navegador recibió dos pujas, fue adjudicado y se pagó en modo simulado. Mailpit recibió los correos de puja superada y de subasta ganada. Axe pasó 21 reglas sin infracciones detectadas en el listado a 390, 768 y 1440 píxeles.
+
+La suite final ejecutó 86 pruebas Java y 12 React sin fallos. La cobertura JaCoCo de líneas fue 84,00\,\% en Auth, 88,39\,\% en Catálogo, 82,95\,\% en Notificaciones y 98,97\,\% en Subastas. Las cifras incluyen pruebas unitarias y de integración.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\columnwidth]{../capturas/subastas-adjudicada.png}
+\caption{Página del lote adjudicado después del pago simulado.}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\columnwidth]{../capturas/subastas-correo-ganada.png}
+\caption{Confirmación de adjudicación recibida en Mailpit.}
+\end{figure}
+
+\section{Despliegue y conclusiones}
+La implementación local usa un script Windows. El Blueprint define cuatro servicios en Render con conexión TLS a Neon y AMQPS de CloudAMQP. Vercel sirve el frontend y Brevo suministra SMTP. El despliegue público requiere completar las cuentas del propietario. Render Free suspende procesos inactivos. Neon Free suspende su cómputo tras cinco minutos sin actividad \cite{render,neon}. El cierre programado actúa mientras el servicio está activo.
+
+Los resultados verifican las transacciones, los avisos y la separación de responsabilidades. El umbral de 500 ms sigue pendiente en los perfiles medidos. La validación local tampoco mide la primera visita tras suspender los procesos en la nube. El siguiente paso consiste en separar las latencias de las consultas, la escritura, los hashes y la espera para localizar los picos y repetir perfiles comparables.
+
+\begin{thebibliography}{00}
+\bibitem{argon} A. Biryukov et al., RFC 9106, 2021. \url{https://www.rfc-editor.org/rfc/rfc9106}
+\bibitem{render} Render, \emph{Deploy for Free}. \url{https://render.com/docs/free}
+\bibitem{neon} Neon, \emph{Scale to Zero}. \url{https://neon.com/docs/introduction/scale-to-zero}
+\bibitem{k6} Grafana Labs, \emph{k6 metrics reference}. \url{https://grafana.com/docs/k6/latest/using-k6/metrics/reference/}
+\end{thebibliography}
+\end{document}

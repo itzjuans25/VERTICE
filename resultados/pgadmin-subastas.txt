@@ -1,5 +1,5 @@
 INSERT 0 0
-       categoria       | condicion | productos 
+       categoria       | condicion | productos
 -----------------------+-----------+-----------
  Almacenamiento        | NUEVO     |         2
  Almacenamiento        | USADO     |         2
@@ -25,17 +25,17 @@ INSERT 0 0
  Tarjetas gráficas     | USADO     |         2
 (22 rows)
 
- productos_demo | sin_imagen | sin_descripcion | con_segunda_vista 
+ productos_demo | sin_imagen | sin_descripcion | con_segunda_vista
 ----------------+------------+-----------------+-------------------
              45 |          0 |               0 |                23
 (1 row)
 
- activos | fichas_incompletas 
+ activos | fichas_incompletas
 ---------+--------------------
       45 |                  0
 (1 row)
 
-               nombre               | stock 
+               nombre               | stock
 ------------------------------------+-------
  Portátil ThinkPad T480             |     0
  Caja H510 de segunda mano          |     2
@@ -53,7 +53,7 @@ INSERT 0 0
  Tarjeta GeForce GTX 1650 Ventus XS |     3
 (14 rows)
 
-  id  |        fecha_compra        | estado  |  total   
+  id  |        fecha_compra        | estado  |  total
 ------+----------------------------+---------+----------
  2547 | 2026-11-25 03:43:49.289981 | ENVIADA | 24000.00
  2546 | 2026-11-25 03:43:48.698821 | ENVIADA | 24000.00
@@ -62,17 +62,17 @@ INSERT 0 0
  2543 | 2026-11-25 03:43:47.73864  | ENVIADA | 24000.00
 (5 rows)
 
- sms_simulados |          ultimo_sms           
+ sms_simulados |          ultimo_sms
 ---------------+-------------------------------
             41 | 2026-11-24 22:37:43.242465-05
 (1 row)
 
- en_bandeja | agotados 
+ en_bandeja | agotados
 ------------+----------
           0 |        0
 (1 row)
 
-   categoria    | lotes | abiertos 
+   categoria    | lotes | abiertos
 ----------------+-------+----------
  CARROS         |     2 |        2
  COLECCIONABLES |     2 |        2
@@ -84,14 +84,13 @@ INSERT 0 0
  RELOJES        |     2 |        2
 (8 rows)
 
- id |               titulo                |   estado   | pujas | version |   monto   |            pagada             
+ id |               titulo                |   estado   | pujas | version |   monto   |            pagada
 ----+-------------------------------------+------------+-------+---------+-----------+-------------------------------
  18 | Validación de subasta 1795577887467 | ADJUDICADA |     2 |       4 | 110000.00 | 2026-11-24 22:39:00.843429-05
  17 | Subasta Newman 1795577871040        | ADJUDICADA |     2 |       4 |    120.00 | 2026-11-24 22:40:31.115778-05
 (2 rows)
 
- publicados | pendientes 
+ publicados | pendientes
 ------------+------------
           6 |          0
 (1 row)
-

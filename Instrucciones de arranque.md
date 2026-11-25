@@ -20,6 +20,7 @@ Se conservan la base y los correos en `%LOCALAPPDATA%\EcommerceDev`. Las instanc
 | Auth | 9090 | 9090 | [Swagger](http://localhost:9090/swagger-ui.html) |
 | Catálogo | 9092 | 9092 | [Swagger](http://localhost:9092/swagger-ui.html) |
 | Notificaciones | 9093 | 9093 | [Swagger](http://localhost:9093/swagger-ui.html) |
+| Subastas | 9094 | 9094 | [Swagger](http://localhost:9094/swagger-ui.html) |
 | PostgreSQL | 55432 | 5432 | `pg_isready` |
 | RabbitMQ AMQP | 5673 | 5672 | Health de Notificaciones |
 | Mailpit SMTP / web | 1025 / 8025 | 1025 / 8025 | [Bandeja](http://localhost:8025) |
@@ -48,7 +49,7 @@ Detén primero el modo Windows antes de iniciar Docker. Si ya tienes PostgreSQL 
 
 1. Revisa `%LOCALAPPDATA%\EcommerceDev` y el archivo `.log` o `.err.log` del componente. Con Docker usa `docker compose ps` y `docker compose logs --tail=100`.
 2. Comprueba el puerto con `Get-NetTCPConnection -LocalPort 3000 -State Listen`. Si hay otra aplicación, usa otro puerto. Si cambias los puertos del frontend o Java, revisa CORS y las URLs `REACT_APP_*`.
-3. Comprueba `/actuator/health` en los puertos 9090, 9092 y 9093. La primera consulta a Frankfurter puede demorar unos segundos.
+3. Comprueba `/actuator/health` en los puertos 9090, 9092, 9093 y 9094. La primera consulta a Frankfurter puede demorar unos segundos.
 4. En Swagger, usa el JWT del login en **Authorize**. Para `encolar`, usa la clave de tu archivo de entorno en el esquema `notificationKey`.
 
 ## Crear un administrador para la demostración

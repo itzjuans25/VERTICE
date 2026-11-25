@@ -1,5 +1,23 @@
 # Auditoría TechStore
 
+## Rama subastas
+
+| Requisito | Estado | Evidencia |
+| --- | --- | --- |
+| Core e-commerce | Cumple | Auth, catálogo, stock, carrito y compra comprobados en Postman. Se añadió el recorrido de puja y adjudicación. |
+| Al menos tres microservicios | Cumple | Cuatro procesos locales, con Swagger y health en 9090, 9092, 9093 y 9094. |
+| Una base de datos | Cumple | PostgreSQL compartido. [Consulta de lotes y pedidos](../resultados/pgadmin-subastas.txt) |
+| Notificaciones | Cumple local | RabbitMQ y Mailpit entregaron puja superada y ganada para el lote 18. [Evidencia](../resultados/subastas-e2e.json) |
+| Cinco APIs propias por servicio | Cumple | [APIs existentes y siete rutas de Subastas](../README.md) |
+| Cobertura mínima de 80 % | Cumple en suite completa | JaCoCo considera juntas las pruebas unitarias y de integración. Véanse las cifras de la [revisión](../REVISION_FINAL.md). |
+| Dos APIs externas | Cumple local | Frankfurter y Nager.Date pasaron la validación previa a k6. La ficha usa el tipo de cambio y la entrega en días hábiles. |
+| Despliegue completo | Parcial | Arranque Windows probado. Configuración Vercel, Render, Neon, CloudAMQP y Brevo preparada. Publicación pendiente. |
+| Carga y estrés | Cumple | 43 rutas por perfil, con 3, 6 y 8 VU. [Corridas y fases Auth](../REVISION_FINAL.md) |
+| Máximo de 500 ms | No cumple | k6 alcanzó 5.616,10 ms. Newman alcanzó 3.087 ms. |
+| IEEE en LaTeX | Cumple | [Artículo extendido](../output/pdf/articulo-ieee.pdf) y [edición de máximo 4 páginas](../output/pdf/articulo-ieee-4p.pdf). |
+
+## Evidencia de la entrega estable
+
 Mediciones locales del 22 de noviembre de 2026. Los resultados anteriores se conservan como evidencia histórica.
 
 | Requisito del profesor | Estado | Evidencia |

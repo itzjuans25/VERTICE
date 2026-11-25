@@ -16,4 +16,3 @@ ENV PORT=9094
 EXPOSE 9094
 HEALTHCHECK --interval=15s --timeout=5s --start-period=90s CMD wget -q --spider "http://127.0.0.1:$PORT/health" || exit 1
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=55", "-jar", "/app/app.jar"]
-

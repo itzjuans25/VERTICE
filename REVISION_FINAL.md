@@ -1,5 +1,32 @@
 # Revisión final de TechStore
 
+## Rama subastas, 24 de noviembre de 2026
+
+- La etiqueta `version-estable` conserva la entrega del 22 de noviembre. El cuarto servicio se integra en la rama `subastas`, con JWT de Auth y PostgreSQL compartido.
+- Maven verificó 86 pruebas Java y React ejecutó 12, con cero fallos. JaCoCo de líneas en la suite conjunta: Auth 84,00 %, Catálogo 88,39 %, Notificaciones 82,95 % y Subastas 98,97 %. La primera ejecución con `clean` no pudo borrar los JAR abiertos en Windows. Al detener solo los procesos Java y conservar PostgreSQL, el comando pasó para los cuatro servicios. [Cobertura](resultados/cobertura-subastas.json)
+- La auditoría npm de dependencias de ejecución reportó cero alertas. El análisis local OSV de manifiestos encontró avisos para Bouncy Castle 1.83 en Auth. La revisión previa del grafo transitivo encontró otros avisos. Se mantienen las versiones probadas a la espera de verificar actualizaciones compatibles. [OSV](resultados/osv-java-subastas.json)
+- El lote 18 verificó dos pujas, el aviso a quien perdió el liderazgo, la extensión del plazo, la adjudicación y el pago simulado. El recorrido adelantó la fecha de cierre del lote de prueba para comprobar el proceso programado. [JSON](resultados/subastas-e2e.json) · [Capturas](docs/capturas)
+- La compra 2548 confirmó stock de 1 a 0 en un producto de prueba de una sola unidad, mostró el pedido en el historial y recibió el correo en Mailpit. El navegador también verificó el cambio de contraseña y la ruta protegida después de cerrar sesión. [Evidencia](resultados/e2e-compra-subastas.json)
+- La consulta real de PostgreSQL confirmó 16 lotes de muestra, dos por categoría. Ejecutar el seed de nuevo devolvió `INSERT 0 0`. [Consulta](resultados/pgadmin-subastas.txt)
+- Newman ejecutó 80 peticiones y 238 aserciones. Hubo cero errores de petición y nueve fallos de tiempo. Máximo 3.087 ms. [JSON](resultados/postman-subastas.json) · [HTML](postman/reporte-subastas.html)
+- Axe verificó 21 reglas sin infracciones detectadas en el listado a 390, 768 y 1440 px. El documento midió el mismo ancho que la ventana en los tres casos. La auditoría automática cubre el listado.
+
+| VU | Media ms | p95 ms | p99 ms | Máximo ms | Errores | req/s |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 3 | 98,82 | 309,94 | 873,52 | 5.616,10 | 0 | 15,07 |
+| 6 | 49,45 | 241,46 | 469,38 | 1.064,97 | 0 | 61,03 |
+| 8 | 58,21 | 275,16 | 739,62 | 1.701,67 | 0 | 69,22 |
+
+Las tres corridas ejercitaron 43 rutas. Subastas registró máximos de 509,93, 221,31 y 196,47 ms. A 3 VU también superó 500 ms `GET /mias` con 502,68 ms. A 8 VU, el máximo fue el cambio de contraseña. La media muestral por hash fue 269,47 ms y su espera 30,73 ms. La consulta promedió 2,51 ms y la escritura 21,45 ms por cambio. Esas medias describen fases agrupadas. La medición no asigna los picos de Catálogo y Notificaciones a una sola causa. [3 VU](resultados/subastas-k6-3.json) · [6 VU](resultados/subastas-k6-6.json) · [8 VU](resultados/subastas-k6-8.json) · [Fases Auth](resultados/subastas-k6-fases-8.json)
+
+**Pendientes.** Publicación desde las cuentas del propietario y prueba de Brevo. Docker Compose validó la configuración. Al construir, el cliente informó que el motor Docker Desktop Linux no estaba disponible. Quedan la latencia y una auditoría de accesibilidad del resto de pantallas. El catálogo conserva sus filtros existentes. El rediseño nuevo se concentra en inicio, cabecera y subastas. [Publicación y variables](docs/Render.md)
+
+**Entrega.** El artículo IEEE extendido tiene 7 páginas y la edición corta 2 páginas. Ambos se compilaron y no registraron líneas desbordadas. [Artículo](output/pdf/articulo-ieee.pdf) · [Edición corta](output/pdf/articulo-ieee-4p.pdf) · [Guía](output/pdf/guia-ecommerce-frank.pdf)
+
+**Acciones del propietario.** Revoca la clave AWS IAM histórica, rota el token Twilio y rota cualquier clave Brevo que hayas compartido. Publica el repositorio, crea Neon, CloudAMQP y Brevo, conecta Render y Vercel, configura CORS y prueba `smoke-nube` y pgAdmin con las URLs definitivas.
+
+## Entrega estable, 22 de noviembre de 2026
+
 Verificación del 22 de noviembre de 2026 en Windows. Entorno local iniciado con `iniciar.ps1`.
 
 | Verificación | Resultado | Evidencia | Corrección |
