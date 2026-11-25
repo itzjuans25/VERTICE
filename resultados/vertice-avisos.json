@@ -1,0 +1,20 @@
+{
+  "usuariosDemo": [
+    3296,
+    3297
+  ],
+  "avisos": [
+    {
+      "id": 46,
+      "asunto": "Bienvenido a VÉRTICE",
+      "estado": "ENVIADO"
+    },
+    {
+      "id": 47,
+      "asunto": "Bienvenido a VÉRTICE",
+      "estado": "ENVIADO"
+    }
+  ],
+  "sinToken": 401,
+  "separadosPorJwt": true
+}

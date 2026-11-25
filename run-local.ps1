@@ -46,13 +46,8 @@ foreach ($name in $defaults.Keys) {
 }
 
 if ($Service -eq 'frontend') {
-    $npm = Get-Command npm.cmd -ErrorAction SilentlyContinue
-    $npmPath = if ($npm) { $npm.Source } else {
-        Get-ChildItem "$env:LOCALAPPDATA/EcommerceDev/node-*/npm.cmd" -ErrorAction SilentlyContinue |
-            Select-Object -First 1 -ExpandProperty FullName
-    }
-    if (-not $npmPath) { throw 'Instala Node.js con npm o restaura la instalación portátil de EcommerceDev.' }
-    $env:PATH = (Split-Path $npmPath) + ';' + $env:PATH
+    . (Join-Path $PSScriptRoot 'scripts/windows-local.ps1')
+    $npmPath = Get-EcommerceNpm
     $env:PORT = $env:FRONTEND_PORT
     if (-not $env:REACT_APP_AUTH_URL) {
         $env:REACT_APP_AUTH_URL = "http://localhost:$($env:AUTH_PORT)"

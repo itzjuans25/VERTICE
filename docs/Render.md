@@ -1,4 +1,4 @@
-# Publicar la demo de Remata
+# Publicar la demo de VÉRTICE
 
 La tienda React se aloja en Vercel Hobby. Render ejecuta los cuatro JAR, Neon guarda los datos persistentes, CloudAMQP enruta eventos y Brevo entrega correos. La demo local usa PostgreSQL, RabbitMQ y Mailpit. La publicación requiere las cuentas del propietario.
 
@@ -24,7 +24,7 @@ En Render abre **New → Blueprint**, autoriza el repositorio, selecciona la ram
 | `MAIL_USERNAME` y `MAIL_PASSWORD` | Notificaciones | Usuario y clave SMTP de Brevo. |
 | `MAIL_FROM` | Notificaciones | Correo de un remitente verificado en Brevo. |
 
-`JWT_SECRET` se genera una vez en el grupo `remata-config`. Cada JAR comparte esa firma y toma `PORT` de Render. Spring resuelve el JDBC desde el host y la base indicados, con `sslmode=require`. Hikari usa hasta 4 conexiones, mínimo 0 inactivas, espera de 30 s y vida máxima de 4 min. El arranque tolera hasta 60 s ante fallos de conexión iniciales. Los servicios se llaman `remata-auth`, `remata-catalogo`, `remata-subastas` y `remata-notificaciones`. Los cuatro servicios exponen `/health`.
+`JWT_SECRET` se genera una vez en el grupo `vertice-config`. Cada JAR comparte esa firma y toma `PORT` de Render. Spring resuelve el JDBC desde el host y la base indicados, con `sslmode=require`. Hikari usa hasta 4 conexiones, mínimo 0 inactivas, espera de 30 s y vida máxima de 4 min. El arranque tolera hasta 60 s ante fallos de conexión iniciales. Los servicios se llaman `vertice-auth`, `vertice-catalogo`, `vertice-subastas` y `vertice-notificaciones`. Los cuatro servicios exponen `/health`.
 
 Para tener un administrador, registra tu cuenta desde el frontend y, en la consola SQL de tu propia base, actualiza únicamente su rol usando el ID de esa cuenta. Vuelve a iniciar sesión para que Auth emita el JWT actualizado.
 

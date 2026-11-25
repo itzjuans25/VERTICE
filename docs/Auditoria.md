@@ -1,4 +1,22 @@
-# Auditoría Remata
+# Auditoría VÉRTICE
+
+## Corrida VÉRTICE · 25 de noviembre de 2026
+
+| Requisito del profesor | Estado | Evidencia de esta corrida |
+| --- | --- | --- |
+| 1. Núcleo de comercio electrónico | Cumple | Compra 2772, stock de 1 a 0. Lote 421, dos postores, extensión y adjudicación 39 con pago simulado idempotente. [Compra](../resultados/vertice-compra.json) · [Subasta](../resultados/vertice-puja.json) |
+| 2. Al menos 3 microservicios | Cumple | Auth, Catálogo, Notificaciones y Subastas. Maven multimódulo, reglas hexagonales con ArchUnit y cuatro contratos OpenAPI. [Módulos](../pom.xml) |
+| 3. Base de datos | Cumple | PostgreSQL `ecommerce`, 45 fichas de Tecnología con la misma huella y 18 lotes curados. La segunda ejecución del seed no insertó ni modificó filas. [Datos](../resultados/vertice-datos.json) · [MER](pgadmin/vertice-mer.md) |
+| 4. Notificaciones | Cumple | RabbitMQ y Mailpit confirmaron la compra, puja superada y adjudicación. El envío externo requiere credenciales del titular. [Capturas](capturas/) |
+| 5. Cinco APIs propias por servicio | Cumple | Operaciones, reglas y rutas de los cuatro servicios en el README. [APIs](../README.md#cinco-apis-no-crud-por-microservicio) |
+| 6. 80 % de cobertura unitaria por servicio | Parcial | JaCoCo de líneas unitarias, 20,04 / 34,56 / 68,61 / 16,90 %. Con integración, 82,44 / 86,97 / 81,88 / 92,14 % en el mismo orden. [Medición](../resultados/vertice-cobertura.json) |
+| 7. Dos APIs externas | Cumple | Frankfurter, Nager.Date y Open-Meteo respondieron a través del sistema. [Respuestas](../resultados/vertice-integraciones.json) |
+| 8. Despliegue completo | Parcial | Arranque local comprobado, configuración pública documentada. La publicación necesita las cuentas del titular. [Publicación](Render.md) |
+| 9. Carga y estrés | Cumple | k6 con 3, 6 y 8 usuarios virtuales y comprobaciones funcionales Newman. [Rendimiento](../resultados/vertice-rendimiento.md) |
+| 10. Máximo de 500 ms por API | No cumple | Newman observó un máximo de 3821 ms. [Newman](../resultados/vertice-postman.json) · [Latencia por ruta](../resultados/vertice-rendimiento.md) |
+| 11. Artículo IEEEtran de hasta 4 páginas | Cumple | Versiones corta (4 páginas) y extendida (8), compiladas. [Fuentes](articulo/) |
+
+Las tablas posteriores conservan sus mediciones históricas.
 
 ## Catálogo general
 

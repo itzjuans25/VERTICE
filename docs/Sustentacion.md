@@ -1,4 +1,4 @@
-# Guion de sustentación de Remata
+# Guion de sustentación de VÉRTICE
 
 Empieza con la portada. Cambia entre **En tienda** y **En subasta** en la misma categoría. Explica por qué un casco puede comprarse al precio publicado y por qué un vehículo completo solo aparece como lote simulado.
 

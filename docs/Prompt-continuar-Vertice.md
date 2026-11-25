@@ -1,0 +1,13 @@
+# Prompt para continuar VÉRTICE
+
+Continúa el proyecto adjunto. Soy estudiante y lo voy a sustentar. Responde en español. Empieza con el README, la primera tabla de Auditoría y la guía de Sustentación de VÉRTICE. Ubica cada archivo con rg y revisa git status y git diff. Trabaja un pendiente a la vez, cambia lo mínimo, ejecuta la prueba correspondiente y muestra solo cifras reales. No copies logs largos ni secretos.
+
+VÉRTICE es una casa de piezas singulares con subastas curadas y una Tienda a precio fijo. Mantén el catálogo histórico de 45 productos tecnológicos, sus precios, el historial de compras y las pujas previas. Las 18 fichas curadas usan nombres ficticios y fotos ilustrativas únicas. Los pagos, entregas, procedencias y traspasos se simulan. Hay un precio mínimo de puja, confirmación previa y dos minutos adicionales si se oferta en los últimos dos minutos.
+
+Conserva Java 17, Spring Boot hexagonal con ArchUnit, React, PostgreSQL, RabbitMQ y Mailpit. Auth escucha en 9090, Catálogo en 9092, Notificaciones en 9093 y Subastas en 9094. Tienda en 3000, PostgreSQL en 55432, RabbitMQ en 5673 y Mailpit en 8025/1025. Usa iniciar.ps1 y detener.ps1. IntelliJ importa el pom.xml raíz. Postman, el MER y las consultas están enlazados en la guía de sustentación. Mantén Argon2id con 19 MiB, dos iteraciones y paralelismo uno.
+
+Pruebas locales destacadas. La compra 2772 descontó la última unidad y entregó el correo en Mailpit. El lote 421 comprobó dos compradores, la extensión de cierre, los correos y el pago simulado idempotente de la adjudicación 39. Se dejaron ofertas de demo en 385, 386 y 387. Frankfurter da una referencia en USD, Nager.Date estima días hábiles y Open-Meteo añade información de Bogotá. Consulta resultados/vertice-*.json y resultados/vertice-rendimiento.md antes de repetir pruebas.
+
+Pendientes. Publicación e integración con SMTP real requieren cuentas del titular. Sigue docs/Render.md y verifica con el smoke sin publicar credenciales. Mejora cobertura exclusivamente unitaria con casos de negocio. La suite conjunta supera 80 % en los cuatro servicios. k6 recorrió 50 rutas y encontró máximos superiores a 500 ms en los tres perfiles. Usa las fases medidas de Auth para estudiar el rendimiento, conserva los parámetros de seguridad, registra la máquina y separa el arranque en frío del servicio caliente. Solo atribuye una causa si la prueba la demuestra.
+
+Actualiza README, auditoría, artículo IEEE, capturas y ZIP cuando cambie evidencia. Revisa que el PDF corto mantenga hasta 4 páginas y el extendido 8. No incluyas datos, variables privadas, archivos de compilación ni logs en el ZIP. Cierra con comandos de arranque, estado de los requisitos y acciones que requiere el propietario.

@@ -107,11 +107,31 @@
     "busquedaSinRecarga": true,
     "recomendacionesCruzadas": true,
     "vehiculosAgrupadosApi": true,
-    "vehiculosAgrupadosVista": true
+    "vehiculosAgrupadosVista": true,
+    "avisoLocal": true,
+    "perfil": true
   },
   "contraste": {
     "textoFondo": 17.35,
     "textoSuaveSuperficie": 7.2,
     "accion": 8.72
-  }
+  },
+  "cuenta": [
+    {
+      "ancho": 390,
+      "reglas": 22,
+      "fallos": []
+    },
+    {
+      "ancho": 768,
+      "reglas": 22,
+      "fallos": []
+    },
+    {
+      "ancho": 1440,
+      "reglas": 23,
+      "fallos": []
+    }
+  ],
+  "ok": true
 }

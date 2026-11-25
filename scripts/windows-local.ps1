@@ -28,6 +28,14 @@ function Get-EcommerceTool([string]$Name, [string[]]$Candidates, [string]$Packag
     throw "Falta $Package ($Name). Consulta Instrucciones de arranque.md."
 }
 
+function Get-EcommerceNpm {
+    $candidates = @(Get-ChildItem "$ecommerceHome/node-*/npm.cmd" -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty FullName)
+    $npm = Get-EcommerceTool 'npm.cmd' $candidates 'Node.js con npm'
+    $env:PATH = (Split-Path $npm) + ';' + $env:PATH
+    return $npm
+}
+
 function Wait-EcommerceTcp([int]$Port) {
     $until = (Get-Date).AddSeconds(75)
     do {

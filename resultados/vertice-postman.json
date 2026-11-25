@@ -1,0 +1,40 @@
+{
+  "peticiones": 87,
+  "peticionesFallidas": 0,
+  "aserciones": 259,
+  "asercionesFallidas": 6,
+  "promedioMs": 188.19540229885058,
+  "maximoMs": 3821.0,
+  "fallos": [
+    {
+      "caso": "Catálogo activo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 542 to be below 500"
+    },
+    {
+      "caso": "Notificaciones activo",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 523 to be below 500"
+    },
+    {
+      "caso": "Listado administrativo de pedidos",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 955 to be below 500"
+    },
+    {
+      "caso": "Vaciar carrito",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 522 to be below 500"
+    },
+    {
+      "caso": "Limpiar postor Uno",
+      "comprobacion": "Responde en máximo 500 ms",
+      "mensaje": "expected 3821 to be at most 500"
+    },
+    {
+      "caso": "Inicio de tienda",
+      "comprobacion": "Tiempo menor de 500 ms",
+      "mensaje": "expected 1058 to be below 500"
+    }
+  ]
+}

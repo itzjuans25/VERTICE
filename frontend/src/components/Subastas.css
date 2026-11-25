@@ -35,10 +35,10 @@
 .auction-page .primary, .auction-page button[aria-pressed=true] { border-color: transparent; background: var(--tech-accent); color: var(--tech-ink); font-weight: 700; }
 .auction-page .primary:hover { background: var(--tech-hover); }
 .auction-page button:disabled { background: var(--tech-raised); color: var(--tech-muted); cursor: not-allowed; }
-.auction-page .danger { color: var(--tech-error); }
+.auction-page .danger { color: #f08e8b; }
 .auction-chip { display: inline-block; font-size: 13px; padding: 4px 8px; background: var(--tech-raised); border-radius: var(--tech-radius-sm); color: var(--tech-muted); font-variant-numeric: tabular-nums; }
-.auction-chip.ambar { color: var(--tech-warn); }
-.auction-chip.rojo { color: var(--tech-error); }
+.auction-chip.ambar { color: #f2ad60; border-inline-start: 2px solid var(--tech-warn); }
+.auction-chip.rojo { color: #f08e8b; border-inline-start: 2px solid var(--tech-error); }
 .auction-price { font-size: 36px; display: block; margin-top: 8px; }
 .auction-card strong, .auction-price { font-variant-numeric: tabular-nums; }
 .auction-form { display: grid; gap: 16px; }
@@ -46,7 +46,7 @@
 .auction-form input, .auction-form select, .auction-form textarea { box-sizing: border-box; width: 100%; color: var(--tech-text); background: var(--tech-background); border: 1px solid var(--tech-control); border-radius: var(--tech-radius-sm); font: inherit; padding: 8px; min-height: 44px; color-scheme: dark; }
 .auction-form textarea { resize: vertical; min-height: 82px; }
 .admin-auction { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.auction-error { border-left: 3px solid var(--tech-error); padding: 12px; color: var(--tech-error); background: var(--tech-surface); }
+.auction-error { border-left: 3px solid var(--tech-error); padding: 12px; color: #f08e8b; background: var(--tech-surface); }
 .auction-skeleton { border-radius: var(--tech-radius); background: var(--tech-raised); color: var(--tech-muted); padding: 20px; min-height: 210px; }
 .auction-records { margin: 0; padding: 0; list-style: none; }
 .auction-records li { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--tech-border); }

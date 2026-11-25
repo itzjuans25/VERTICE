@@ -1,4 +1,4 @@
-# Instrucciones de arranque de TechStore
+# Instrucciones de arranque de VÉRTICE
 
 Desde la carpeta que contiene `docker-compose.yml`, ejecuta en PowerShell:
 
@@ -26,7 +26,7 @@ Se conservan la base y los correos en `%LOCALAPPDATA%\EcommerceDev`. Las instanc
 | Mailpit SMTP / web | 1025 / 8025 | 1025 / 8025 | [Bandeja](http://localhost:8025) |
 
 En pgAdmin usa `127.0.0.1:55432`, base `ecommerce`, usuario `ecommerce_dev` y `POSTGRES_PASSWORD` de tu `.env.native`.
-El arranque carga 45 productos sin duplicarlos. En la tienda puedes explorar sin cuenta. Para comprar, regístrate e inicia sesión.
+El arranque conserva los 45 productos históricos de Tecnología, incorpora el catálogo general y prepara 18 lotes curados sin duplicarlos. La exploración es pública. Comprar y pujar requieren sesión.
 
 ## Requisitos locales
 
@@ -44,6 +44,8 @@ powershell -ExecutionPolicy Bypass -File .\detener.ps1 -Docker
 ```
 
 Detén primero el modo Windows antes de iniciar Docker. Si ya tienes PostgreSQL o RabbitMQ en los puertos predeterminados de Docker, cambia `POSTGRES_PORT` y `RABBITMQ_PORT` en `.env`.
+
+La configuración de Compose pasó la validación. Este equipo ejecutó la demo completa en Windows nativo con el motor de Docker Desktop apagado.
 
 ## Cuando algo no arranca
 

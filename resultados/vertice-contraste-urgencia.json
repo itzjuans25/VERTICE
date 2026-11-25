@@ -1,0 +1,23 @@
+{
+  "alcance": "Ficha de subasta con reloj de navegador situado a 90 segundos del cierre",
+  "resultados": [
+    {
+      "ancho": 390,
+      "visible": true,
+      "texto": "rgb(240, 142, 139)",
+      "fallos": []
+    },
+    {
+      "ancho": 768,
+      "visible": true,
+      "texto": "rgb(240, 142, 139)",
+      "fallos": []
+    },
+    {
+      "ancho": 1440,
+      "visible": true,
+      "texto": "rgb(240, 142, 139)",
+      "fallos": []
+    }
+  ]
+}

@@ -1,11 +1,10 @@
-# Remata · Compra directa y subastas
+# VÉRTICE · Piezas singulares y subastas curadas
 
-Tienda general en Colombia con dos modalidades. En **Tienda** pagas el precio fijo publicado. En **Subastas** haces una oferta y, si ganas, confirmas un pago simulado. Las dos modalidades comparten navegación, categorías, buscador y cuenta. Los vehículos completos se ofrecen en Subastas. En Tienda hay accesorios de moto.
+Casa de subastas editorial con 18 piezas ilustrativas. Las vitrinas reúnen moda de autor, relojería, joyería, arte y colección, y vehículos de exhibición. Cada lote tiene fotografía propia, atributos y un motivo curatorial. Los pagos, las entregas, las procedencias y los traspasos son simulados.
 
-El catálogo conserva 45 fichas de Tecnología y añade 30 productos en ocho categorías principales. [Mapa compartido](frontend/src/categorias.js) agrupa las categorías de Catálogo y Subastas sin cambiar sus textos históricos. La portada muestra conteos por modalidad y rota los destacados con un máximo de dos productos por grupo.
+La compra directa conserva el catálogo de Tecnología y el inventario general. Auth, Catálogo y pedidos, Subastas y Notificaciones continúan como cuatro servicios hexagonales. El POM de la raíz permite importar los cuatro en IntelliJ IDEA.
 
-Los cuatro contextos son Identidad, Catálogo y pedidos, Subastas y Notificaciones. Catálogo comparte inventario, carrito y pedidos para registrar el descuento y la confirmación en una sola transacción local. No hay un gateway. Subastas administra pujas y adjudicaciones. Los avisos viajan por RabbitMQ.
-
+[Guion y pasos de sustentación](docs/Sustentacion-Vertice.md) · [Modelo entidad-relación](docs/pgadmin/vertice-mer.md) · [Evidencias de la corrida](REVISION_FINAL.md)
 
 ## Arranque en Windows
 
@@ -61,7 +60,7 @@ flowchart LR
 
 ## Recorrido de subasta
 
-Abre **Subastas** y filtra por nombre, categoría, condición o rango de precio. En la ficha puedes consultar la puja mínima y el historial anonimizado. Con una cuenta inicia una puja. Si otra cuenta ofrece un monto superior, el primer postor recibe un correo. Cada oferta aceptada en los últimos 2 minutos extiende el cierre otros 2 minutos. En **Mis pujas** se muestran las ofertas propias y las adjudicaciones. El ganador confirma un pago simulado. Las fotos locales son ilustrativas y los vehículos y joyas son lotes ficticios. Los 16 lotes históricos se complementan con ejemplos que mantienen representadas las nueve categorías principales.
+Abre **Subastas** y filtra por nombre, categoría, condición o rango de precio. En la ficha puedes consultar la puja mínima y el historial anonimizado. Con una cuenta inicia una puja. Si otra cuenta ofrece un monto superior, el primer postor recibe un correo. Cada oferta aceptada en los últimos 2 minutos extiende el cierre otros 2 minutos. En **Mis pujas** se muestran las ofertas propias y las adjudicaciones. El ganador confirma un pago simulado. Las fotos locales son ilustrativas y los vehículos y joyas son lotes ficticios. El seed actual incorpora 18 piezas. Los lotes de demostración anteriores con pujas se conservan para su historial.
 
 Las rutas se agrupan bajo `/api/ecommerce/subastas`.
 
@@ -100,6 +99,7 @@ En pgAdmin usa host `127.0.0.1`, puerto `55432`, base `ecommerce` y usuario `eco
 | Proveedor | Dónde se usa | Vigencia y fallback |
 | --- | --- | --- |
 | [Frankfurter](https://frankfurter.dev/) | USD en la ficha de Tienda y de Subastas. Historial de pujas con la tasa vigente. | 6 h. Catálogo responde 503 sin tasa válida. Subastas devuelve `disponible:false`. |
+| [Open-Meteo](https://open-meteo.com/en/docs) | Temperatura, humedad y precipitación actuales de la sede simulada en Bogotá. | 45 min. Sin observación vigente, la ficha indica que el dato no está disponible. |
 | [Nager.Date](https://date.nager.at/) | Entrega del carrito, ficha de lote y adjudicación. | 24 h por año. Sin calendario vigente se calcula con lunes a viernes y se indica «Calendario parcial». |
 
 Los dos servicios consultan en segundo plano con 1 s de conexión, 2 s de lectura, un reintento y un cortacircuito de 60 s tras tres fallos consecutivos. El precio en COP, la compra y la puja conservan su funcionamiento.
@@ -117,6 +117,10 @@ El correo de Windows se puede verificar en Mailpit. Para Brevo se configuran `MA
 ## Postman y rendimiento
 
 Importa la colección y elige **Local**. Guarda credenciales administrativas y claves solo como valores locales del entorno. El script de Newman crea la cuenta administrativa temporal y conserva un reporte sin cuerpos ni cabeceras. [Colección, entornos e informe](postman/README.md)
+
+La corrida VÉRTICE ejercitó 50 rutas con 3, 6 y 8 usuarios virtuales. Los máximos fueron 878,79, 944,28 y 918,93 ms. Newman ejecutó 87 peticiones y 259 aserciones con seis fallos de latencia. JaCoCo superó el 80 % en los cuatro servicios al sumar integración. En unitarias aisladas el mejor resultado fue 68,61 %. [Latencias por ruta](resultados/vertice-rendimiento.md) · [Cobertura por servicio](resultados/vertice-cobertura.json) · [Auditoría](docs/Auditoria.md)
+
+### Mediciones anteriores a VÉRTICE
 
 <!-- RESULTADOS TECHSTORE -->
 Pasaron **76 pruebas Java** y **12 React**. JaCoCo de líneas en la suite Java completa: **Auth 85,28 %, Catálogo 88,49 %, Notificaciones 82,95 %**.
@@ -136,7 +140,7 @@ Newman ejecutó 48 peticiones y 145 aserciones. Hubo 0 aserciones fallidas en la
 - **8 usuarios.** Rutas por encima de 500 ms: POST /save (861,08 ms), POST /login (591,87 ms), POST /renovar (629,82 ms), POST /cambiar-clave (1086,76 ms). Cambio de contraseña: máximo 1086,76 ms y p95 826,43 ms.
 <!-- FIN RESULTADOS TECHSTORE -->
 
-Para reproducir los perfiles usa `pruebas/ejecutar-k6.ps1` con modos carga y estrés. Cada perfil mide la aplicación en Windows. El máximo por ruta es el criterio para los 500 ms. [Informe por ruta](resultados/latencias-techstore.md)
+Para reproducir los perfiles usa `pruebas/ejecutar-k6.ps1` con el modo carga a 3 VU y el modo estrés a 6 y 8 VU. El máximo por ruta determina si se cumple el límite.
 
 ## Despliegue público
 
@@ -144,9 +148,9 @@ La demo de Windows incluye cuatro servicios. Para publicar, conecta Vercel a Rea
 
 ## Guion de sustentación
 
-1. Abre la tienda. Busca un portátil usado por marca. Explica condición, grado, garantía y paginación.
-2. Haz un registro y un pedido. Enseña carrito, historial, correo en Mailpit y tablas en pgAdmin.
-3. Ejecuta Postman o abre el reporte HTML. Enseña Swagger, JaCoCo y una ruta que supere 500 ms.
+1. Abre una ficha curada. Explica por qué es una subasta y muestra la puja mínima, la confirmación y el tiempo de cierre.
+2. Muestra el lote 421 y su correo de adjudicación en Mailpit. Después enseña el stock y el historial de la compra 2772.
+3. Abre Swagger, Postman y pgAdmin. Usa JaCoCo y k6 para explicar qué requisitos siguen pendientes. [Guion y preguntas](docs/Sustentacion-Vertice.md)
 
 **¿Qué hace RabbitMQ?** Entrega el aviso por separado. El pedido se confirma en PostgreSQL y el correo se comprueba en Mailpit.
 

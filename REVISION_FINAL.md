@@ -1,6 +1,17 @@
-# Revisión final de Remata
+# Revisión final de VÉRTICE
 
-## Remata · Compra directa y subastas
+## VÉRTICE · 25 de noviembre de 2026
+
+- PostgreSQL confirmó 18 piezas curadas, la huella histórica de los 45 productos de Tecnología y tres lotes anteriores con pujas. Al ejecutar nuevamente el seed, PostgreSQL devolvió `UPDATE 0` e `INSERT 0 0`. [Datos locales](resultados/vertice-datos.json)
+- Las 18 fotografías ilustrativas salieron de dos contactos de estudio y se verificó que sus SHA-256 fueran distintos. La verificación de todas las imágenes visibles se registra por separado.
+- Open-Meteo respondió por el endpoint del servicio con datos de Bogotá. Su caché dura 45 minutos y la ficha muestra estado de disponibilidad. El adaptador funciona en el planificador de proveedores. [Contrato del proveedor](https://open-meteo.com/en/docs)
+- El montaje local necesitó resolver npm desde la instalación portátil de Windows. La configuración de los backends y la base sigue en los puertos existentes.
+- La compra 2772 descontó la última unidad. Dos postores completaron la adjudicación 39 con los avisos de Mailpit. Los productores de registro y compra conservan ahora el identificador de usuario en RabbitMQ. Se comprobó que dos sesiones recibieron avisos distintos y que la consulta sin JWT devolvió HTTP 401. [Compra](resultados/vertice-compra.json) · [Puja](resultados/vertice-puja.json) · [Avisos](resultados/vertice-avisos.json)
+- Las pantallas principales se midieron en cinco anchos y la cuenta se comprobó con axe en tres de ellos. Se ajustó el contraste de las alertas de tiempo y se verificó la ficha con el reloj del navegador a 90 segundos del cierre. [Experiencia](resultados/vertice-experiencia.json) · [Contraste](resultados/vertice-contraste-urgencia.json)
+- Se separaron las pruebas unitarias de la suite con integración. Newman hizo 87 peticiones. k6 ejercitó 50 rutas en cada perfil y registró picos por encima de 500 ms. [Auditoría](docs/Auditoria.md) · [Latencias, arranque y análisis por fase](resultados/vertice-rendimiento.md)
+
+
+## Antecedente de la versión de compra directa y subastas
 
 El símbolo, los iconos PNG y la imagen social se integraron desde el kit adjunto. La marca y los colores de la aplicación se editan en `frontend/src/marca.js`. La navegación, los filtros y las fichas usan nueve categorías compartidas. Tienda vende a precio fijo y Subastas adjudica con pago simulado. Los vehículos completos se publican como lotes.
 
@@ -10,7 +21,7 @@ Pasaron 90 pruebas Java. Cobertura de líneas de JaCoCo: Auth 82,44 %, Catálogo
 
 La compra sintética 2550 registró stock de 1 a 0 y entregó el correo de confirmación en Mailpit. El lote 162 comprobó dos postores, puja superada, adjudicación y pago simulado. Newman hizo 86 peticiones y 256 aserciones, con dos incumplimientos de tiempo y máximo de 846 ms. [Compra](resultados/remata-compra-e2e.json) · [Subasta](resultados/remata-puja.json) · [Newman](resultados/remata-postman.json)
 
-Los identificadores históricos de archivo y los resultados del apartado anterior a Remata siguen disponibles para comparar. El evento que traslada lotes desiertos a la tienda queda como trabajo futuro.
+Los identificadores históricos de archivo y los resultados del apartado anterior a VÉRTICE siguen disponibles para comparar. El evento que traslada lotes desiertos a la tienda queda como trabajo futuro.
 
 ## Rama subastas, 24 de noviembre de 2026
 

@@ -62,9 +62,10 @@ if ($Docker) {
         }
     }
     if (-not (Test-Path 'frontend/node_modules/.bin/react-scripts.cmd')) {
+        $npm = Get-EcommerceNpm
         Push-Location frontend
         try {
-            & npm.cmd ci --no-audit --no-fund
+            & $npm ci --no-audit --no-fund
             if ($LASTEXITCODE -ne 0) { throw 'npm ci fallo.' }
         } finally { Pop-Location }
     }

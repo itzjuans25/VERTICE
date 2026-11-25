@@ -3,32 +3,32 @@
 \usepackage[T1]{fontenc}
 \usepackage{booktabs,tabularx,graphicx,url}
 \input{metricas-techstore.tex}
-\title{Remata: compra directa y subastas en una tienda general}
+\title{VÉRTICE: una casa editorial de subastas curadas}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-Remata reúne dos modalidades de venta en una tienda general colombiana: precio fijo y subasta. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
+VÉRTICE es una casa editorial de subastas académicas. La compra directa permanece como canal complementario. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
 \end{IEEEkeywords}
 
 \section{Introducción}
-Una tienda general administra mercancía nueva y usada de varias categorías. El precio fijo reserva unidades de un inventario y la subasta resuelve qué oferta gana al vencer un plazo. En artículos usados, la ficha debe comunicar el grado, la garantía y la compatibilidad sin ocultar la diferencia entre un anuncio y una unidad física. Se adoptó como alcance una tienda con inventario propio y gestión centralizada de pedidos.
+Una casa de subastas necesita justificar por qué se adjudica cada pieza por competencia y preservar el registro de ofertas. El precio fijo reserva unidades de un inventario y la subasta resuelve qué oferta gana al vencer un plazo. En artículos usados, la ficha debe comunicar el grado, la garantía y la compatibilidad sin ocultar la diferencia entre un anuncio y una unidad física. Se adoptó como alcance una tienda con inventario propio y gestión centralizada de pedidos.
 
-Remata amplía una aplicación académica con registro, sesión, carrito e historial. El catálogo muestra computadores ensamblados, componentes, periféricos, teléfonos, consolas y artículos de segunda mano. Los precios se expresan en pesos colombianos. La operación de compra registra un pedido y descuenta inventario. El pago y el despacho físico quedan fuera del recorrido académico.
+VÉRTICE amplía una aplicación académica con registro, sesión, carrito e historial. El catálogo muestra computadores ensamblados, componentes, periféricos, teléfonos, consolas y artículos de segunda mano. Los precios se expresan en pesos colombianos. La operación de compra registra un pedido y descuenta inventario. El pago y el despacho físico quedan fuera del recorrido académico.
 
 La evaluación se organizó en tres preguntas. La primera comprueba si se puede filtrar, comprar, consultar el pedido y recibir correo en un entorno persistente. La segunda verifica el objetivo de cobertura de líneas superior al 80\,\% en cada servicio. La tercera revisa qué rutas rompen el umbral de 500\,ms y presta atención al costo de autenticar el cambio de clave.
 
 Se conservan los registros históricos y nuevos por perfil. El repositorio incorpora el código de la prueba, los resultados de operación y capturas de los pasos ejecutados. Así se pueden reproducir los escenarios al cambiar de equipo, JVM o red.
 
 \section{Trabajos relacionados}
-Lewis y Fowler describen una organización de servicios alrededor de capacidades de negocio \cite{micro}. Remata aplica esa separación a identidad, compra y avisos. Una sola instalación PostgreSQL simplifica la demostración. Cada servicio conserva un proceso y artefacto de despliegue propios.
+Lewis y Fowler describen una organización de servicios alrededor de capacidades de negocio \cite{micro}. VÉRTICE aplica esa separación a identidad, compra y avisos. Una sola instalación PostgreSQL simplifica la demostración. Cada servicio conserva un proceso y artefacto de despliegue propios.
 
-El patrón de bandeja transaccional descrito por Richardson persiste el evento antes de publicarlo \cite{outbox}. Remata emplea una bandeja para las solicitudes aceptadas por la API de Notificaciones. Catálogo emite sus avisos tras confirmar su propia transacción. La ventana entre confirmar los datos y publicar un evento del dominio sigue siendo un punto para evolucionar.
+El patrón de bandeja transaccional descrito por Richardson persiste el evento antes de publicarlo \cite{outbox}. VÉRTICE emplea una bandeja para las solicitudes aceptadas por la API de Notificaciones. Catálogo emite sus avisos tras confirmar su propia transacción. La ventana entre confirmar los datos y publicar un evento del dominio sigue siendo un punto para evolucionar.
 
 PostgreSQL proporciona operadores e índices por trigramas para apoyar búsquedas por patrón \cite{trgm}. Argon2id permite configurar costo de CPU y memoria para derivar un hash de contraseña \cite{argon}. OWASP documenta una configuración de referencia de 19 MiB, dos iteraciones y paralelismo uno \cite{owasp}. Se usa ese perfil para las contraseñas nuevas y se sigue verificando BCrypt para las cuentas existentes.
 
@@ -56,7 +56,7 @@ Los controladores traducen solicitudes y respuestas. Los adaptadores implementan
 \clearpage
 \section{Implementación}
 \subsection{Catálogo y datos}
-La base histórica contiene 45 artículos de Tecnología. El seed de Remata agrega 30 en ocho categorías principales sin sustituir las existencias ni los pedidos existentes. Cada fila usa una clave estable. La restricción única y la cláusula de conflicto permiten repetir la carga sin duplicar filas ni reiniciar stock consumido. La migración inicial rellena metadatos faltantes y añade índices para consultas. Los precios son representativos de una demostración en COP. Las imágenes generadas corresponden al tipo de artículo y se sirven localmente sin depender de proveedores de imágenes.
+La base histórica contiene 45 artículos de Tecnología. El seed de VÉRTICE agrega 30 en ocho categorías principales sin sustituir las existencias ni los pedidos existentes. Cada fila usa una clave estable. La restricción única y la cláusula de conflicto permiten repetir la carga sin duplicar filas ni reiniciar stock consumido. La migración inicial rellena metadatos faltantes y añade índices para consultas. Los precios son representativos de una demostración en COP. Las imágenes generadas corresponden al tipo de artículo y se sirven localmente sin depender de proveedores de imágenes.
 
 \begin{table}[!ht]
 \caption{Almacenamiento del recorrido}
@@ -118,7 +118,7 @@ Cada usuario realiza un recorrido con registro de cuenta, sesión, rotación de 
 Se reportan promedio, p95, p99, máximo, errores y peticiones por segundo \cite{k6}. El p95 describe la posición debajo de la cual se ubica aproximadamente el 95\,\% de las muestras. El máximo por ruta responde a la condición estricta de 500\,ms. Un máximo superior cuenta aunque el promedio sea menor. Las medidas por solicitud empiezan después del calentamiento y cubren los recorridos completados durante la ventana de prueba.
 
 \subsection{Diseño de comparación}
-Los registros históricos de 33 rutas son una referencia del estado anterior. Con tres usuarios se observó un máximo de 685,62 ms en cambio de clave. Con seis alcanzó 715,10 ms. El guion Remata amplía el recorrido y tiene un catálogo diferente. Comparar esas cifras directamente no permite aislar un efecto del algoritmo. Las ejecuciones históricas difieren en recorrido, versión del catálogo y ventana de medición.
+Los registros históricos de 33 rutas son una referencia del estado anterior. Con tres usuarios se observó un máximo de 685,62 ms en cambio de clave. Con seis alcanzó 715,10 ms. El guion VÉRTICE amplía el recorrido y tiene un catálogo diferente. Comparar esas cifras directamente no permite aislar un efecto del algoritmo. Las ejecuciones históricas difieren en recorrido, versión del catálogo y ventana de medición.
 
 Durante la revisión se priorizó mantener el costo de Argon2id y probar mayor margen de heap y procesadores visibles para Auth. Se conservan las series antes y después. Los perfiles se ejecutan secuencialmente, sin compilar ni ejecutar el recorrido del navegador en paralelo. Para atribuir diferencias a una sola causa se requieren repeticiones con una base clonada y trazas por fase.
 
@@ -143,11 +143,11 @@ El cambio de clave realiza una verificación y deriva otra contraseña. El login
 El listado paginado de productos controla la cardinalidad de respuesta y aplica los filtros en la base de datos. El listado heredado de productos y el listado de compras administrativas se mantienen para compatibilidad. Si se desea comparar esos recorridos entre entornos, debe controlarse la cantidad acumulada de registros. Las compras de k6 se guardan en una base de desarrollo y no se reutilizan como evidencia comercial.
 
 \subsection{Evidencia del catálogo}
-\captura{../capturas/techstore-tienda.png}{Fig. 3. Catálogo Remata con filtros en Windows.}
+\captura{../capturas/vertice-compra-tienda.png}{Fig. 3. Catálogo VÉRTICE con filtros en Windows.}
 La búsqueda en servidor permite comprobar marca, categoría y condición sin depender de la página que estaba visible. El recorrido abre una ficha de segunda mano y cambia a la vista secundaria. Antes de confirmar, el carrito consolida unidades y calcula el total en pesos colombianos.
 
 \subsection{Evidencia de correo}
-\captura{../capturas/techstore-correo.png}{Fig. 4. Correo de compra comprobado en Mailpit.}
+\captura{../capturas/vertice-compra-correo.png}{Fig. 4. Correo de compra comprobado en Mailpit.}
 El asunto contiene el identificador del pedido. El tiempo HTTP de la compra y el de entrega del correo corresponden a etapas diferentes. Newman confirma el asunto mediante la API de Mailpit y el recorrido de navegador conserva una captura de la bandeja.
 
 \clearpage
@@ -196,7 +196,7 @@ Se midió una sola ubicación Windows. La ejecución no representa tráfico púb
 El despliegue en Render y el uso de SMTP fuera de Mailpit requieren cuentas y credenciales que no se usaron en este experimento. Mailpit captura el correo de prueba. El modo SMS registra simulaciones en la base. No se extrapolan resultados de entrega comercial a partir de esos entornos.
 
 \section{Conclusiones y trabajo futuro}
-Remata ejecuta el recorrido de búsqueda, compra e historial con avisos al cliente. Los registros muestran qué perfiles y rutas satisfacen o exceden el objetivo temporal. Los principales elementos para reproducir la evaluación son el guion k6, las salidas JaCoCo, las imágenes del flujo real y las instrucciones Windows.
+VÉRTICE ejecuta el recorrido de búsqueda, compra e historial con avisos al cliente. Los registros muestran qué perfiles y rutas satisfacen o exceden el objetivo temporal. Los principales elementos para reproducir la evaluación son el guion k6, las salidas JaCoCo, las imágenes del flujo real y las instrucciones Windows.
 
 Las siguientes tareas comprenden estudiar la publicación de lotes desiertos como venta directa mediante un evento idempotente por identificador de lote, verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
 
@@ -210,8 +210,8 @@ El repositorio bloquea la fila actual del lote antes de comparar el monto con el
 
 La transacción escribe los avisos en PostgreSQL. El publicador espera confirmación de RabbitMQ y calcula un nuevo plazo si hay un fallo. El consumidor mantiene reintentos y cola de errores. La entrega al menos una vez admite duplicados si se pierde el registro de la confirmación.
 
-\captura{../capturas/subastas-adjudicada.png}{Fig. 6. Pantalla de adjudicación y pago simulado en Windows.}
-\captura{../capturas/subastas-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
+\captura{../capturas/vertice-subastas-adjudicada.png}{Fig. 6. Pantalla de adjudicación y pago simulado en Windows.}
+\captura{../capturas/vertice-subastas-correo-ganada.png}{Fig. 7. Correo de adjudicación recibido en Mailpit.}
 
 \begin{table}[!ht]
 \caption{Ampliación de la evaluación local a 43 rutas}
@@ -231,14 +231,14 @@ Newman ejecutó 80 peticiones y 238 aserciones. Nueve superaron el umbral, con u
 
 La verificación final ejecutó 86 pruebas Java y 12 pruebas React sin fallos. JaCoCo midió 84,00\,\% de líneas en Auth, 88,39\,\% en Catálogo, 82,95\,\% en Notificaciones y 98,97\,\% en Subastas. Estas cifras combinan pruebas de unidad e integración.
 
-\subsection{Catálogo general y experiencia compartida}
-Remata mapea las categorías de las API a nueve grupos principales desde el frontend. Un mismo buscador separa los resultados por modalidad; las fichas proponen hasta tres artículos del mismo grupo en la otra modalidad. Los vehículos completos permanecen como lotes simulados. Los accesorios de moto se venden por precio fijo. Mi cuenta agrupa compras, pujas, adjudicaciones y avisos de la identidad autenticada.
+\subsection{Curaduría editorial y procedencia ilustrativa}
+VÉRTICE presenta 18 piezas en cinco vitrinas curatoriales. Cada ficha declara por qué se subasta y distingue los datos ilustrativos de la transacción de demostración. El seed conserva lotes con pujas y adjudicaciones. Un mismo buscador separa los resultados por modalidad; las fichas proponen hasta tres artículos del mismo grupo en la otra modalidad. Los vehículos completos permanecen como lotes simulados. Los accesorios de moto se venden por precio fijo. Mi cuenta agrupa compras, pujas, adjudicaciones y avisos de la identidad autenticada.
 
-La comprobación en PostgreSQL conservó la huella de las 45 filas de Tecnología y añadió 30 fichas generales. Se verificaron 75 productos y 21 lotes activos con 96 imágenes principales y cero SHA-256 repetidos. Las variantes ilustrativas de Tecnología se resuelven en la presentación sin editar las filas. Los destacados rotan y limitan a dos la representación de un grupo.
+La comprobación en PostgreSQL conservó la huella de las 45 filas de Tecnología y añadió 30 fichas generales. La medición anterior verificó 75 productos y 21 lotes activos. En esta edición se generaron 18 fotos de estudio, con cero SHA-256 repetidos entre esas imágenes. Las variantes ilustrativas de Tecnología se resuelven en la presentación sin editar las filas. Los destacados rotan y limitan a dos la representación de un grupo.
 
-Identidad emite el JWT; Catálogo y pedidos mantiene la unidad transaccional de inventario y compra; Subastas protege la puja y ordena el cierre; Notificaciones entrega los avisos. RabbitMQ desacopla los productores. Los adaptadores externos de Catálogo y Subastas consultan de forma asíncrona a Frankfurter y Nager.Date. La tasa vence a las seis horas y los festivos a las 24 horas. Los clientes tienen tiempo de conexión de un segundo, lectura de dos segundos, un reintento y un cortacircuito. El flujo monetario sigue expresándose en COP.
+Identidad emite el JWT; Catálogo y pedidos mantiene la unidad transaccional de inventario y compra; Subastas protege la puja y ordena el cierre; Notificaciones entrega los avisos. RabbitMQ desacopla los productores. Los adaptadores externos de Catálogo y Subastas consultan de forma asíncrona a Frankfurter y Nager.Date. La tasa vence a las seis horas y los festivos a las 24 horas. Open-Meteo añade temperatura y humedad de Bogotá en un caché de 45 minutos. Los clientes tienen tiempo de conexión de un segundo, lectura de dos segundos, un reintento y un cortacircuito. El flujo monetario sigue expresándose en COP.
 
-\IfFileExists{metricas-remata.tex}{\input{metricas-remata.tex}}{}
+\IfFileExists{metricas-vertice.tex}{\input{metricas-vertice.tex}}{}
 \begin{thebibliography}{00}
 \bibitem{micro} J. Lewis y M. Fowler, \emph{Microservices}, 2014. \url{https://martinfowler.com/articles/microservices.html}
 \bibitem{outbox} C. Richardson, \emph{Transactional outbox}. \url{https://microservices.io/patterns/data/transactional-outbox.html}
@@ -257,6 +257,7 @@ Identidad emite el JWT; Catálogo y pedidos mantiene la unidad transaccional de 
 \bibitem{neon} Neon, \emph{Scale to Zero}. \url{https://neon.com/docs/introduction/scale-to-zero}
 \bibitem{cloudamqp} CloudAMQP, \emph{Plans and Pricing}. \url{https://www.cloudamqp.com/plans/}
 \bibitem{brevo} Brevo, \emph{Which SMTP Port Should I Use?} \url{https://help.brevo.com/hc/en-us/articles/10905415650322}
+\bibitem{meteo} Open-Meteo, \emph{Weather Forecast API}. \url{https://open-meteo.com/en/docs}
 \end{thebibliography}
 \end{document}
 
