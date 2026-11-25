@@ -1,5 +1,6 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/jetbrains-mono';
 
 :root {
   --tech-radius-sm: 8px;
@@ -20,8 +21,13 @@ body { font-family: var(--tech-font); }
 }
 
 .App h1,.App h2,.marca-logo { font-family:'Fraunces Variable',Georgia,serif; }
-.marca-logo { display:inline-flex; align-items:center; gap:8px; letter-spacing:-.025em; font-weight:650; color:var(--tech-text); }
-.marca-logo svg { color:var(--tech-text); flex:none; }
+.marca-logo { display:inline-flex; align-items:center; gap:8px; letter-spacing:.2em; font-family:var(--tech-font); font-weight:650; color:var(--tech-text); }
+.marca-logo svg { color:var(--tech-accent); flex:none; }
+.auction-price,.auction-chip,.tt-card-footer strong,.tt-detail-price { font-family:'JetBrains Mono Variable',monospace; font-variant-numeric:tabular-nums; }
+.vertice-vitrinas { grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); }
+.vertice-curaduria { margin-top:16px; border-inline-start:2px solid var(--tech-accent); }
+.vertice-confirmacion { margin-top:16px; border:1px solid var(--tech-control); border-radius:var(--tech-radius-sm); display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.vertice-confirmacion p { flex-basis:100%; }
 
 body,.App { background:var(--tech-background); color:var(--tech-text); }
 .App .navbar { background:var(--tech-surface); border-color:var(--tech-border); box-shadow:none; }

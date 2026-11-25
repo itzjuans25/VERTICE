@@ -18,6 +18,14 @@ export const categoriaPorSlug = slug => categoriasMercado.find(c => c.slug === s
 export const categoriaProducto = nombre => categoriasMercado.find(c => c.tienda.includes(nombre));
 export const categoriaLote = lote => categoriasMercado.find(c => c.lotes.includes(lote));
 
+export const vitrinas = [
+  { nombre:'Calzado y moda de autor', grupo:'MODA', foto:'01' },
+  { nombre:'Relojería', grupo:'RELOJES', foto:'06' },
+  { nombre:'Joyería', grupo:'JOYERIA', foto:'09' },
+  { nombre:'Arte y colección', grupo:'COLECCIONABLES', foto:'12' },
+  { nombre:'Vehículos de exhibición', grupo:'CARROS,MOTOS', foto:'16' },
+];
+
 export function destacadosPorCategoria(items, fecha = new Date(), limite = 8) {
   const grupos = categoriasMercado.map(c => items.filter(p => categoriaProducto(p.categoria) === c));
   const turno = Math.floor(fecha.getTime()/86400000) % grupos.length;
