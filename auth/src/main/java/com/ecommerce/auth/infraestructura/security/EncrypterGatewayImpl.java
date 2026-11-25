@@ -10,10 +10,11 @@ import org.springframework.stereotype.Component;
 public class EncrypterGatewayImpl implements EncrypterGateway {
 
     private final PasswordEncoder passwordEncoder;
+    private final LimiteHash limiteHash;
 
     @Override
     public String encrypt(String password) {
-        return passwordEncoder.encode(password);
+        return limiteHash.ejecutar(() -> passwordEncoder.encode(password));
     }
 
     @Override
@@ -21,6 +22,6 @@ public class EncrypterGatewayImpl implements EncrypterGateway {
         if (rawPassword == null || encodedPassword == null || encodedPassword.isBlank()) {
             return false;
         }
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+        return limiteHash.ejecutar(() -> passwordEncoder.matches(rawPassword, encodedPassword));
     }
 }

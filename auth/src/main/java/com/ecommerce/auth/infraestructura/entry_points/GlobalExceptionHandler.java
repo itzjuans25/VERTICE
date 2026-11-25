@@ -1,5 +1,7 @@
 package com.ecommerce.auth.infraestructura.entry_points;
 
+import com.ecommerce.auth.infraestructura.security.CapacidadHashAgotadaException;
+
 import com.ecommerce.auth.domain.exception.CredencialesInvalidasException;
 import com.ecommerce.auth.domain.exception.DatosInvalidosException;
 import com.ecommerce.auth.domain.exception.EmailEnUsoException;
@@ -80,6 +82,11 @@ public class GlobalExceptionHandler {
                                                     HttpServletRequest request) {
         return build(HttpStatus.CONFLICT,
                 "No fue posible guardar los datos: puede que el email ya exista", request);
+    }
+
+    @ExceptionHandler(CapacidadHashAgotadaException.class)
+    public ResponseEntity<ApiError> handleCapacidadHash(CapacidadHashAgotadaException ex, HttpServletRequest request) {
+        return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), request);
     }
 
     @ExceptionHandler(Exception.class)

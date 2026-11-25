@@ -4,6 +4,7 @@ import com.ecommerce.auth.domain.exception.UsuarioNoEncontradoException;
 import com.ecommerce.auth.domain.model.Usuario;
 import com.ecommerce.auth.domain.port.out.UsuarioGateway;
 import com.ecommerce.auth.infraestructura.mapper.MapperUsuario;
+import com.ecommerce.auth.infraestructura.security.PerfilAuth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,11 +14,12 @@ public class UsuarioDataGatewayImpl implements UsuarioGateway {
 
     private final MapperUsuario mapperUsuario;
     private final UsuarioDataJpaRepository repository;
+    private final PerfilAuth perfil;
 
     @Override
     public Usuario guardar(Usuario usuario) {
         UsuarioData data = mapperUsuario.toUsuarioData(usuario);
-        return mapperUsuario.toUsuario(repository.save(data));
+        return perfil.medir("escritura", () -> mapperUsuario.toUsuario(repository.save(data)));
     }
 
     @Override
@@ -27,9 +29,9 @@ public class UsuarioDataGatewayImpl implements UsuarioGateway {
 
     @Override
     public Usuario buscarPorID(Long id) {
-        return repository.findById(id)
+        return perfil.medir("consulta", () -> repository.findById(id)
                 .map(mapperUsuario::toUsuario)
-                .orElse(null);
+                .orElse(null));
     }
 
     @Override
@@ -49,13 +51,13 @@ public class UsuarioDataGatewayImpl implements UsuarioGateway {
 
     @Override
     public boolean cambiarPassword(Long id, String hashAnterior, String hashNuevo) {
-        return repository.cambiarPassword(id, hashAnterior, hashNuevo) == 1;
+        return perfil.medir("escritura", () -> repository.cambiarPassword(id, hashAnterior, hashNuevo) == 1);
     }
 
     @Override
     public Usuario buscarPorEmail(String email) {
-        return repository.findByEmailIgnoreCase(email)
+        return perfil.medir("consulta", () -> repository.findByEmailIgnoreCase(email)
                 .map(mapperUsuario::toUsuario)
-                .orElse(null);
+                .orElse(null));
     }
 }
