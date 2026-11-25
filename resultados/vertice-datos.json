@@ -1,0 +1,19 @@
+{
+  "tecnologia": "45:86d8d2ecde422c3368cd93ffde12eabb",
+  "curados": [
+    "CARROS|2",
+    "COLECCIONABLES|4",
+    "JOYERIA|3",
+    "MODA|5",
+    "MOTOS|1",
+    "RELOJES|3"
+  ],
+  "lotesDemoPreviosConPuja": "3",
+  "clavesForaneas": [
+    "fotos_publicacion -> products",
+    "item_carrito -> carrito",
+    "item_carrito -> compras",
+    "subasta_ordenes -> subasta_lotes",
+    "subasta_pujas -> subasta_lotes"
+  ]
+}

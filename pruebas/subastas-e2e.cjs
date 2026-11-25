@@ -8,7 +8,7 @@ const tienda = 'http://localhost:3000';
 const auth = 'http://127.0.0.1:9090/api/ecommerce/usuario';
 const subastas = 'http://127.0.0.1:9094/api/ecommerce/subastas';
 const mailpit = 'http://127.0.0.1:8025';
-const marca = 'Validación de subasta ' + Date.now();
+const marca = 'Ensayo curado · Cronógrafo de archivo ' + Date.now();
 const prefijo = 'e2e-subasta-' + Date.now();
 const captura = (page, nombre) => page.screenshot({ path: 'docs/capturas/' + (process.env.TECHSTORE_SUBASTAS_PREFIJO || 'subastas-') + nombre + '.png', animations: 'disabled' });
 const estado = { prueba: marca, vistas: [], correos: [] };
@@ -76,12 +76,14 @@ async function main() {
     const admin = await cuenta('Admin');
     const uno = await cuenta('Ana');
     const dos = await cuenta('Luis');
+    estado.postores = [uno.id, dos.id];
     sql('UPDATE usuario SET role=' + "'ADMIN'" + ' WHERE id=' + Number(admin.id));
     const { token } = await obtenerLogin(admin);
     const ahora = Date.now();
     const lote = await pedir(subastas, { method: 'POST', token, body: {
-      titulo: marca, descripcion: 'Lote efímero para verificar cierre y adjudicación.', categoria: 'ELECTRONICA',
-      condicion: 'USADO', atributos: { Color: 'Negro' }, imagenes: ['/subastas/electronica.webp'],
+      titulo: marca, descripcion: 'Cronógrafo ilustrativo de cuerda manual. Pago y entrega simulados.', categoria: 'RELOJES',
+      condicion: 'USADO', atributos: { 'Por qué se subasta': 'Caso ficticio de un calibre de archivo con diseño bicompax.' },
+      imagenes: ['/mercado/vertice-06.webp'],
       precioInicial: 100000, incremento: 5000, inicio: new Date(ahora - 4000), fin: new Date(ahora + 600000),
     } });
     assert.ok(Number.isInteger(lote.id));
@@ -115,9 +117,11 @@ async function main() {
     await iniciar(luis, await obtenerLogin(dos));
     const ruta = '/subastas/' + lote.id;
     await abrir(ana, ruta);
+    await ana.getByRole('button', { name: 'Revisar oferta' }).click();
     await ana.getByRole('button', { name: 'Confirmar puja' }).click();
     await ana.getByText('Vas ganando', { exact: true }).waitFor();
     await abrir(luis, ruta);
+    await luis.getByRole('button', { name: 'Revisar oferta' }).click();
     await luis.getByRole('button', { name: 'Confirmar puja' }).click();
     await luis.getByText('Vas ganando', { exact: true }).waitFor();
     await ana.getByText('Te superaron', { exact: true }).waitFor();
@@ -133,6 +137,12 @@ async function main() {
     await esperar(async () => (await pedir(subastas + '/' + lote.id)).lote.estado === 'ADJUDICADA');
     await luis.getByRole('button', { name: 'Confirmar pago simulado' }).click();
     await luis.getByText('Pago simulado registrado.', { exact: true }).waitFor();
+    const loginLuis = await obtenerLogin(dos);
+    const orden = await pedir(subastas + '/' + lote.id + '/pago', {method:'POST',token:loginLuis.token});
+    const repetida = await pedir(subastas + '/' + lote.id + '/pago', {method:'POST',token:loginLuis.token});
+    assert.deepEqual(repetida,orden);
+    estado.pagoIdempotente = true;
+    estado.adjudicacion = orden.id;
     await captura(luis, 'adjudicada');
     const ganada = await correo(dos.email, 'Subasta ganada');
     estado.correos.push({ asunto: ganada.Subject, id: ganada.ID });
@@ -143,6 +153,14 @@ async function main() {
     await luis.goto('http://localhost:9094/swagger-ui/index.html');
     await luis.getByText('subastas-controller', { exact: true }).first().waitFor();
     await captura(luis, 'swagger');
+    const activos = (await pedir(subastas + '?curados=true&tamano=48')).items
+      .filter(item => item.estado === 'ACTIVA' && item.pujas === 0 && item.imagenes[0]?.startsWith('/mercado/vertice-')).slice(0,3);
+    estado.lotesActivos = [];
+    for (const activo of activos) {
+      const viva = await pedir(subastas + '/' + activo.id + '/pujas',
+        {method:'POST',token:loginLuis.token,body:{monto:activo.pujaMinima}});
+      estado.lotesActivos.push({id:viva.id,titulo:viva.titulo,precio:viva.precioActual,pujas:viva.pujas});
+    }
     estado.ok = true;
   } finally {
     await browser.close();

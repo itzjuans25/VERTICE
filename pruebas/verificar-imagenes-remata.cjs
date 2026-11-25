@@ -38,7 +38,7 @@ async function main() {
     categoriasTienda:[...new Set(productos.map(p => p.categoria))].sort(),
     categoriasSubastas:[...new Set(visibles.map(l => l.categoria))].sort(),
   };
-  writeFileSync('resultados/remata-imagenes.json',JSON.stringify(salida,null,2)+'\n');
+  writeFileSync(process.env.IMAGENES_REPORTE || 'resultados/vertice-imagenes.json',JSON.stringify(salida,null,2)+'\n');
   console.log(JSON.stringify(salida));
   assert.equal(repetidas.length,0);
 }

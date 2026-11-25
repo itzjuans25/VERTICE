@@ -1,0 +1,58 @@
+{
+  "auth": {
+    "unitarias": {
+      "pruebas": 9,
+      "lineas": 97,
+      "total": 484,
+      "porcentaje": 20.04
+    },
+    "conjunta": {
+      "pruebas": 24,
+      "lineas": 399,
+      "total": 484,
+      "porcentaje": 82.44
+    }
+  },
+  "catalogo": {
+    "unitarias": {
+      "pruebas": 15,
+      "lineas": 329,
+      "total": 952,
+      "porcentaje": 34.56
+    },
+    "conjunta": {
+      "pruebas": 33,
+      "lineas": 828,
+      "total": 952,
+      "porcentaje": 86.97
+    }
+  },
+  "notificaciones": {
+    "unitarias": {
+      "pruebas": 22,
+      "lineas": 212,
+      "total": 309,
+      "porcentaje": 68.61
+    },
+    "conjunta": {
+      "pruebas": 24,
+      "lineas": 253,
+      "total": 309,
+      "porcentaje": 81.88
+    }
+  },
+  "subastas": {
+    "unitarias": {
+      "pruebas": 7,
+      "lineas": 71,
+      "total": 420,
+      "porcentaje": 16.9
+    },
+    "conjunta": {
+      "pruebas": 11,
+      "lineas": 387,
+      "total": 420,
+      "porcentaje": 92.14
+    }
+  }
+}

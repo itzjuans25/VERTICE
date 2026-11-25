@@ -1,0 +1,90 @@
+{
+  "prueba": "Ensayo curado · Cronógrafo de archivo 1795606976106",
+  "vistas": [
+    {
+      "ancho": 390,
+      "viewport": 390,
+      "documento": 390,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": 1
+          }
+        ]
+      }
+    },
+    {
+      "ancho": 768,
+      "viewport": 768,
+      "documento": 768,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 23,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": 1
+          }
+        ]
+      }
+    },
+    {
+      "ancho": 1440,
+      "viewport": 1440,
+      "documento": 1440,
+      "imagenes": true,
+      "accesibilidad": {
+        "pasa": 24,
+        "fallos": [
+          {
+            "regla": "color-contrast",
+            "elementos": 1
+          }
+        ]
+      }
+    }
+  ],
+  "correos": [
+    {
+      "asunto": "Puja superada",
+      "id": "0CXKISaHB7XY6kvs37sULZ"
+    },
+    {
+      "asunto": "Subasta ganada",
+      "id": "3nTIRvz77RKC0NZfzMuEEc"
+    }
+  ],
+  "postores": [
+    3098,
+    3099
+  ],
+  "lote": 421,
+  "antiSniping": true,
+  "relojAcelerado": true,
+  "pagoIdempotente": true,
+  "adjudicacion": 39,
+  "lotesActivos": [
+    {
+      "id": 385,
+      "titulo": "Zapatillas Umbral · edición 07",
+      "precio": 880000,
+      "pujas": 1
+    },
+    {
+      "id": 386,
+      "titulo": "Bomber de archivo Línea Cero",
+      "precio": 1030000,
+      "pujas": 1
+    },
+    {
+      "id": 387,
+      "titulo": "Abrigo de pasarela Contraluz",
+      "precio": 1490000,
+      "pujas": 1
+    }
+  ],
+  "ok": true
+}

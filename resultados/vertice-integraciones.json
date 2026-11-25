@@ -1,0 +1,29 @@
+{
+  "id": 385,
+  "fx": {
+    "disponible": true,
+    "precioCop": 840000.0,
+    "precioUsd": 236.22,
+    "tasa": 0.00028121,
+    "fechaTasa": "2026-11-25",
+    "fuente": "Frankfurter"
+  },
+  "entrega": {
+    "fechaEstimada": "2026-11-30",
+    "diasHabiles": 3,
+    "incluyeFestivos": true,
+    "fuente": "Nager.Date"
+  },
+  "clima": {
+    "disponible": true,
+    "ciudad": "Bogotá",
+    "fuente": "Open-Meteo",
+    "observacion": {
+      "temperatura": 13.2,
+      "humedad": 86,
+      "precipitacion": 0.0,
+      "horaLocal": "2026-11-25T06:30:00"
+    }
+  },
+  "activos": 18
+}

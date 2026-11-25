@@ -1,0 +1,20 @@
+{
+  "pedido": 2772,
+  "totalCop": 95000,
+  "estado": "COMPLETADA",
+  "correo": "Confirmacion de Compra #2772 · VÉRTICE",
+  "fechaCorreo": "2026-11-25T06:46:27.128-05:00",
+  "anchosVerificados": [
+    390,
+    768,
+    1440
+  ],
+  "productosVerificados": 76,
+  "producto": "Equipo de prueba 1795607168",
+  "cambioClaveYReingreso": true,
+  "cierreYRutaProtegida": true,
+  "calendario": "3 días hábiles. Excluye fines de semana y festivos de Colombia · Nager.Date.",
+  "stockAntes": 1,
+  "stockDespues": 0,
+  "contrasteBuscador": 18.14
+}
