@@ -7,6 +7,9 @@ const config = {
   CATALOGO_URL: trimTrailingSlash(
     process.env.REACT_APP_CATALOGO_URL || 'http://localhost:9092'
   ),
+  SUBASTAS_URL: trimTrailingSlash(
+    process.env.REACT_APP_SUBASTAS_URL || 'http://localhost:9094'
+  ),
   REQUEST_TIMEOUT_MS: Number(
     process.env.REACT_APP_REQUEST_TIMEOUT_MS || 15000
   ),

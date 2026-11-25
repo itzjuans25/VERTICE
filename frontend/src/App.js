@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
@@ -13,6 +13,15 @@ import Orders from './components/Orders';
 import { clearSession, getSession, isAdmin } from './session';
 import { catalogoApi, contarItems } from './api/catalogoApi';
 import { SESSION_EXPIRED_EVENT } from './api/client';
+import './tokens.css';
+
+const rutaSubastas = nombre => lazy(() => import('./components/Subastas').then(modulo => ({ default: modulo[nombre] })));
+const Inicio = rutaSubastas('Inicio');
+const Subastas = rutaSubastas('Lista');
+const Detalle = rutaSubastas('Detalle');
+const MisPujas = rutaSubastas('MisPujas');
+const AdminSubastas = rutaSubastas('AdminSubastas');
+const NoEncontrado = rutaSubastas('NoEncontrado');
 
 function inicioPara(user) {
   return isAdmin(user) ? '/admin' : '/productos';
@@ -96,8 +105,11 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <a className="tech-skip" href="#contenido">Saltar al contenido</a>
         <Navbar user={user} onLogout={handleLogout} cartCount={cartCount} />
 
+        <div id="contenido" tabIndex={-1}>
+        <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>
         <Routes>
           <Route
             path="/login"
@@ -155,15 +167,15 @@ function App() {
             }
           />
 
-          <Route
-            path="/"
-            element={
-              <Navigate to="/productos" replace />
-            }
-          />
-
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<Inicio />} />
+          <Route path="/subastas" element={<Subastas />} />
+          <Route path="/subastas/:id" element={<Detalle user={user} />} />
+          <Route path="/mis-pujas" element={<RutaPrivada user={user}><MisPujas /></RutaPrivada>} />
+          <Route path="/admin/subastas" element={<RutaAdmin user={user}><AdminSubastas /></RutaAdmin>} />
+          <Route path="*" element={<NoEncontrado />} />
         </Routes>
+        </Suspense>
+        </div>
         <footer className="tt-footer">
           <span>TechStore</span>
           <span>Tecnología nueva y usada · Precios en COP</span>

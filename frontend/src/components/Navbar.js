@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import {
   FaMicrochip,
@@ -16,6 +16,9 @@ import { isAdmin } from '../session';
 
 function Navbar({ user, onLogout, cartCount }) {
   const admin = isAdmin(user);
+  const [abierto, abrir] = useState(false);
+  const { pathname, search } = useLocation();
+  useEffect(() => abrir(false), [pathname, search]);
 
   return (
     <nav className="navbar">
@@ -24,7 +27,13 @@ function Navbar({ user, onLogout, cartCount }) {
           <FaMicrochip aria-hidden="true" /> TechStore
         </Link>
 
-        <div className="nav-menu">
+        <button className="tech-nav-toggle" type="button" aria-controls="tech-navigation" aria-expanded={abierto} onClick={() => abrir(!abierto)}>
+          {abierto ? 'Cerrar menú' : 'Menú'}
+        </button>
+        <div id="tech-navigation" className={'nav-menu' + (abierto ? ' tech-open' : '')}>
+          <NavLink to="/subastas" className="nav-link">Subastas</NavLink>
+          {user && <NavLink to="/mis-pujas" className="nav-link">Mis pujas</NavLink>}
+          {admin && <NavLink to="/admin/subastas" className="nav-link">Administrar lotes</NavLink>}
           {user ? (
             <>
               {admin ? (
