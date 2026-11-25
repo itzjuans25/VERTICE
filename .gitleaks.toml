@@ -1,0 +1,19 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "Marcadores JWT de instalación y de las plantillas de entorno"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''(?:^|/)(?:(?:auth|catalogo)/)?\.env\.example$''', '''(?:^|/)INSTALL\.md$''']
+regexes = ['''^(?:cambia-este-secreto-jwt-de-al-menos-32-caracteres-0001|un-secreto-de-al-menos-32-caracteres)$''']
+
+[[rules.allowlists]]
+description = "Valor fijo para firmar los JWT generados únicamente en pruebas"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''(?:^|/)(?:auth|catalogo)/src/test/resources/application-test\.properties$''', '''(?:^|/)catalogo/src/test/java/com/ecommerce/catalogo/infraestructura/entry_points/TiendaApiIntegrationTest\.java$''']
+regexes = ['''^test-secret-with-at-least-32-characters-0001$''']

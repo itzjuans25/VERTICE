@@ -92,7 +92,7 @@ Content-Type: application/json
   "email": "ana@ejemplo.com",
   "nombre": "Ana Pérez",
   "role": "USER",
-  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "token": "<JWT firmado por Auth>",
   "tokenType": "Bearer",
   "expiraEnSegundos": 86400,
   "mensaje": "Login exitoso"
