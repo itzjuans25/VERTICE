@@ -7,15 +7,15 @@ import ProductList from './components/ProductList';
 import ProductDetail from './components/ProductDetail';
 import CambiarClave from './components/CambiarClave';
 import Cart from './components/Cart';
-import Navbar from './components/Navbar';
+import Layout from './components/Layout';
+import Cuenta, { Avisos, Seguridad } from './components/Cuenta';
 import AdminPanel from './components/AdminPanel';
 import Orders from './components/Orders';
 import { clearSession, getSession, isAdmin } from './session';
 import { catalogoApi, contarItems } from './api/catalogoApi';
 import { SESSION_EXPIRED_EVENT } from './api/client';
 import './tokens.css';
-import Logo from './components/Logo';
-import { marca } from './marca';
+import './mercado.css';
 
 const rutaSubastas = nombre => lazy(() => import('./components/Subastas').then(modulo => ({ default: modulo[nombre] })));
 const Inicio = rutaSubastas('Inicio');
@@ -24,6 +24,8 @@ const Detalle = rutaSubastas('Detalle');
 const MisPujas = rutaSubastas('MisPujas');
 const AdminSubastas = rutaSubastas('AdminSubastas');
 const NoEncontrado = rutaSubastas('NoEncontrado');
+const Buscar = lazy(() => import('./components/ExplorarMercado').then(modulo => ({ default: modulo.BuscarMercado })));
+const Categoria = lazy(() => import('./components/ExplorarMercado').then(modulo => ({ default: modulo.CategoriaMercado })));
 
 function inicioPara(user) {
   return isAdmin(user) ? '/admin' : '/productos';
@@ -38,6 +40,10 @@ function RutaAdmin({ user, children }) {
     return <Navigate to="/login" replace />;
   }
   return isAdmin(user) ? children : <Navigate to="/productos" replace />;
+}
+
+function RutaCuenta({ user, children }) {
+  return <RutaPrivada user={user}><Cuenta>{children}</Cuenta></RutaPrivada>;
 }
 
 function App() {
@@ -107,10 +113,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <a className="tech-skip" href="#contenido">Saltar al contenido</a>
-        <Navbar user={user} onLogout={handleLogout} cartCount={cartCount} />
-
-        <div id="contenido" tabIndex={-1}>
+        <Layout user={user} onLogout={handleLogout} cartCount={cartCount}>
         <Suspense fallback={<div className="loading" role="status">Cargando…</div>}>
         <Routes>
           <Route
@@ -149,7 +152,11 @@ function App() {
             element={<ProductList user={user} setCartCount={setCartCount} />}
           />
           <Route path="/productos/:id" element={<ProductDetail user={user} setCartCount={setCartCount} />} />
-          <Route path="/cuenta/contrasena" element={<RutaPrivada user={user}><CambiarClave cerrarSesion={handleLogout} /></RutaPrivada>} />
+          <Route path="/cuenta/contrasena" element={<Navigate to="/cuenta/seguridad" replace />} />
+          <Route path="/cuenta/seguridad" element={<RutaCuenta user={user}><Seguridad user={user}><CambiarClave cerrarSesion={handleLogout} /></Seguridad></RutaCuenta>} />
+          <Route path="/cuenta" element={<RutaCuenta user={user}><Orders user={user} /></RutaCuenta>} />
+          <Route path="/cuenta/avisos" element={<RutaCuenta user={user}><Avisos /></RutaCuenta>} />
+          <Route path="/cuenta/ganadas" element={<RutaCuenta user={user}><MisPujas vista="ganadas" /></RutaCuenta>} />
 
           <Route
             path="/carrito"
@@ -163,25 +170,23 @@ function App() {
           <Route
             path="/compras"
             element={
-              <RutaPrivada user={user}>
+              <RutaCuenta user={user}>
                 <Orders user={user} />
-              </RutaPrivada>
+              </RutaCuenta>
             }
           />
 
           <Route path="/" element={<Inicio />} />
+          <Route path="/buscar" element={<Buscar />} />
+          <Route path="/categoria/:slug" element={<Categoria />} />
           <Route path="/subastas" element={<Subastas />} />
           <Route path="/subastas/:id" element={<Detalle user={user} />} />
-          <Route path="/mis-pujas" element={<RutaPrivada user={user}><MisPujas /></RutaPrivada>} />
+          <Route path="/mis-pujas" element={<RutaCuenta user={user}><MisPujas vista="pujas" /></RutaCuenta>} />
           <Route path="/admin/subastas" element={<RutaAdmin user={user}><AdminSubastas /></RutaAdmin>} />
           <Route path="*" element={<NoEncontrado />} />
         </Routes>
         </Suspense>
-        </div>
-        <footer className="tt-footer">
-          <Logo />
-          <span>{marca.lema} · Precios en COP</span>
-        </footer>
+        </Layout>
       </div>
     </Router>
   );

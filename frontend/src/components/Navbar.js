@@ -1,93 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import './Navbar.css';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { FaSearch, FaShoppingCart } from 'react-icons/fa';
 import Logo from './Logo';
-import {
-  FaStore,
-  FaShoppingCart,
-  FaBox,
-  FaCog,
-  FaUser,
-  FaSignOutAlt,
-  FaSignInAlt,
-  FaUserPlus,
-} from 'react-icons/fa';
 import { isAdmin } from '../session';
+import './Navbar.css';
 
-function Navbar({ user, onLogout, cartCount }) {
-  const admin = isAdmin(user);
+export default function Navbar({ user, onLogout, cartCount }) {
   const [abierto, abrir] = useState(false);
-  const { pathname, search } = useLocation();
-  useEffect(() => abrir(false), [pathname, search]);
+  const [busqueda, setBusqueda] = useState('');
+  const ubicacion = useLocation();
+  const navegar = useNavigate();
+  useEffect(() => abrir(false), [ubicacion.pathname, ubicacion.search]);
 
-  return (
-    <nav className="navbar">
-      <div className="nav-container">
-        <Link to="/" className="nav-logo">
-          <Logo />
-        </Link>
+  function buscar(evento) {
+    evento.preventDefault();
+    const q = busqueda.trim();
+    if (q) navegar('/buscar?' + new URLSearchParams({ q }));
+  }
 
-        <button className="tech-nav-toggle" type="button" aria-controls="tech-navigation" aria-expanded={abierto} onClick={() => abrir(!abierto)}>
-          {abierto ? 'Cerrar menú' : 'Menú'}
-        </button>
-        <div id="tech-navigation" className={'nav-menu' + (abierto ? ' tech-open' : '')}>
-          <NavLink to="/subastas" className="nav-link">Subastas</NavLink>
-          {user && <NavLink to="/mis-pujas" className="nav-link">Mis pujas</NavLink>}
-          {admin && <NavLink to="/admin/subastas" className="nav-link">Administrar lotes</NavLink>}
-          {user ? (
-            <>
-              {admin ? (
-                <>
-                  <Link to="/admin" className="nav-link">
-                    <FaCog /> Panel Admin
-                  </Link>
-                  <Link to="/productos" className="nav-link">
-                    <FaStore /> Ver Tienda
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/productos" className="nav-link">
-                    <FaStore /> Productos
-                  </Link>
-                  <Link to="/carrito" className="nav-link cart-link">
-                    <FaShoppingCart /> Carrito
-                    {cartCount > 0 && (
-                      <span className="cart-badge">{cartCount}</span>
-                    )}
-                  </Link>
-                  <Link to="/compras" className="nav-link">
-                    <FaBox /> Mis Compras
-                  </Link>
-                </>
-              )}
-              <span className="nav-user">
-                <FaUser /> {user.nombre}
-              </span>
-              <Link to="/cuenta/contrasena" className="nav-link">Cambiar contraseña</Link>
-              <button
-                type="button"
-                onClick={onLogout}
-                className="nav-btn logout-btn"
-              >
-                <FaSignOutAlt /> Cerrar Sesión
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/productos" className="nav-link"><FaStore /> Catálogo</Link>
-              <Link to="/login" className="nav-btn">
-                <FaSignInAlt /> Iniciar Sesión
-              </Link>
-              <Link to="/register" className="nav-btn register-btn">
-                <FaUserPlus /> Registrarse
-              </Link>
-            </>
-          )}
-        </div>
-      </div>
-    </nav>
-  );
+  return <header className="navbar">
+    <div className="nav-container mercado-nav" onKeyDown={e => { if (e.key === 'Escape') abrir(false); }}>
+      <Link to="/" className="nav-logo"><Logo /></Link>
+      <form className="mercado-busqueda" onSubmit={buscar} role="search">
+        <input type="search" aria-label="Buscar en tienda y subastas" placeholder="Buscar en todo Remata"
+          value={busqueda} onChange={e => setBusqueda(e.target.value)} maxLength={120} />
+        <button type="submit" aria-label="Buscar en todo Remata"><FaSearch aria-hidden="true" /></button>
+      </form>
+      <button className="tech-nav-toggle" type="button" aria-controls="mercado-navigation" aria-expanded={abierto} onClick={() => abrir(!abierto)}>{abierto ? 'Cerrar menú' : 'Menú'}</button>
+      <nav id="mercado-navigation" aria-label="Navegación principal" className={'nav-menu' + (abierto ? ' tech-open' : '')}>
+        <NavLink to="/productos" className="nav-link">Tienda</NavLink>
+        <NavLink to="/subastas" className="nav-link">Subastas</NavLink>
+        {!isAdmin(user) && <NavLink to="/carrito" className="nav-link cart-link"><FaShoppingCart aria-hidden="true" /> Carrito
+          {cartCount > 0 && <span className="mercado-contador">{cartCount}</span>}</NavLink>}
+        {user ? <details className="mercado-cuenta" key={ubicacion.key}>
+          <summary>{user.nombre || 'Cuenta'}</summary>
+          <div><Link to="/cuenta">Mi cuenta</Link>
+            {isAdmin(user) && <><Link to="/admin">Administrar tienda</Link><Link to="/admin/subastas">Administrar lotes</Link></>}
+            <button type="button" onClick={() => { onLogout(); abrir(false); }}>Cerrar sesión</button></div>
+        </details> : <><Link to="/login" className="nav-link">Iniciar sesión</Link><Link to="/register" className="nav-link">Registrarse</Link></>}
+      </nav>
+    </div>
+  </header>;
 }
-
-export default Navbar;

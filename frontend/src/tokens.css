@@ -14,12 +14,7 @@ body { font-family: var(--tech-font); }
 .App .navbar { position: sticky; top: 0; z-index: 12; }
 .tech-nav-toggle { display: none; }
 #contenido { scroll-margin-top: 90px; }
-@media (max-width: 1050px) {
-  .App .nav-container { position: relative; display: flex; justify-content: space-between; }
-  .tech-nav-toggle { display: block; background: var(--tech-raised); color: var(--tech-text); border: 1px solid var(--tech-control); border-radius: var(--tech-radius-sm); padding: 8px 12px; }
-  .App .nav-menu { display: none; position: absolute; top: 100%; right: 8px; left: auto; width: min(320px, calc(100vw - 16px)); max-height: 75vh; overflow: auto; padding: 16px; background: var(--tech-surface); border: 1px solid var(--tech-border); border-radius: var(--tech-radius); }
-  .App .nav-menu.tech-open { display: grid; justify-content: stretch; gap: 8px; }
-}
+
 @media (prefers-reduced-motion: reduce) {
   .App *, .App *::before, .App *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; scroll-behavior: auto !important; }
 }

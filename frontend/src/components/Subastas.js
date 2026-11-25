@@ -3,14 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { subastasApi as api } from '../api/subastasApi';
 import './Subastas.css';
+import { catalogoApi } from '../api/catalogoApi';
+import { categoriasMercado, nombresCategorias as categorias, categoriaLote } from '../categorias';
+import { Cierre, cop, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
+import { Recomendados, useMercado } from './ExplorarMercado';
 
-export const categorias = {
-  RELOJES: 'Relojes', JOYERIA: 'Joyería', CARROS: 'Carros', MOTOS: 'Motos',
-  ELECTRONICA: 'Electrónica', COLECCIONABLES: 'Coleccionables', HOGAR: 'Hogar', OTROS: 'Otros',
-};
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
 const img = categoria => '/subastas/' + categoria.toLowerCase() + '.webp';
-const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 2, minimumFractionDigits: 0 });
 const fecha = valor => new Date(valor).toLocaleString('es-CO');
 const vacio = { q: '', categoria: '', condicion: '', minimo: '', maximo: '' };
 
@@ -58,58 +57,22 @@ function Titulo({ children }) {
   return <h1>{children}</h1>;
 }
 
-function Cierre({ lote }) {
-  const [ahora, setAhora] = useState(Date.now);
-  const programada = lote.estado === 'PROGRAMADA';
-  const segundo = Math.max(0, Math.ceil((Date.parse(programada ? lote.inicio : lote.fin) - ahora) / 1000));
-
-  useEffect(() => {
-    if (lote.estado !== 'ACTIVA' && lote.estado !== 'PROGRAMADA') return undefined;
-    const timer = setInterval(() => {
-      if (document.visibilityState !== 'hidden') setAhora(Date.now());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [lote.estado]);
-
-  if (!['ACTIVA', 'PROGRAMADA'].includes(lote.estado)) return <span className="auction-chip">{estados[lote.estado]}</span>;
-  if (!segundo) return <span className="auction-chip">{programada ? 'Por iniciar' : 'Plazo terminado'}</span>;
-  const horas = Math.floor(segundo / 3600);
-  const minutos = Math.floor(segundo / 60) % 60;
-  const segundos = String(segundo % 60).padStart(2, '0');
-  const color = segundo < 3600 ? 'rojo' : segundo < 86400 ? 'ambar' : '';
-  return <span className={'auction-chip ' + color}>{programada ? 'Inicia en ' : 'Cierra en '}{horas ? horas + ' h ' : ''}{minutos} min {segundos} s</span>;
-}
-
-function Tarjeta({ lote }) {
-  return <article className="auction-card">
-    <Link to={'/subastas/' + lote.id}>
-      <img src={lote.imagenes[0]} width="424" height="424" loading="lazy" alt={lote.titulo} />
-      <div className="auction-card-body">
-        <span className="auction-muted">{categorias[lote.categoria]} · {lote.condicion === 'NUEVO' ? 'Nuevo' : 'Usado'}</span>
-        <h2>{lote.titulo}</h2>
-        <div className="auction-row"><strong>{cop.format(lote.precioActual)}</strong><span>{lote.pujas} {lote.pujas === 1 ? 'puja' : 'pujas'}</span></div>
-        <Cierre lote={lote} />
-      </div>
-    </Link>
-  </article>;
-}
-
-function EstadoConsulta({ consulta }) {
-  return <>
-    {consulta.cargando && <div className="auction-skeleton" role="status">Cargando…</div>}
-    {consulta.error && <div className="auction-error" role="alert">{consulta.error} <button onClick={consulta.recargar}>Reintentar</button></div>}
-  </>;
-}
+function EstadoConsulta({ consulta }) { return <EstadoMercado estado={consulta} reintentar={consulta.recargar} />; }
 
 export function Inicio() {
   const cargar = useCallback(() => api.listar({ tamano: 3 }), []);
   const consulta = useConsulta(cargar);
   const lotes = consulta.datos?.items.filter(l => l.estado === 'ACTIVA');
+  const recien = useCallback(() => catalogoApi.productos.explorar({ tamano: 4, orden: 'recientes' }), []);
+  const [productos, reintentar] = useMercado(recien);
 
-  return <main id="principal" className="auction-page">
+  return <main id="principal" className="auction-page mercado-inicio">
+    <nav className="mercado-anclas" aria-label="Secciones del inicio">
+      <a href="#inicio-subastas">Subastas</a><a href="#inicio-categorias">Categorías</a><a href="#inicio-tienda">Tienda</a><a href="#inicio-como">Cómo funciona</a>
+    </nav>
     <section className="auction-hero">
       <div><Titulo>Tienda y subastas</Titulo>
-        <p>Compra tecnología nueva y usada o presenta tu oferta en los lotes de la tienda.</p>
+        <p>Compra productos nuevos y usados o presenta tu oferta en los lotes de la tienda.</p>
         <div className="auction-row">
           <Link className="auction-btn primary" to="/productos">Ver tienda</Link>
           <Link className="auction-btn" to="/subastas">Ver subastas</Link>
@@ -117,10 +80,24 @@ export function Inicio() {
       </div>
       <img src={img('ELECTRONICA')} alt="Cámara digital" width="424" height="424" />
     </section>
-    {lotes?.length > 0 && <section><h2>Subastas que terminan pronto</h2><div className="auction-grid">{lotes.map(lote => <Tarjeta key={lote.id} lote={lote} />)}</div></section>}
-    <section><h2>Categorías de subastas</h2><div className="auction-categories">
-      {Object.entries(categorias).map(([id, label]) => <Link to={'/subastas?categoria=' + id} key={id}><img src={img(id)} width="424" height="424" loading="lazy" alt="" />{label}</Link>)}
+    <section id="inicio-subastas" className="mercado-seccion"><h2>Subastas que terminan pronto</h2>
+      <EstadoConsulta consulta={consulta} />
+      <div className="tt-grid">{lotes?.map(lote => <TarjetaMercado key={lote.id} lote={lote} />)}</div>
+      {lotes?.length === 0 && <p>En este momento no hay lotes activos próximos a cerrar.</p>}
+    </section>
+    <section id="inicio-categorias"><h2>Categorías</h2><div className="auction-categories">
+      {categoriasMercado.map(({ lote, nombre, slug }) => <Link to={'/categoria/' + slug} key={slug}>
+        <img src={img(lote)} width="424" height="424" loading="lazy" alt="" />{nombre}</Link>)}
     </div></section>
+    <section id="inicio-tienda"><h2>Recién llegados a la tienda</h2>
+      <EstadoMercado estado={productos} reintentar={reintentar} />
+      <div className="tt-grid">{productos.datos?.items.map(producto => <TarjetaMercado key={producto.id} producto={producto} />)}</div>
+    </section>
+    <section id="inicio-como"><h2>Cómo funciona</h2><ol className="mercado-pasos">
+      <li><strong>Elige</strong> Comprueba descripción, condición y plazo del lote.</li>
+      <li><strong>Puja</strong> Inicia sesión y ofrece el monto mínimo o uno mayor.</li>
+      <li><strong>Gana</strong> Consulta Mis subastas ganadas y confirma el pago simulado.</li>
+    </ol><p>La ficha de cada producto indica la garantía declarada y el grado de los usados cuando aplica.</p></section>
   </main>;
 }
 
@@ -130,10 +107,8 @@ export function Lista() {
   const cargador = useCallback(() => api.listar(Object.fromEntries(params)), [params]);
   const consulta = useConsulta(cargador, true);
 
-  function filtrar(evento) {
-    evento.preventDefault();
-    const entries = [...new FormData(evento.currentTarget)].filter(([, valor]) => String(valor).trim());
-    cambiarParams(Object.fromEntries(entries));
+  function filtrar(valores) {
+    cambiarParams(Object.fromEntries(Object.entries(valores).filter(([, valor]) => String(valor).trim())));
   }
 
   function mover(nuevo) {
@@ -145,26 +120,16 @@ export function Lista() {
   return <main id="principal" className="auction-page">
     <Titulo>Subastas</Titulo>
     <p className="auction-muted">Ofertas en COP y pagos simulados.</p>
-    <div className="auction-layout">
-      <form className="auction-panel auction-form" onSubmit={filtrar} key={[...params].filter(([k]) => k !== 'pagina').join()}>
-        <label>Buscar<input name="q" placeholder="Nombre del lote" defaultValue={params.get('q') || ''} maxLength="100" /></label>
-        <label>Categoría<select name="categoria" defaultValue={params.get('categoria') || ''}><option value="">Todas</option>{Object.entries(categorias).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-        <label>Condición<select name="condicion" defaultValue={params.get('condicion') || ''}><option value="">Todas</option><option value="NUEVO">Nuevo</option><option value="USADO">Usado</option></select></label>
-        <label>Precio mínimo<input name="minimo" type="number" min="0" defaultValue={params.get('minimo') || ''} /></label>
-        <label>Precio máximo<input name="maximo" type="number" min="0" defaultValue={params.get('maximo') || ''} /></label>
-        <button className="primary">Aplicar filtros</button><Link to="/subastas">Limpiar filtros</Link>
-      </form>
+    <div className="mercado-seccion">
+      <FiltrosMercado lote valores={Object.fromEntries(params)} categorias={Object.entries(categorias)} alBuscar={filtrar} alLimpiar={() => cambiarParams({})}
+        key={[...params].filter(([k]) => k !== 'pagina').join()} />
       <section aria-label="Resultados">
         <EstadoConsulta consulta={consulta} />
         {consulta.datos && <>
           <p className="auction-muted">{consulta.datos.total} {consulta.datos.total === 1 ? 'lote' : 'lotes'}</p>
-          <div className="auction-grid">{consulta.datos.items.map(lote => <Tarjeta key={lote.id} lote={lote} />)}</div>
+          <div className="tt-grid">{consulta.datos.items.map(lote => <TarjetaMercado key={lote.id} lote={lote} />)}</div>
           {!consulta.datos.total && <p className="auction-panel">No hay lotes con estos filtros. <Link to="/subastas">Ver todos</Link></p>}
-          {consulta.datos.total > consulta.datos.tamano && <div className="auction-pager">
-            <button disabled={!pagina} onClick={() => mover(pagina - 1)}>Anterior</button>
-            <span>Página {pagina + 1}</span>
-            <button disabled={(pagina + 1) * consulta.datos.tamano >= consulta.datos.total} onClick={() => mover(pagina + 1)}>Siguiente</button>
-          </div>}
+          <Paginacion pagina={pagina} paginas={Math.ceil(consulta.datos.total / consulta.datos.tamano)} cambiar={mover} />
         </>}
       </section>
     </div>
@@ -253,25 +218,27 @@ export function Detalle({ user }) {
           {error && <p role="alert" className="auction-error">{error}</p>}
         </section>
       </div>
+      <Recomendados categoria={categoriaLote(lote.categoria)} lado="tienda" />
       {puedePujar && <div className="auction-mobile-bid"><strong>{cop.format(lote.precioActual)}</strong><a className="auction-btn primary" href="#ofertar">Pujar</a></div>}
     </>}
   </main>;
 }
 
-export function MisPujas() {
+export function MisPujas({ vista }) {
   const consulta = useConsulta(api.mias, true);
   return <main id="principal" className="auction-page">
-    <Titulo>Mis pujas</Titulo>
+    <Titulo>{vista === 'ganadas' ? 'Subastas ganadas' : 'Mis pujas'}</Titulo>
     <EstadoConsulta consulta={consulta} />
     {consulta.datos && <>
-      <h2>Adjudicaciones</h2>
+      {vista !== 'pujas' && <>
       <div className="auction-panel">{consulta.datos.adjudicaciones.length ? <ul className="auction-records">
         {consulta.datos.adjudicaciones.map(orden => <li key={orden.id}><Link to={'/subastas/' + orden.loteId}>Lote {orden.loteId}</Link><span>{cop.format(orden.monto)} · {orden.pagada ? 'Pago simulado confirmado' : 'Pendiente de pago simulado'}</span></li>)}
       </ul> : <p>Aún no tienes adjudicaciones.</p>}</div>
-      <h2>Historial de pujas</h2>
+      </>}
+      {vista !== 'ganadas' && <><h2>Historial de pujas</h2>
       <div className="auction-panel">{consulta.datos.pujas.length ? <ul className="auction-records">
         {consulta.datos.pujas.map((puja, index) => <li key={index}><Link to={'/subastas/' + puja.loteId}>Lote {puja.loteId}</Link><span>{cop.format(puja.monto)} · {fecha(puja.fecha)}</span></li>)}
-      </ul> : <p>Todavía no has pujado. <Link to="/subastas">Ver subastas</Link></p>}</div>
+      </ul> : <p>Todavía no has pujado. <Link to="/subastas">Ver subastas</Link></p>}</div></>}
     </>}
   </main>;
 }

@@ -56,7 +56,7 @@ async function main() {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 1440);
     const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
     assert.ok((await fetch(new URL(favicon, tienda))).headers.get('content-type').startsWith('image/'));
-    const buscador = page.getByRole('searchbox');
+    const buscador = page.getByLabel('Buscar productos');
     await buscador.focus();
     assert.equal(await buscador.evaluate(e => getComputedStyle(e).outlineStyle), 'solid');
     const contraste = await buscador.evaluate(e => {
@@ -123,7 +123,9 @@ async function main() {
     await captura('historial');
     assert.doesNotMatch(await page.locator('body').innerText(), /\b(undefined|NaN)\b/);
 
-    await page.getByRole('link', { name: 'Cambiar contraseña' }).click();
+    await page.locator('.mercado-cuenta summary').click();
+    await page.getByRole('link', { name: 'Mi cuenta', exact: true }).click();
+    await page.getByRole('link', { name: 'Seguridad', exact: true }).click();
     await page.locator('#clave-actual').fill(password);
     await page.locator('#clave-nueva').fill(nueva);
     await page.locator('#clave-confirmacion').fill(nueva);
@@ -138,7 +140,8 @@ async function main() {
     await page.locator('#login-password').fill(nueva);
     await page.getByRole('button', { name: /Iniciar Sesión/i }).click();
     await page.waitForURL('**/productos');
-    await page.getByRole('button', { name: 'Cerrar Sesión' }).click();
+    await page.locator('.mercado-cuenta summary').click();
+    await page.getByRole('button', { name: /Cerrar sesión/i }).click();
     await page.goto(tienda + '/compras');
     await page.waitForURL('**/login');
 

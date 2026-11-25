@@ -1,3 +1,5 @@
+import { categoriaProducto } from '../categorias';
+import { Recomendados } from './ExplorarMercado';
 import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -87,5 +89,6 @@ export default function ProductDetail({ user, setCartCount }) {
         {mensaje && <p className="tt-aviso" role={mensaje.error ? 'alert' : 'status'}>{mensaje.texto}</p>}
       </section>
     </div>
+    <Recomendados categoria={categoriaProducto(producto.categoria)} lado="subastas" />
   </main>;
 }
