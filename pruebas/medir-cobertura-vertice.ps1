@@ -1,3 +1,5 @@
+param([string]$Resultado = 'resultados/vertice-cobertura.json')
+
 $ErrorActionPreference='Stop'
 Set-Location (Split-Path $PSScriptRoot)
 . .\scripts\windows-local.ps1
@@ -46,6 +48,6 @@ try {
             }
             $salida[$m]=$datos
         } finally { Pop-Location }
-        $salida | ConvertTo-Json -Depth 5 | Set-Content resultados/vertice-cobertura.json -Encoding utf8
+        $salida | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $Resultado -Encoding utf8
     }
 } finally { Remove-Item Env:SUBASTAS_IT_CLAVE -ErrorAction SilentlyContinue }

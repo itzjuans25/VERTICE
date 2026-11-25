@@ -1972,7 +1972,8 @@
                 "exec": [
                   "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
                   "pm.test('Tiempo menor de 500 ms', () => pm.expect(pm.response.responseTime).to.be.below(500));",
-                  "pm.test('Conteos de lotes activos', () => { const j=pm.response.json(); pm.expect(j.items.length).to.be.at.most(8); pm.expect(j.total).to.be.a('number'); });"
+                  "pm.test('Conteos de lotes activos', () => { const j=pm.response.json(); pm.expect(j.items.length).to.be.at.most(8); pm.expect(j.total).to.be.a('number'); });",
+                  "pm.test('La portada solo muestra curaduría pública', () => { for (const lote of pm.response.json().items) { pm.expect(lote.atributos['Por qué se subasta']).to.be.a('string').and.not.empty; pm.expect(lote.atributos.Visibilidad).not.to.eql('Interna'); pm.expect(lote.titulo).not.to.match(/^Ensayo curado/i); } });"
                 ]
               }
             }

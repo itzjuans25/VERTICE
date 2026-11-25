@@ -21,4 +21,6 @@ erDiagram
 
 `subasta_avisos` guarda publicaciones pendientes por clave de evento, mientras `notificaciones_pendientes` respalda el encolado de avisos y `sms_simulado` registra SMS simulados. Los índices principales de Subastas cubren estado y cierre, categoría y condición, pujas por lote y usuario, y órdenes por usuario.
 
+La curaduría pública lee el motivo y la visibilidad desde los atributos JSON de `subasta_lotes`. Un lote interno conserva su enlace directo y sus relaciones con pujas, avisos y adjudicaciones. El script incluye el plan de consulta de la portada.
+
 [Consultas para inspeccionar PostgreSQL](vertice-inspeccion.sql) · [Claves foráneas inspeccionadas](../../resultados/vertice-datos.json)

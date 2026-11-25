@@ -1,0 +1,7 @@
+[INFO] Reactor Summary:
+[INFO] auth 0.0.1-SNAPSHOT ................................ SUCCESS [  4.117 s]
+[INFO] catalogo 0.0.1-SNAPSHOT ............................ SUCCESS [  0.481 s]
+[INFO] notificaciones 0.0.1-SNAPSHOT ...................... SUCCESS [  0.245 s]
+[INFO] subastas 0.0.1-SNAPSHOT ............................ SUCCESS [  0.179 s]
+[INFO] vertice 1.0.0-SNAPSHOT ............................. SUCCESS [  0.000 s]
+[INFO] BUILD SUCCESS

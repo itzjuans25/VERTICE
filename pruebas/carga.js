@@ -147,27 +147,31 @@ export function setup() {
   const email = prefijo + '-preflight@example.test';
   const previo = enviar('auth_registrar', { body: registro(email) });
   try {
-    recorrer(admin.token, { id: previo.id, email }, prefijo + '-preflight', true);
+    recorrer(admin.token, { id: previo.id, email }, prefijo + '-preflight', { clave: password });
   } finally {
     enviar('auth_eliminar', { token: admin.token, id: previo.id });
   }
   return { admin: admin.token, clientes, prefijo };
 }
 
+const sesionVu = { clave: password };
+
 export default function ({ admin, clientes, prefijo }) {
   const cliente = clientes[exec.vu.idInTest - 1];
   const nombre = prefijo + '-' + exec.vu.idInTest + '-' + exec.vu.iterationInScenario;
-  const mitad = exec.vu.iterationInScenario % 2 === 0;
-  recorrer(admin, cliente, nombre, mitad);
-  completadas.add(1);
-  sleep(0.55);
+  try {
+    recorrer(admin, cliente, nombre, sesionVu);
+    completadas.add(1);
+  } finally {
+    sleep(0.55);
+  }
 }
 
-function recorrer(admin, cliente, nombre, mitad) {
+function recorrer(admin, cliente, nombre, sesion) {
   const id = cliente.id;
   const nuevaCuenta = enviar('auth_registrar', { body: registro(nombre + '-alta@example.test') });
-  const actual = mitad ? password : otraClave;
-  const nueva = mitad ? otraClave : password;
+  const actual = sesion.clave;
+  const nueva = actual === password ? otraClave : password;
   const { token } = enviar('auth_login', { body: { email: cliente.email, password: actual } });
   enviar('auth_perfil', { token, id });
   enviar('auth_pantalla_perfil', { token });
@@ -176,6 +180,7 @@ function recorrer(admin, cliente, nombre, mitad) {
   enviar('auth_evaluar', { body: { password: nueva } });
   enviar('auth_renovar', { token, body: { password: actual } });
   enviar('auth_cambiar', { token, body: { actual, nueva } });
+  sesion.clave = nueva;
   enviar('auth_actualizar', { token, body: { id, nombre: 'Cliente k6' } });
   enviar('auth_eliminar', { token: admin, id: nuevaCuenta.id });
 
