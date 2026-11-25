@@ -11,6 +11,7 @@ export const categoriasMercado = [
   { slug: 'moda', nombre: 'Moda y bolsos', tienda: ['Moda y bolsos'], lotes: ['MODA','OTROS'], imagen: '/mercado/bolso-lona.webp' },
   { slug: 'coleccionables', nombre: 'Coleccionables y arte', tienda: ['Coleccionables y arte'], lotes: ['COLECCIONABLES'], imagen: '/mercado/miniatura-velero.webp' },
   { slug: 'herramientas', nombre: 'Herramientas', tienda: ['Herramientas'], lotes: ['HERRAMIENTAS'], imagen: '/mercado/llave-ajustable.webp' },
+  { slug: 'calzado', nombre: 'Zapatillas y calzado', tienda: [], lotes: ['CALZADO'], imagen: '/mercado/vertice-01.webp' },
 ];
 
 export const nombresCategorias = Object.fromEntries(categoriasMercado.flatMap(({ lotes,nombre }) => lotes.map(lote => [lote,nombre])));
@@ -19,11 +20,13 @@ export const categoriaProducto = nombre => categoriasMercado.find(c => c.tienda.
 export const categoriaLote = lote => categoriasMercado.find(c => c.lotes.includes(lote));
 
 export const vitrinas = [
-  { nombre:'Calzado y moda de autor', grupo:'MODA', foto:'01' },
-  { nombre:'Relojería', grupo:'RELOJES', foto:'06' },
-  { nombre:'Joyería', grupo:'JOYERIA', foto:'09' },
-  { nombre:'Arte y colección', grupo:'COLECCIONABLES', foto:'12' },
-  { nombre:'Vehículos de exhibición', grupo:'CARROS,MOTOS', foto:'16' },
+  { slug:'calzado', nombre:'Zapatillas y calzado', foto:'01' },
+  { slug:'moda', nombre:'Ropa y moda', foto:'02' },
+  { slug:'relojes', nombre:'Relojes', foto:'06' },
+  { slug:'joyeria', nombre:'Joyería', foto:'09' },
+  { slug:'vehiculos', nombre:'Motos', grupo:'MOTOS', foto:'17' },
+  { slug:'vehiculos', nombre:'Carros', grupo:'CARROS', foto:'16' },
+  { slug:'coleccionables', nombre:'Coleccionables y arte', foto:'12' },
 ];
 
 export function destacadosPorCategoria(items, fecha = new Date(), limite = 8) {

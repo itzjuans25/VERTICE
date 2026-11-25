@@ -60,6 +60,12 @@ public class RepositorioJdbc implements RepositorioSubastas {
                 .param("id",id).query(this::mapear).optional();
     }
 
+    public Optional<Lote> lotePorCertificado(String codigo) {
+        return jdbc.sql("SELECT * FROM subasta_lotes WHERE CAST(atributos AS jsonb)->>'Certificado'=:codigo"
+                        + CURADURIA_PUBLICA)
+                .param("codigo", codigo).query(this::mapear).optional();
+    }
+
     public Lote actualizar(Lote l) {
         return jdbc.sql("""
                 UPDATE subasta_lotes SET precio_actual=:precio, ganador_id=:ganador, ganador_email=:correo,
@@ -75,6 +81,10 @@ public class RepositorioJdbc implements RepositorioSubastas {
         var parametros = new LinkedHashMap<String,Object>();
         var filtro = new StringBuilder(" WHERE estado <> 'CANCELADA'");
         if (f.curados()) filtro.append(CURADURIA_PUBLICA);
+        if (f.activasAl() != null) {
+            filtro.append(" AND estado='ACTIVA' AND inicio<=:activasAl AND fin>:activasAl");
+            parametros.put("activasAl", fecha(f.activasAl()));
+        }
         if (f.texto() != null && !f.texto().isBlank()) {
             filtro.append(" AND (titulo ILIKE :texto ESCAPE '!' OR descripcion ILIKE :texto ESCAPE '!')");
             parametros.put("texto", "%" + f.texto().strip().replace("!","!!").replace("%","!%").replace("_","!_") + "%");

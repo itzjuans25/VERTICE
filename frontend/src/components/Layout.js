@@ -9,10 +9,11 @@ const nombres = {
   productos: 'Tienda', subastas: 'Subastas', buscar: 'Buscar', categoria: 'Categorías',
   carrito: 'Carrito', cuenta: 'Mi cuenta', compras: 'Mi cuenta', 'mis-pujas': 'Mi cuenta',
   login: 'Iniciar sesión', register: 'Registro', admin: 'Administración',
+  lanzamientos: 'Lanzamientos', verificar: 'Certificados',
 };
 
 export default function Layout({ children, user, onLogout, cartCount }) {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const partes = pathname.split('/').filter(Boolean);
   const actual = nombres[partes[0]] || 'Página';
   const padre = partes.length === 2 && ['productos','subastas'].includes(partes[0]);
@@ -23,8 +24,14 @@ export default function Layout({ children, user, onLogout, cartCount }) {
     despertarServicios();
     return () => window.removeEventListener(SERVIDOR_LENTO_EVENT,actualizar);
   },[]);
+  useEffect(() => {
+    if (hash !== '#como-funciona') return;
+    const guia = document.getElementById('como-funciona');
+    if (guia) { guia.open = true; guia.scrollIntoView(); }
+  }, [hash, pathname]);
   return <>
     <a className="tech-skip" href="#contenido">Saltar al contenido</a>
+    <div className="franja-editorial">certificado verificable / pagos simulados</div>
     <Navbar user={user} onLogout={onLogout} cartCount={cartCount} />
     <div id="contenido" className="mercado-layout" tabIndex={-1}>
       {despertando && <p className="tt-aviso" role="status">Despertando el servidor, puede tardar hasta 1 minuto</p>}
@@ -34,6 +41,11 @@ export default function Layout({ children, user, onLogout, cartCount }) {
       </nav>}
       {children}
     </div>
-    <footer className="tt-footer mercado-footer"><Logo /><Link to="/productos">Catálogo de compra directa</Link><small>{marca.taller}</small></footer>
+    <footer className="tt-footer mercado-footer">
+      <Logo /><Link to="/verificar">Verificar pieza</Link>
+      <details id="como-funciona"><summary>Cómo funciona</summary>
+        <p>Explora un lote, revisa el mínimo y confirma tu oferta. Consulta la adjudicación y registra el pago simulado en tu cuenta.</p>
+      </details><small>{marca.taller}</small>
+    </footer>
   </>;
 }

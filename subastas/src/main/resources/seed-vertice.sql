@@ -34,3 +34,39 @@ FROM (VALUES
  ('vertice-18','Todoterreno clásico Travesía','Vehículo beige de silueta cuadrada y equipamiento de colección. Vehículo de exhibición simulado, sin traspaso real.','CARROS','USADO','{"Por qué se subasta":"Configuración ficticia de exhibición que representa una restauración de un vehículo de expedición.","Año ilustrativo":"1978","Procedencia":"Caso ficticio de curaduría académica","Modalidad":"Sin traspaso real"}','["/mercado/vertice-18.webp"]',48000000,1200000,17)
 ) v(semilla,titulo,descripcion,categoria,condicion,atributos,imagenes,precio,incremento,orden)
 ON CONFLICT (semilla) DO NOTHING;
+
+-- Editorial y pasaportes académicos. Las diferencias se aplican una sola vez.
+WITH piezas(semilla, relato, origen) AS (VALUES
+('vertice-01', 'Los paneles de gamuza grafito rodean una puntera color hueso. En el muestrario imaginario de Taller Umbral, el séptimo par ensayó una doble costura que quedó visible en el contorno.', 'Muestrario Umbral · VII'),
+('vertice-02', 'La lana tabaco cae desde un hombro ancho y relajado. Una nota del archivo ficticio Línea Cero identifica este ejemplar por el cierre interior de cordón.', 'Archivo Línea Cero · Tabaco'),
+('vertice-03', 'Un pliegue en diagonal desplaza la solapa hacia el hombro. El estudio ficticio Contraluz lo concibió como abrigo para una presentación de invierno.', 'Archivo Contraluz · Invierno'),
+('vertice-04', 'El cuero granulado gira sobre un único pliegue que une el fondo con el asa. La prueba del taller Pliegue conserva leves señales de bruñido en el borde.', 'Taller Pliegue · Prototipo'),
+('vertice-05', 'Las capas del acetato cambian de tono alrededor de los aros. El muestrario ficticio Prisma reservó este corte para comprobar el pulido de las aristas.', 'Muestrario Prisma · Índigo'),
+('vertice-06', 'El canto cepillado del Meridiano contrasta con el pulido de sus pulsadores. Dos contadores equilibran la esfera de este instrumento ficticio de cronometraje.', 'Colección Meridiano · Bicompax'),
+('vertice-07', 'Los puentes abiertos del Arista dejan leer el tren de engranajes. Una caja de titanio sobria protege el mecanismo ilustrativo de exhibición.', 'Archivo Arista · Titanio'),
+('vertice-08', 'La esfera esmaltada toma un tono cálido junto a la correa oscura. El estudio ficticio Esmalte prescindió del segundero para remarcar la forma de las agujas.', 'Estudio Esmalte · Marfil'),
+('vertice-09', 'Una lámina continua se dobla antes de completar el aro. El pliegue del taller ficticio Sutura pasa de mate a brillante al girarlo.', 'Taller Sutura · Pliegue'),
+('vertice-10', 'Las uniones del brazalete alternan piezas claras y latón de tono miel. Cada bisagra queda a la vista para explicar cómo se adapta a la muñeca.', 'Archivo Bisagra · Latón'),
+('vertice-11', 'Planos geométricos forman una cadena de sombras sobre el collar. El estudio ficticio Eclipse dejó pátina en los bordes más profundos.', 'Estudio Eclipse · Sombra'),
+('vertice-12', 'Una línea oscura cruza el papel del grabado y se disuelve al llegar al margen. La tirada ilustrativa Línea de sombra se concibió con muy poca tinta.', 'Prensa Línea de sombra · Algodón'),
+('vertice-13', 'Dos contrapesos hacen oscilar el cuerpo de la escultura sin tocar la peana. La pieza ficticia se estudió como mecanismo lento para un escritorio.', 'Estudio Géminis · Contrapeso'),
+('vertice-14', 'La pantalla curvada conduce la luz hacia la base de la lámpara. En el taller imaginario Nido, la superficie se dejó mate para conservar la textura del material.', 'Archivo Nido · Luz indirecta'),
+('vertice-15', 'La cubierta de la cámara deja ver desgaste en sus puntos de apoyo. Su telémetro y su rueda de arrastre representan un mecanismo restaurado para la colección ficticia.', 'Gabinete Retícula · Mecánica'),
+('vertice-16', 'La carrocería baja del coupé se estrecha antes del eje trasero. Vértice lo presenta como vehículo ficticio de exhibición, con una restauración simulada.', 'Colección Vértice · Exhibición'),
+('vertice-17', 'El depósito de la motocicleta se une al asiento por una línea corta. Sus piezas cepilladas y la postura baja evocan un montaje ficticio de taller.', 'Taller Ladera · Exhibición'),
+('vertice-18', 'Los guardabarros cuadrados del todoterreno dejan amplia luz sobre las ruedas. Los paneles muestran una pátina ilustrativa de uso en caminos de grava.', 'Colección Cantera · Exhibición')
+), actualizacion AS (
+    SELECT l.id, p.relato,
+           CASE WHEN p.semilla='vertice-01' THEN 'CALZADO' ELSE l.categoria END AS categoria,
+           (CAST(l.atributos AS jsonb) || jsonb_build_object(
+               'Procedencia', p.origen, 'Certificado', 'VT-S-' || upper(substr(md5('vertice/galeria/' || p.semilla),1,12))
+           ))::text AS atributos,
+           jsonb_build_array('/mercado/' || p.semilla || '-editorial.webp', '/mercado/' || p.semilla || '-detalle.webp')::text AS imagenes
+    FROM subasta_lotes l JOIN piezas p USING (semilla)
+)
+UPDATE subasta_lotes l
+SET descripcion=a.relato, categoria=a.categoria, atributos=a.atributos,
+    imagenes=a.imagenes, version=l.version+1
+FROM actualizacion a
+WHERE l.id=a.id AND (l.descripcion, l.categoria, l.atributos, l.imagenes)
+IS DISTINCT FROM (a.relato, a.categoria, a.atributos, a.imagenes);

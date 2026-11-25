@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/subastas")
@@ -38,6 +39,12 @@ class ReferenciasController {
     Clima clima() {
         var observacion = clima.bogota().orElse(null);
         return new Clima(observacion != null,"Bogotá","Open-Meteo",observacion);
+    }
+
+    @GetMapping("/certificados/{codigo}")
+    ResponseEntity<Subastas.Certificado> certificado(@PathVariable String codigo) {
+        if (!codigo.matches("VT-S-[A-Z0-9]{6,24}")) return ResponseEntity.badRequest().build();
+        return ResponseEntity.of(subastas.verificar(codigo));
     }
 
     record Clima(boolean disponible,String ciudad,String fuente,ClimaDespachoPort.Observacion observacion) {}

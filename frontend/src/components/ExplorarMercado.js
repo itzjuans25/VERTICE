@@ -20,6 +20,7 @@ export function useMercado(cargar) {
 }
 
 async function productosDe(categoria, n) {
+  if (!categoria.tienda.length) return { items: [], total: 0 };
   return catalogoApi.productos.explorar({ categoria: categoria.tienda.join(','), tamano: n, orden:'relevancia' });
 }
 
@@ -64,7 +65,7 @@ export function CategoriaMercado() {
   const { slug } = useParams();
   const [parametros, cambiar] = useSearchParams();
   const categoria = categoriasMercado.find(c => c.slug === slug);
-  const subastas = parametros.get('ver') === 'subastas';
+  const subastas = parametros.get('ver') === 'subastas' || categoria?.tienda.length === 0;
   const cargar = React.useCallback(async () => {
     if (!categoria) return { items: [], total: 0 };
     if (subastas) return subastasApi.listar({ grupo: categoria.lotes.join(','), curados: true, tamano: 24 });
@@ -74,7 +75,7 @@ export function CategoriaMercado() {
   if (!categoria) return <main className="tt-shell mercado-pagina"><h1>Categoría no encontrada</h1><Link to="/">Ver categorías</Link></main>;
   return <main className="tt-shell mercado-pagina"><h1>{categoria.nombre}</h1>
     <nav className="mercado-tabs" aria-label="Canales de la categoría">
-      <button aria-pressed={!subastas} onClick={() => cambiar({})}>En tienda</button>
+      {categoria.tienda.length > 0 && <button aria-pressed={!subastas} onClick={() => cambiar({})}>En tienda</button>}
       <button aria-pressed={subastas} onClick={() => cambiar({ ver: 'subastas' })}>En subasta</button>
     </nav>
     <Resultados nombre={subastas ? 'Lotes' : 'Productos'} cargar={cargar} subastas={subastas} />

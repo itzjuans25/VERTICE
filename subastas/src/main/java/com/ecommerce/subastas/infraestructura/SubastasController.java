@@ -34,12 +34,14 @@ class SubastasController {
                          @RequestParam(required=false) Lote.Categoria categoria,
                          @RequestParam(required=false) @Size(max=12) List<Lote.Categoria> grupo,
                          @RequestParam(defaultValue="false") boolean curados,
+                         @RequestParam(defaultValue="false") boolean activas,
                          @RequestParam(required=false) Lote.Condicion condicion,
                          @RequestParam(required=false) @DecimalMin("0") BigDecimal minimo,
                          @RequestParam(required=false) @DecimalMin("0") BigDecimal maximo,
                          @RequestParam(defaultValue="0") @Min(0) int pagina,
                          @RequestParam(defaultValue="12") @Min(1) @Max(48) int tamano) {
-        var resultado=subastas.listar(new Filtro(q,categoria,condicion,minimo,maximo,pagina,tamano,grupo == null ? List.of() : grupo,curados));
+        var resultado=subastas.listar(new Filtro(q,categoria,condicion,minimo,maximo,pagina,tamano,
+                grupo == null ? List.of() : grupo,curados,activas ? Instant.now() : null));
         return new PaginaPublica(resultado.items().stream().map(l->Publico.de(l,actor)).toList(),pagina,tamano,resultado.total());
     }
 
@@ -94,11 +96,11 @@ class SubastasController {
     record Publico(long id,String titulo,String descripcion,Lote.Categoria categoria,Lote.Condicion condicion,
                    Map<String,String> atributos,List<String> imagenes,BigDecimal precioInicial,BigDecimal incremento,
                    BigDecimal precioActual,BigDecimal pujaMinima,Estado estado,Instant inicio,Instant fin,
-                   int pujas,long version,boolean voyGanando) {
+                   int pujas,long version,boolean voyGanando,boolean reservaAlcanzada) {
         static Publico de(Lote l,Actor actor) {
             return new Publico(l.id(),l.titulo(),l.descripcion(),l.categoria(),l.condicion(),l.atributos(),l.imagenes(),
                     l.precioInicial(),l.incremento(),l.precioActual(),l.pujaMinima(),l.estado(),l.inicio(),l.fin(),
-                    l.pujas(),l.version(),actor!=null && Objects.equals(actor.id(),l.ganadorId()));
+                    l.pujas(),l.version(),actor!=null && Objects.equals(actor.id(),l.ganadorId()),l.reservaAlcanzada());
         }
     }
 }

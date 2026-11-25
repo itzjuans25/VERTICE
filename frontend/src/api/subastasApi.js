@@ -9,6 +9,7 @@ export const subastasApi = {
   precioUsd: id => request(config.SUBASTAS_URL, '/api/subastas/lote/' + id + '/precio-usd', { auth:false }),
   entrega: () => request(config.SUBASTAS_URL, '/api/subastas/entrega', { auth:false, query:{ diasHabiles:3 } }),
   clima: () => request(config.SUBASTAS_URL, '/api/subastas/clima', { auth:false }),
+  certificado: codigo => request(config.SUBASTAS_URL, '/api/subastas/certificados/' + encodeURIComponent(codigo), { auth: false }),
   listar: query => call('', { query }),
   detalle: id => call('/' + id),
   crear: body => call('', { method: 'POST', body }),

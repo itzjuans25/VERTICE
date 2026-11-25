@@ -1,4 +1,4 @@
-import { marca, tituloMarca } from '../marca';
+import { tituloMarca } from '../marca';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { subastasApi as api } from '../api/subastasApi';
@@ -6,6 +6,9 @@ import './Subastas.css';
 import { categoriasMercado, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, vitrinas } from '../categorias';
 import { Cierre, cop, tituloDelLote, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
 import PagoSimulado from './PagoSimulado';
+import { catalogoApi } from '../api/catalogoApi';
+import { useMercado } from './ExplorarMercado';
+import { Lanzamiento, Verificador } from './Ediciones';
 
 
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
@@ -69,44 +72,52 @@ function EstadoConsulta({ consulta }) { return <EstadoMercado estado={consulta} 
 
 export function Inicio() {
   const consulta = useConsulta(api.inicio);
-  const cupo = new Map();
-  const lotes = consulta.datos?.items.filter(l => {
-    const categoria = categoriaLote(l.categoria)?.slug || l.categoria;
-    const cantidad = cupo.get(categoria) || 0;
-    if (l.estado !== 'ACTIVA' || cantidad >= 2) return false;
-    cupo.set(categoria, cantidad+1);
-    return true;
-  });
+  const [ediciones, recargar] = useMercado(catalogoApi.lanzamientos);
+  const siguiente = ediciones.datos?.find(pieza => Date.parse(pieza.apertura) > Date.now());
+  const conteos = new Map(consulta.datos?.categorias.map(({ categoria, total }) => [categoria, total]));
 
-  return <main id="principal" className="auction-page mercado-inicio">
-    <nav className="mercado-anclas" aria-label="Secciones del inicio">
-      <a href="#inicio-subastas">Próximos cierres</a><a href="#inicio-categorias">Vitrinas</a><a href="#inicio-como">Cómo pujar</a>
-    </nav>
+  return <main id="principal" className="auction-page mercado-inicio inicio-editorial">
     <section className="auction-hero">
-      <div><Titulo>{marca.lema}</Titulo>
-        <p>Relojería de colección, moda de autor y piezas de exhibición con un motivo para cada subasta.</p>
+      <div>
+        <Titulo>Piezas que no se repiten.</Titulo>
+        <p>Objetos de autor, tiradas cortas y piezas que encontraron la forma de perdurar.</p>
         <div className="auction-row">
           <Link className="auction-btn primary" to="/subastas">Explorar subastas</Link>
+          <Link className="auction-btn" to="/lanzamientos">Ver lanzamientos</Link>
         </div>
+        {siguiente && <div className="hero-apertura"><strong>Próximo lanzamiento · {siguiente.titulo}</strong>
+          <Cierre lote={{ inicio: siguiente.apertura, estado: 'PROGRAMADA' }} />
+        </div>}
       </div>
-      <img src="/mercado/vertice-portada-galeria.webp" alt="Cronógrafo de esfera negra y caja dorada sobre piedra" width="1200" height="900" />
+      <figure className="hero-pieza">
+        <img src="/mercado/edicion-aureola.webp" alt="Reloj de esfera marfil y correa burdeos sobre papel de taller" width="640" height="800" />
+        <figcaption>Serie · N.º 037/120 · <Link to="/verificar?codigo=VT-E-AUR68K">VT-E-AUR68K</Link></figcaption>
+      </figure>
     </section>
-    <section id="inicio-subastas" className="mercado-seccion"><h2>Subastas que cierran pronto</h2>
+    <section id="inicio-subastas"><h2>Subastas que terminan pronto</h2>
       <EstadoConsulta consulta={consulta} />
-      <div className="tt-grid">{lotes?.map(lote => <TarjetaMercado key={lote.id} lote={lote} />)}</div>
-      {lotes?.length === 0 && <p>En este momento no hay lotes activos próximos a cerrar.</p>}
+      <div className="tt-grid">{consulta.datos?.items.slice(0,4).map(lote => <TarjetaMercado key={lote.id} lote={lote} />)}</div>
+      {consulta.datos?.items.length === 0 && <p>No hay lotes activos próximos a cerrar.</p>}
     </section>
-    <section id="inicio-categorias"><h2>Vitrinas</h2><div className="auction-categories mercado-categorias vertice-vitrinas">
-      {vitrinas.map(({ nombre, grupo, foto }) => <Link to={'/subastas?' + new URLSearchParams({ grupo })} key={grupo}>
-        <img src={'/mercado/vertice-' + foto + '.webp'} width="400" height="300" loading="lazy" alt="" />
-        <strong>{nombre}</strong>
-      </Link>)}
-    </div></section>
-    <section id="inicio-como"><h2>Cómo pujar</h2><ol className="mercado-pasos">
-      <li><strong>Elige</strong> Comprueba descripción, condición y plazo del lote.</li>
-      <li><strong>Puja</strong> Inicia sesión y ofrece el monto mínimo o uno mayor.</li>
-      <li><strong>Gana</strong> Consulta Mis subastas ganadas y confirma el pago simulado.</li>
-    </ol></section>
+    <section id="inicio-lanzamientos"><h2>Lanzamientos</h2>
+      <EstadoMercado estado={ediciones} reintentar={recargar} />
+      <div className="ediciones-grid">{ediciones.datos?.slice(0,3).map(pieza => <Lanzamiento key={pieza.productoId} pieza={pieza} />)}</div>
+    </section>
+    <section id="inicio-categorias"><h2>Explora por categoría</h2>
+      <div className="cuadricula-categorias">
+        {vitrinas.map(({ nombre, slug, grupo, foto }) => {
+          const principal = categoriaPorSlug(slug);
+          const grupos = grupo ? [grupo] : principal.lotes;
+          const cantidad = grupos.reduce((suma, categoria) => suma + (conteos.get(categoria) || 0), 0);
+          const filtro = grupo ? { grupo } : { categoria: slug };
+          return <Link to={'/subastas?' + new URLSearchParams({ ...filtro, activas: 'true' })} key={nombre}>
+            <img src={'/mercado/vertice-' + foto + '-mini.webp'} width="600" height="450" loading="lazy" alt="" />
+            <span><strong>{nombre}</strong><small>{consulta.datos ? cantidad + (cantidad === 1 ? ' lote activo' : ' lotes activos') : 'Consultando…'}</small></span>
+          </Link>;
+        })}
+      </div>
+    </section>
+    <Verificador />
   </main>;
 }
 
@@ -121,7 +132,9 @@ export function Lista() {
   const consulta = useConsulta(cargador, true);
 
   function filtrar(valores) {
-    cambiarParams(Object.fromEntries(Object.entries(valores).filter(([, valor]) => String(valor).trim())));
+    const filtros = Object.fromEntries(Object.entries(valores).filter(([, valor]) => String(valor).trim()));
+    if (params.get('activas') === 'true') filtros.activas = 'true';
+    cambiarParams(filtros);
   }
 
   function mover(nuevo) {
@@ -201,19 +214,23 @@ export function Detalle({ user }) {
       <div className="auction-detail">
         <section>
           <img className="auction-photo" src={lote.imagenes[seleccion] || lote.imagenes[0]} width="424" height="424" alt={tituloDelLote(lote.titulo)} />
-          {lote.imagenes.length > 1 && <div className="auction-thumbs">{lote.imagenes.map((src, index) => <button type="button" key={src} aria-pressed={index === seleccion} onClick={() => setSeleccion(index)}><img src={src} width="68" height="68" alt={'Foto ' + (index + 1)} /></button>)}</div>}
+          {lote.imagenes.length > 1 && <div className="auction-thumbs">{lote.imagenes.map((src, index) => <button type="button" key={src} aria-pressed={index === seleccion} onClick={() => setSeleccion(index)}><img src={src} width="68" height="68" alt={index === 0 ? 'Vista general del lote' : 'Vista de detalle del lote'} /></button>)}</div>}
           <div className="auction-tabs" aria-label="Información del lote">
             {['Por qué se subasta', 'Ficha técnica', 'Historial de pujas'].map(nombre => <button key={nombre} aria-pressed={tab === nombre} onClick={() => setTab(nombre)}>{nombre}</button>)}
           </div>
           <div className="auction-panel">
-            {tab === 'Por qué se subasta' && <p>{lote.atributos['Por qué se subasta'] || lote.descripcion}</p>}
-            {tab === 'Ficha técnica' && (Object.keys(lote.atributos).length ? <dl>{Object.entries(lote.atributos).filter(([nombre]) => nombre !== 'Por qué se subasta' && nombre !== 'Visibilidad').map(([nombre, dato]) => <React.Fragment key={nombre}><dt>{nombre}</dt><dd>{dato}</dd></React.Fragment>)}</dl> : <p>Este lote no tiene atributos adicionales.</p>)}
+            {tab === 'Por qué se subasta' && <div className="relato-lote">
+              <p>{lote.descripcion}</p>{lote.atributos['Por qué se subasta'] && <p>{lote.atributos['Por qué se subasta']}</p>}
+              {lote.atributos.Certificado && <Link to={'/verificar?codigo=' + lote.atributos.Certificado}>Ver registro de la pieza</Link>}
+            </div>}
+            {tab === 'Ficha técnica' && (Object.keys(lote.atributos).length ? <dl>{Object.entries(lote.atributos).filter(([nombre]) => nombre !== 'Por qué se subasta' && nombre !== 'Visibilidad' && nombre !== 'Reserva COP').map(([nombre, dato]) => <React.Fragment key={nombre}><dt>{nombre}</dt><dd>{dato}</dd></React.Fragment>)}</dl> : <p>Este lote no tiene atributos adicionales.</p>)}
             {tab === 'Historial de pujas' && (detalle.historial.length ? <ul className="auction-records">{detalle.historial.map((puja, index) => <li key={index}><span>{puja.mia ? 'Tú' : puja.postor} · {fecha(puja.fecha)}</span><strong>{cop.format(puja.monto)}{consultaUsd.datos?.disponible ? ' · ≈ ' + usd.format(puja.monto * consultaUsd.datos.tasa) : ''}</strong></li>)}</ul> : <p>Aún no hay pujas.</p>)}
           </div>
         </section>
-        <section id="ofertar" className="auction-panel auction-bid">
+        <section id="ofertar" className="auction-panel auction-bid tema-oscuro">
           <span className="auction-muted">{categorias[lote.categoria]} · {lote.condicion === 'NUEVO' ? 'Nuevo' : 'Usado'}</span>
           <div className="auction-bid-head"><span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]} · COP</span><Cierre lote={lote} /></div>
+          <span>{lote.reservaAlcanzada ? 'Reserva alcanzada' : 'Reserva no alcanzada'}</span>
           <strong className="auction-price">{cop.format(lote.precioActual)}</strong>
           {!consultaUsd.cargando && <p className="auction-muted">{consultaUsd.datos?.disponible ? '≈ ' + usd.format(lote.precioActual * consultaUsd.datos.tasa) + ' · Frankfurter' : 'Referencia USD no disponible'}</p>}
           <dl className="auction-valores"><dt>Incremento</dt><dd>{cop.format(lote.incremento)}</dd>
@@ -263,6 +280,11 @@ function ReferenciaUsd({ monto, cotizacion }) {
 function PagoSubasta({ orden, cotizacion }) {
   return <PagoSimulado referencia={'SIM-SUBASTA-' + orden.id} monto={orden.monto}
     referenciaUsd={cotizacion?.disponible ? orden.monto * cotizacion.tasa : null}
+    certificados={async () => {
+      const { lote } = await api.detalle(orden.loteId);
+      return lote.atributos.Certificado && lote.atributos.Visibilidad !== 'Interna'
+        ? [{ codigo: lote.atributos.Certificado }] : [];
+    }}
     pagadoEn={orden.pagada} confirmar={async () => (await api.pagar(orden.loteId)).pagada} />;
 }
 

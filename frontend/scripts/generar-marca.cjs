@@ -3,7 +3,14 @@ const path = require('node:path');
 const { marca, tituloMarca } = require('../src/marca');
 const publico = path.join(__dirname, '..', 'public');
 const html = path.join(publico, 'index.html');
-const { colores, simbolo } = marca;
+const { simbolo } = marca;
+const tokens = fs.readFileSync(path.join(__dirname, '..', 'src', 'tokens.css'), 'utf8');
+function color(nombre) {
+  const match = tokens.match(new RegExp('--color-' + nombre + ':\\s*(#[a-f0-9]+)', 'i'));
+  if (!match) throw new Error('Falta el token de color ' + nombre);
+  return match[1];
+}
+const colores = { background: color('fondo'), text: color('texto'), accent: color('acento') };
 const escape = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const paths = '<path d="' + simbolo.trazo + '" fill="none" stroke="' + colores.accent + '" stroke-width="1.75" stroke-linejoin="round"/>';
 const favicon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + simbolo.vista + '"><rect width="32" height="32" rx="5" fill="' + colores.background + '"/>' + paths + '</svg>';
@@ -18,7 +25,6 @@ const meta = [
   '<link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />',
   '<link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon-180.png" />',
   '<title>' + escape(tituloMarca()) + '</title>',
-  '<style>:root{' + Object.entries(colores).map(([k,v]) => '--tech-' + k + ':' + v).join(';') + '}</style>',
 ];
 const markup = fs.readFileSync(html, 'utf8').replace(/<!-- marca:inicio -->[\s\S]*?<!-- marca:fin -->/, '<!-- marca:inicio -->\n    ' + meta.join('\n    ') + '\n    <!-- marca:fin -->');
 fs.writeFileSync(html, markup);

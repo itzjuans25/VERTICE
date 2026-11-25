@@ -16,6 +16,7 @@ import com.ecommerce.catalogo.domain.model.NotificacionSMS;
 import com.ecommerce.catalogo.domain.model.Usuario;
 import com.ecommerce.catalogo.domain.port.out.CarritoGateway;
 import com.ecommerce.catalogo.domain.port.out.CompraGateway;
+import com.ecommerce.catalogo.domain.port.out.EdicionGateway;
 import com.ecommerce.catalogo.domain.port.out.NotificacionGateway;
 import com.ecommerce.catalogo.domain.port.out.ProductoGateway;
 import com.ecommerce.catalogo.domain.port.out.UsuarioGateway;
@@ -29,6 +30,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,6 +43,7 @@ public class CompraUseCase implements CompraService {
     private final UsuarioGateway usuarioGateway;
     private final NotificacionGateway notificacionGateway;
     private final DespuesDeConfirmar despuesDeConfirmar;
+    private final EdicionGateway ediciones;
 
     @Override
     public Compra realizarCompra(Long usuarioId) {
@@ -58,6 +62,9 @@ public class CompraUseCase implements CompraService {
         var itemsPorProducto = carrito.getItems().stream()
                 .sorted(Comparator.comparing(ItemCarrito::getProductoId)).toList();
         for (ItemCarrito item : itemsPorProducto) {
+            ediciones.bloquear(item.getProductoId()).ifPresent(edicion ->
+                    edicion.validarCompra(item.getCantidad(),
+                            compraGateway.unidadesCompradas(usuarioId, item.getProductoId()), Instant.now()));
             if (!productoGateway.descontarStock(item.getProductoId(), item.getCantidad())) {
                 throw new StockInsuficienteException(
                         "Stock insuficiente para el producto " + item.getNombreProducto());
@@ -129,19 +136,52 @@ public class CompraUseCase implements CompraService {
     @Override
     public Compra pagarSimulado(Long id, Long propietario) {
         Compra compra = obtenerCompraPorId(id);
-        if (!compra.getUsuarioId().equals(propietario)) {
-            throw new CompraNoEncontradaException(id);
-        }
+        exigirPropietario(compra, propietario);
         if (compra.getPagoSimuladoEn() != null) return compra;
         if (!Boolean.TRUE.equals(compra.getRequierePagoSimulado()) || "CANCELADA".equals(compra.getEstado())) {
             throw new DatosInvalidosException("La compra no admite pago simulado");
         }
-        compraGateway.registrarPagoSimulado(id, propietario, Instant.now());
+        boolean primeraConfirmacion = compraGateway.registrarPagoSimulado(id, propietario, Instant.now());
         Compra confirmada = obtenerCompraPorId(id);
         if (confirmada.getPagoSimuladoEn() == null) {
             throw new DatosInvalidosException("La compra no admite pago simulado");
         }
+        if (primeraConfirmacion) {
+            for (ItemCarrito item : compra.getItems()) {
+                ediciones.porProducto(item.getProductoId()).ifPresent(edicion ->
+                        compraGateway.guardarCertificado(id, new CompraGateway.Certificado(
+                                "VT-C-" + UUID.randomUUID().toString().replace("-", "").substring(0, 24).toUpperCase(Locale.ROOT),
+                                edicion.productoId(), item.getNombreProducto(), edicion.serie(), confirmada.getPagoSimuladoEn())));
+            }
+            despuesDeConfirmar.ejecutar(() -> avisarPago(confirmada, propietario));
+        }
         return confirmada;
+    }
+
+    @Override
+    public List<CompraGateway.Certificado> certificados(Long id, Long propietario) {
+        exigirPropietario(obtenerCompraPorId(id), propietario);
+        return compraGateway.certificados(id);
+    }
+
+    private static void exigirPropietario(Compra compra, Long propietario) {
+        if (!compra.getUsuarioId().equals(propietario)) throw new CompraNoEncontradaException(compra.getId());
+    }
+
+    private void avisarPago(Compra compra, Long propietario) {
+        try {
+            Usuario usuario = usuarioGateway.buscarPorId(propietario);
+            if (usuario == null) return;
+            String referencia = "SIM-COMPRA-" + compra.getId();
+            notificacionGateway.enviarNotificacion(MensajeNotificacion.builder()
+                    .tipo(MensajeNotificacion.TipoNotificacion.EMAIL)
+                    .email(NotificacionEmail.builder().usuarioId(propietario).destinatario(usuario.getEmail())
+                            .asunto("Pago simulado registrado · " + referencia)
+                            .cuerpo("Registramos " + compra.getTotal() + " COP de demostración. Consulta el comprobante en tu actividad.")
+                            .build()).build());
+        } catch (RuntimeException e) {
+            log.warn("No se pudo publicar el pago simulado de la compra {}", compra.getId());
+        }
     }
 
     @Override

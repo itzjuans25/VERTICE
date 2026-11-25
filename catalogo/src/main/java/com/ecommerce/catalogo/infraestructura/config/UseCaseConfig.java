@@ -2,6 +2,8 @@ package com.ecommerce.catalogo.infraestructura.config;
 
 import com.ecommerce.catalogo.application.port.in.CarritoService;
 import com.ecommerce.catalogo.application.port.in.CompraService;
+import com.ecommerce.catalogo.application.usecase.ConsultarEdiciones;
+import com.ecommerce.catalogo.domain.port.out.EdicionGateway;
 import com.ecommerce.catalogo.application.port.in.ProductoService;
 import com.ecommerce.catalogo.application.port.out.DespuesDeConfirmar;
 import com.ecommerce.catalogo.application.usecase.InformacionTienda;
@@ -48,11 +50,16 @@ public class UseCaseConfig {
                                        ProductoGateway productoGateway,
                                        UsuarioGateway usuarioGateway,
                                        NotificacionGateway notificacionGateway, DespuesDeConfirmar confirmacion,
-                                       PlatformTransactionManager gestor) {
+                                       EdicionGateway ediciones, PlatformTransactionManager gestor) {
         var caso = new CompraUseCase(compraGateway, carritoGateway, productoGateway, usuarioGateway,
-                notificacionGateway, confirmacion);
+                notificacionGateway, confirmacion, ediciones);
         return transaccional(CompraService.class, caso, gestor, new String[]{"realizarCompra", "cambiarEstado", "pagarSimulado"},
-                "obtenerComprasPorUsuario", "obtenerCompraPorId", "obtenerTodasLasCompras");
+                "obtenerComprasPorUsuario", "obtenerCompraPorId", "obtenerTodasLasCompras", "certificados");
+    }
+
+    @Bean
+    ConsultarEdiciones consultarEdiciones(EdicionGateway ediciones, ProductoGateway productos, CompraGateway compras) {
+        return new ConsultarEdiciones(ediciones, productos, compras);
     }
 
     @Bean

@@ -22,6 +22,12 @@ public interface CompraDataJpaRepository extends JpaRepository<CompraData, Long>
             """)
     int registrarPagoSimulado(Long id, Long propietario, Instant fecha);
 
+    @Query("""
+            select coalesce(sum(i.cantidad), 0) from CompraData c join c.items i
+            where c.usuarioId = :usuarioId and i.productoId = :productoId and c.estado <> 'CANCELADA'
+            """)
+    long unidadesCompradas(Long usuarioId, Long productoId);
+
     @EntityGraph(attributePaths = "items")
     List<CompraData> findByUsuarioIdOrderByFechaCompraDesc(Long usuarioId);
 

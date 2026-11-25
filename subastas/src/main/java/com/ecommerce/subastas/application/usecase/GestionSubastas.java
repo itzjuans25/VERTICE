@@ -9,6 +9,10 @@ import com.ecommerce.subastas.domain.ReglaSubasta;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Optional;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.UUID;
 
 public class GestionSubastas implements Subastas {
     private final RepositorioSubastas repo;
@@ -26,9 +30,13 @@ public class GestionSubastas implements Subastas {
             throw new ReglaSubasta("Verifica las fechas de inicio y cierre.");
         }
         Estado estado = alta.inicio().isAfter(reloj.instant()) ? Estado.PROGRAMADA : Estado.ACTIVA;
-        return repo.insertar(new Lote(0, alta.titulo(), alta.descripcion(), alta.categoria(), alta.condicion(),
-                alta.atributos(), alta.imagenes(), alta.precioInicial(), alta.incremento(), alta.precioInicial(),
-                null, null, actor.email(), estado, alta.inicio(), alta.fin(), 0, 0));
+        var atributos = new LinkedHashMap<>(alta.atributos());
+        atributos.put("Certificado", "VT-S-" + UUID.randomUUID().toString().replace("-", "").substring(0,24).toUpperCase(Locale.ROOT));
+        var lote = new Lote(0, alta.titulo(), alta.descripcion(), alta.categoria(), alta.condicion(),
+                atributos, alta.imagenes(), alta.precioInicial(), alta.incremento(), alta.precioInicial(),
+                null, null, actor.email(), estado, alta.inicio(), alta.fin(), 0, 0);
+        lote.reserva();
+        return repo.insertar(lote);
     }
 
     @Override
@@ -47,6 +55,16 @@ public class GestionSubastas implements Subastas {
     @Override
     public BigDecimal precioActual(long id) {
         return buscar(id, false).precioActual();
+    }
+
+    @Override
+    public Optional<Certificado> verificar(String codigo) {
+        return repo.lotePorCertificado(codigo).map(lote -> {
+            Instant pago = repo.orden(lote.id()).map(Orden::pagada).orElse(null);
+            return new Certificado(codigo, lote.id(), lote.titulo(),
+                    lote.atributos().getOrDefault("Tirada ilustrativa", "Pieza única"),
+                    lote.estado().name(), pago);
+        });
     }
 
     @Override
@@ -86,12 +104,16 @@ public class GestionSubastas implements Subastas {
     @Override
     public Orden pagar(Actor actor, long id) {
         return repo.transaccion(() -> {
-            buscar(id, true);
+            var lote = buscar(id, true);
             var orden = repo.orden(id).orElseThrow(() -> new ReglaSubasta("La subasta no tiene adjudicación."));
             if (orden.usuarioId() != actor.id()) {
                 throw new ReglaSubasta("PROHIBIDO", "La adjudicación pertenece a otra cuenta.");
             }
-            return orden.pagada() == null ? repo.pagar(orden.id(), reloj.instant()) : orden;
+            if (orden.pagada() != null) return orden;
+            var confirmada = repo.pagar(orden.id(), reloj.instant());
+            repo.avisar("pago:" + orden.id(), actor.id(), actor.email(), "Pago simulado registrado · SIM-SUBASTA-" + orden.id(),
+                    "Registramos el pago académico de " + lote.titulo() + ". Consulta el comprobante en tu actividad.");
+            return confirmada;
         });
     }
 
@@ -119,9 +141,9 @@ public class GestionSubastas implements Subastas {
 
     private void cerrar(Lote lote) {
         var cerrada = repo.actualizar(lote.cambiar(Estado.CERRADA));
-        if (cerrada.ganadorId() == null) {
+        if (!cerrada.reservaAlcanzada()) {
             repo.avisar("sin-ganador:" + lote.id(), null, lote.tiendaEmail(), "Subasta cerrada sin ganador",
-                    lote.titulo() + " cerró sin pujas.");
+                    lote.titulo() + (cerrada.pujas() == 0 ? " cerró sin pujas." : " cerró sin alcanzar la reserva."));
             return;
         }
         repo.adjudicar(cerrada);

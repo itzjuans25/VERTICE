@@ -2,33 +2,240 @@
 @import '@fontsource-variable/fraunces';
 @import '@fontsource-variable/jetbrains-mono';
 
+/* Tokens de VÉRTICE derivados de kit-cuspide v2: tema CLARO EDITORIAL (principal). Fuente única: sin valores sueltos. */
 :root {
-  --tech-radius-sm: 8px;
-  --tech-radius: 12px;
-  --tech-radius-lg: 16px;
-  --tech-font: 'Inter Variable', system-ui, sans-serif;
+  --color-fondo: #F6F2EA;
+  --color-superficie: #FFFFFF;
+  --color-superficie-2: #EFE9DE;
+  --color-borde: #DCD3C2;
+  --color-texto: #16130E;
+  --color-texto-suave: #675F51;
+  --color-acento: #7A1F2B;          /* burdeos: enlaces, etiquetas, barras */
+  --color-acento-suave: #A67C2E;    /* oro envejecido: detalles y bordes */
+  --color-texto-sobre-acento: #FFFFFF;
+  --color-boton: #16130E;           /* botón primario: tinta */
+  --color-boton-texto: #F6F2EA;
+  --color-exito: #1F7A4D;
+  --color-aviso: #B45309;           /* subasta: menos de 24 h */
+  --color-error: #B42318;           /* subasta: menos de 1 h */
+  --color-neutro: #675F51;          /* terminada / agotada */
+  --color-edicion: #7A1F2B;
+
+  --fuente-titulo: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --fuente-texto: "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --texto-xs: 0.75rem; --texto-sm: 0.875rem; --texto-md: 1rem; --texto-lg: 1.125rem;
+  --texto-xl: 1.25rem; --texto-2xl: 1.5rem; --texto-3xl: 2rem; --texto-4xl: 2.5rem; --texto-5xl: 3.9rem;
+
+  --espacio-1: 4px; --espacio-2: 8px; --espacio-3: 12px; --espacio-4: 16px;
+  --espacio-5: 24px; --espacio-6: 32px; --espacio-7: 48px; --espacio-8: 64px; --espacio-9: 96px;
+
+  --radio-sm: 8px; --radio-md: 12px; --radio-lg: 16px; --radio-pildora: 999px;
+  --ancho-maximo: 1280px;
+  --transicion: 180ms ease;
+  --anillo-foco: 0 0 0 2px var(--color-fondo), 0 0 0 4px var(--color-acento);
 }
-body { font-family: var(--tech-font); }
-.App :focus-visible { outline: 2px solid var(--tech-accent); outline-offset: 4px; }
-.tech-skip { position: fixed; z-index: 100; top: .5rem; left: .5rem; transform: translateY(-200%); background: var(--tech-accent); color: var(--tech-ink); padding: .5rem .8rem; }
+
+/* Secciones oscuras puntuales (panel de puja, hero de lanzamiento): añade class="tema-oscuro" */
+.tema-oscuro {
+  --color-fondo: #0E1014; --color-superficie: #161A21; --color-superficie-2: #1E232C; --color-borde: #2A313C;
+  --color-texto: #EEF1F5; --color-texto-suave: #A3AEBD; --color-acento: #F2B134; --color-acento-suave: #D99A1F;
+  --color-texto-sobre-acento: #1A1204; --color-boton: #F2B134; --color-boton-texto: #1A1204;
+  --color-exito: #3DD68C; --color-aviso: #FB923C; --color-error: #F87171; --color-neutro: #6B7685;
+  background: var(--color-fondo); color: var(--color-texto);
+}
+
+
+:root {
+  --fuente-mono: "JetBrains Mono Variable", monospace;
+  --color-control: #817567;
+  --color-sombra: rgba(36, 26, 17, 0.12);
+  --color-velo: rgba(255, 255, 255, 0.82);
+  --sin-color: transparent;
+  --esquema-color: light;
+  --radio-sm: 8px;
+  --radio-md: 12px;
+  --radio-lg: 16px;
+  --borde-fino: 1px;
+  --foco-ancho: 2px;
+  --espaciado-titulo: -0.015em;
+  --espaciado-marca: 0.18em;
+  --ancho-lectura: 1250px;
+  --duracion-reducida: 0.01ms;
+  --medida-0-1s: 0.1s;
+  --medida-0-2s: 0.2s;
+  --medida-0-3s: 0.3s;
+  --medida-0-4s: 0.4s;
+  --medida-0-5px: 0.5px;
+  --medida-0-5rem: 0.5rem;
+  --medida-0-5s: 0.5s;
+  --medida-0-6rem: 0.6rem;
+  --medida-0-6s: 0.6s;
+  --medida-0-7s: 0.7s;
+  --medida-0-85rem: 0.85rem;
+  --medida-0-8s: 0.8s;
+  --medida-0deg: 0deg;
+  --medida-1-02rem: 1.02rem;
+  --medida-1-12rem: 1.12rem;
+  --medida-1-1rem: 1.1rem;
+  --medida-1-25rem: 1.25rem;
+  --medida-1-2rem: 1.2rem;
+  --medida-1-3rem: 1.3rem;
+  --medida-1-5px: 1.5px;
+  --medida-1-5rem: 1.5rem;
+  --medida-1-5s: 1.5s;
+  --medida-1-6rem: 1.6rem;
+  --medida-1-8rem: 1.8rem;
+  --medida-100dvh: 100dvh;
+  --medida-100px: 100px;
+  --medida-100vh: 100vh;
+  --medida-105px: 105px;
+  --medida-10px: 10px;
+  --medida-110px: 110px;
+  --medida-112px: 112px;
+  --medida-11px: 11px;
+  --medida-1200px: 1200px;
+  --medida-120px: 120px;
+  --medida-1280px: 1280px;
+  --medida-12px: 12px;
+  --medida-1320px: 1320px;
+  --medida-135deg: 135deg;
+  --medida-135px: 135px;
+  --medida-13em: .13em;
+  --medida-13px: 13px;
+  --medida-1400px: 1400px;
+  --medida-14px: 14px;
+  --medida-150ms: 150ms;
+  --medida-150px: 150px;
+  --medida-15px: 15px;
+  --medida-168px: 168px;
+  --medida-16px: 16px;
+  --medida-175px: 175px;
+  --medida-180deg: 180deg;
+  --medida-18px: 18px;
+  --medida-190px: 190px;
+  --medida-19px: 19px;
+  --medida-1px: 1px;
+  --medida-1rem: 1rem;
+  --medida-1s: 1s;
+  --medida-2-5rem: 2.5rem;
+  --medida-2-65rem: 2.65rem;
+  --medida-2-7s: 2.7s;
+  --medida-20px: 20px;
+  --medida-210px: 210px;
+  --medida-21px: 21px;
+  --medida-22px: 22px;
+  --medida-230px: 230px;
+  --medida-240px: 240px;
+  --medida-245px: 245px;
+  --medida-24px: 24px;
+  --medida-250px: 250px;
+  --medida-25px: 25px;
+  --medida-26px: 26px;
+  --medida-270px: 270px;
+  --medida-280px: 280px;
+  --medida-28px: 28px;
+  --medida-2px: 2px;
+  --medida-2rem: 2rem;
+  --medida-2s: 2s;
+  --medida-3-5rem: 3.5rem;
+  --medida-300px: 300px;
+  --medida-30px: 30px;
+  --medida-320px: 320px;
+  --medida-32px: 32px;
+  --medida-35px: 35px;
+  --medida-360deg: 360deg;
+  --medida-36px: 36px;
+  --medida-38ch: 38ch;
+  --medida-390px: 390px;
+  --medida-3px: 3px;
+  --medida-3rem: 3rem;
+  --medida-400px: 400px;
+  --medida-40px: 40px;
+  --medida-42px: 42px;
+  --medida-435px: 435px;
+  --medida-44px: 44px;
+  --medida-45deg: 45deg;
+  --medida-46px: 46px;
+  --medida-480px: 480px;
+  --medida-48px: 48px;
+  --medida-4rem: .4rem;
+  --medida-4vw: 4vw;
+  --medida-5-2rem: 5.2rem;
+  --medida-5-7vw: 5.7vw;
+  --medida-500px: 500px;
+  --medida-50px: 50px;
+  --medida-520px: 520px;
+  --medida-560px: 560px;
+  --medida-56px: 56px;
+  --medida-5px: 5px;
+  --medida-5rem: 5rem;
+  --medida-5vw: 5vw;
+  --medida-60px: 60px;
+  --medida-65px: 65px;
+  --medida-65rem: .65rem;
+  --medida-65vh: 65vh;
+  --medida-68px: 68px;
+  --medida-6px: 6px;
+  --medida-6vw: 6vw;
+  --medida-70px: 70px;
+  --medida-70vh: 70vh;
+  --medida-740px: 740px;
+  --medida-75rem: .75rem;
+  --medida-75vh: 75vh;
+  --medida-77rem: .77rem;
+  --medida-7px: 7px;
+  --medida-80px: 80px;
+  --medida-82px: 82px;
+  --medida-85px: 85px;
+  --medida-85rem: .85rem;
+  --medida-86px: 86px;
+  --medida-875rem: .875rem;
+  --medida-87rem: .87rem;
+  --medida-880px: 880px;
+  --medida-90deg: 90deg;
+  --medida-92rem: .92rem;
+  --medida-93rem: .93rem;
+  --medida-95rem: .95rem;
+  --medida-9px: 9px;
+  --medida-9rem: .9rem;
+  --medida-neg--035em: -.035em;
+  --medida-neg--055em: -.055em;
+  --medida-neg-20px: -20px;
+  --medida-neg-2px: -2px;
+  --medida-neg-30px: -30px;
+  --medida-neg-40px: -40px;
+  --medida-neg-41px: -41px;
+  --medida-neg-48px: -48px;
+  --medida-neg-4px: -4px;
+  --medida-neg-50px: -50px;
+  --medida-neg-6px: -6px;
+  --medida-neg-8px: -8px;
+}
+.tema-oscuro { --color-control: #8C98AA; --esquema-color: dark; color-scheme: var(--esquema-color); }
+:root, .tema-oscuro {
+  --tech-background: var(--color-fondo); --tech-surface: var(--color-superficie); --tech-raised: var(--color-superficie-2);
+  --tech-border: var(--color-borde); --tech-control: var(--color-control); --tech-text: var(--color-texto);
+  --tech-muted: var(--color-texto-suave); --tech-accent: var(--color-acento); --tech-hover: var(--color-acento);
+  --tech-ink: var(--color-texto-sobre-acento); --tech-success: var(--color-exito); --tech-warn: var(--color-aviso);
+  --tech-error: var(--color-error); --tech-radius-sm: var(--radio-sm); --tech-radius: var(--radio-md);
+  --tech-radius-lg: var(--radio-lg); --tech-font: var(--fuente-texto);
+}
+body, .App { background: var(--color-fondo); color: var(--color-texto); font-family: var(--fuente-texto); color-scheme: var(--esquema-color); }
+.App .navbar { background: var(--color-superficie); border-color: var(--color-borde); box-shadow: none; }
+.App .tt-footer { background: var(--color-superficie); color: var(--color-texto-suave); border-color: var(--color-borde); }
+.App h1, .App h2, .App h3 { font-family: var(--fuente-titulo); letter-spacing: var(--espaciado-titulo); }
+.App .marca-logo { display: inline-flex; align-items: center; gap: var(--espacio-2); color: var(--color-texto); letter-spacing: var(--espaciado-marca); font-weight: 650; }
+.App .marca-logo svg { color: var(--color-acento-suave); flex: none; }
+.App :focus-visible { outline: var(--foco-ancho) solid var(--color-acento); outline-offset: var(--espacio-1); }
+.tech-skip { position: fixed; z-index: 100; top: var(--espacio-2); left: var(--espacio-2); transform: translateY(-200%); background: var(--color-boton); color: var(--color-boton-texto); padding: var(--espacio-2) var(--espacio-3); }
 .tech-skip:focus { transform: none; }
-.App .navbar { position: sticky; top: 0; z-index: 12; }
-.tech-nav-toggle { display: none; }
-#contenido { scroll-margin-top: 90px; }
-
+#contenido { scroll-margin-top: var(--espacio-9); }
+.auction-price, .auction-chip, .tt-card-footer strong, .tt-detail-price, .pago-simulado strong { font-family: var(--fuente-mono); font-variant-numeric: tabular-nums; }
+.App .auction-btn, .App .tt-button { border-radius: var(--radio-pildora); }
+.App a.primary, .App button.primary, .App .tt-button:not(.tt-secondary) { background: var(--color-boton); color: var(--color-boton-texto); }
+.App .auction-chip.ambar { color: var(--color-aviso); }
+.App .auction-chip.rojo, .App .auction-error { color: var(--color-error); }
 @media (prefers-reduced-motion: reduce) {
-  .App *, .App *::before, .App *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; scroll-behavior: auto !important; }
+  .App *, .App *::before, .App *::after { animation-duration: var(--duracion-reducida) !important; transition-duration: var(--duracion-reducida) !important; scroll-behavior: auto !important; }
 }
-
-.App h1,.App h2,.marca-logo { font-family:'Fraunces Variable',Georgia,serif; }
-.marca-logo { display:inline-flex; align-items:center; gap:8px; letter-spacing:.2em; font-family:var(--tech-font); font-weight:650; color:var(--tech-text); }
-.marca-logo svg { color:var(--tech-accent); flex:none; }
-.auction-price,.auction-chip,.tt-card-footer strong,.tt-detail-price { font-family:'JetBrains Mono Variable',monospace; font-variant-numeric:tabular-nums; }
-.vertice-vitrinas { grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); }
-.vertice-curaduria { margin-top:16px; border-inline-start:2px solid var(--tech-accent); }
-.vertice-confirmacion { margin-top:16px; border:1px solid var(--tech-control); border-radius:var(--tech-radius-sm); display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
-.vertice-confirmacion p { flex-basis:100%; }
-
-body,.App { background:var(--tech-background); color:var(--tech-text); }
-.App .navbar { background:var(--tech-surface); border-color:var(--tech-border); box-shadow:none; }
-.App .tt-footer { background:var(--tech-surface); color:var(--tech-muted); border-color:var(--tech-border); }

@@ -9,6 +9,7 @@ import CambiarClave from './components/CambiarClave';
 import Cart from './components/Cart';
 import Layout from './components/Layout';
 import Cuenta, { Avisos, Seguridad } from './components/Cuenta';
+import { Certificados, Lanzamientos } from './components/Ediciones';
 import AdminPanel from './components/AdminPanel';
 import Orders from './components/Orders';
 import { clearSession, getSession, isAdmin } from './session';
@@ -186,6 +187,8 @@ function App() {
           />
 
           <Route path="/" element={<Inicio />} />
+          <Route path="/lanzamientos" element={<Lanzamientos />} />
+          <Route path="/verificar" element={<Certificados />} />
           <Route path="/buscar" element={<Buscar />} />
           <Route path="/categoria/:slug" element={<Categoria />} />
           <Route path="/subastas" element={<Subastas />} />

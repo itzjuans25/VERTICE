@@ -9,6 +9,7 @@ import com.ecommerce.catalogo.domain.model.ItemCarrito;
 import com.ecommerce.catalogo.domain.model.Usuario;
 import com.ecommerce.catalogo.domain.port.out.CarritoGateway;
 import com.ecommerce.catalogo.domain.port.out.CompraGateway;
+import com.ecommerce.catalogo.domain.port.out.EdicionGateway;
 import com.ecommerce.catalogo.domain.port.out.NotificacionGateway;
 import com.ecommerce.catalogo.domain.port.out.ProductoGateway;
 import com.ecommerce.catalogo.domain.port.out.UsuarioGateway;
@@ -49,12 +50,15 @@ class CompraUseCaseTest {
     @Mock
     private NotificacionGateway notificacionGateway;
 
+    @Mock
+    private EdicionGateway ediciones;
+
     private CompraUseCase useCase;
 
     @BeforeEach
     void prepararCaso() {
         useCase = new CompraUseCase(compraGateway, carritoGateway, productoGateway, usuarioGateway,
-                notificacionGateway, Runnable::run);
+                notificacionGateway, Runnable::run, ediciones);
     }
 
     @Test

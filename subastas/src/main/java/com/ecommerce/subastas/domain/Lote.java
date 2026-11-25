@@ -11,10 +11,25 @@ public record Lote(long id, String titulo, String descripcion, Categoria categor
                    Map<String,String> atributos, List<String> imagenes, BigDecimal precioInicial,
                    BigDecimal incremento, BigDecimal precioActual, Long ganadorId, String ganadorEmail,
                    String tiendaEmail, Estado estado, Instant inicio, Instant fin, int pujas, long version) {
-    public enum Categoria { RELOJES, JOYERIA, CARROS, MOTOS, ELECTRONICA, COLECCIONABLES, HOGAR, OTROS, DEPORTES, MODA, HERRAMIENTAS }
+    public enum Categoria { CALZADO, RELOJES, JOYERIA, CARROS, MOTOS, ELECTRONICA, COLECCIONABLES, HOGAR, OTROS, DEPORTES, MODA, HERRAMIENTAS }
     public enum Condicion { NUEVO, USADO }
 
     public BigDecimal pujaMinima() { return precioActual.add(incremento); }
+
+    public BigDecimal reserva() {
+        String valor = atributos.get("Reserva COP");
+        if (valor == null) return precioInicial;
+        if (!valor.matches("[1-9][0-9]{0,12}(\\.[0-9]{1,2})?")) {
+            throw new ReglaSubasta("La reserva debe ser un importe positivo en COP.");
+        }
+        BigDecimal reserva = new BigDecimal(valor);
+        if (reserva.compareTo(precioInicial) < 0) throw new ReglaSubasta("La reserva no puede ser inferior al precio de salida.");
+        return reserva;
+    }
+
+    public boolean reservaAlcanzada() {
+        return pujas > 0 && precioActual.compareTo(reserva()) >= 0;
+    }
 
     public Lote cambiar(Estado destino) {
         estado.exigirTransicion(destino);

@@ -35,12 +35,12 @@ export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
   const condicion = item.condicion === 'USADO' ? 'Usado' : 'Nuevo';
   const precio = lote?.precioActual ?? producto?.precio;
   const ficha = lote ? nombresCategorias[item.categoria] : producto.categoria;
-  return <article className="tt-card product-card mercado-card">
+  return <article className={'tt-card product-card mercado-card ' + (lote ? 'tarjeta-lote' : 'tarjeta-producto')}>
     <Link className="tt-card-image" to={enlace} tabIndex={-1} aria-hidden="true">
-      <img src={lote ? lote.imagenes[0] : imagenProducto(producto.imagenUrl,producto.nombre)} alt="" width="424" height="318" loading="lazy" />
+      <img src={lote ? lote.imagenes[0] : imagenProducto(producto.imagenUrl,producto.nombre)} alt={'Vista de ' + nombre} width="424" height="318" loading="lazy" />
     </Link>
     <div className="tt-card-body">
-      <div className="tt-etiquetas"><span>{condicion}</span>{producto?.grado && <span>Grado {producto.grado}</span>}</div>
+      <div className="tt-etiquetas">{lote && <span>Pieza única</span>}<span>{condicion}</span>{producto?.grado && <span>Grado {producto.grado}</span>}</div>
       <h3><Link to={enlace}>{nombre}</Link></h3>
       <p className="tt-detalle-menor">{ficha}{producto?.garantiaDias > 0 ? ' · ' + producto.garantiaDias + ' días de garantía' : ''}</p>
       <div className="tt-card-footer">
@@ -53,6 +53,7 @@ export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
         <span>{lote.pujas ? 'Oferta líder' : 'Salida'} · {estados[lote.estado]}</span>
         <Cierre lote={lote} />
         <span>Incremento {cop.format(lote.incremento)}{lote.estado === 'ACTIVA' && ' · +2 min al pujar en los últimos 2 min'}</span>
+        <span>{lote.reservaAlcanzada ? 'Reserva alcanzada' : 'Reserva no alcanzada'}</span>
         <p><strong>Por qué se subasta</strong><br />{lote.atributos?.['Por qué se subasta'] || 'Consulta el contexto en la ficha.'}</p>
         {['CARROS', 'MOTOS'].includes(lote.categoria) && <span>Demostración académica · Sin traspaso real</span>}
       </div>}

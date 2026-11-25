@@ -11,6 +11,7 @@ public interface RepositorioSubastas {
     <T> T transaccion(Supplier<T> accion);
     Lote insertar(Lote lote);
     Optional<Lote> lote(long id, boolean bloquear);
+    Optional<Lote> lotePorCertificado(String codigo);
     Lote actualizar(Lote lote);
     Pagina listar(Filtro filtro);
     Inicio inicio(Instant ahora);

@@ -91,6 +91,7 @@ function Orders({ user }) {
               {compra.pagoSimulado && <PagoSimulado
                 referencia={compra.pagoSimulado.referencia} monto={compra.total}
                 referenciaUsd={compra.referenciaUsd} pagadoEn={compra.pagoSimulado.pagadoEn}
+                certificados={() => catalogoApi.compras.certificados(compra.id)}
                 confirmar={async () => (await catalogoApi.compras.pagar(compra.id)).pagoSimulado.pagadoEn} />}
               <div className="order-items">
                 <h4>Productos</h4>

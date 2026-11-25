@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -15,6 +16,7 @@ public class CompraDataGatewayImpl implements CompraGateway {
 
     private final CompraDataJpaRepository repository;
     private final MapperCompra mapper;
+    private final CertificadoDataRepository certificados;
 
     @Override
     public Compra guardar(Compra compra) {
@@ -49,7 +51,20 @@ public class CompraDataGatewayImpl implements CompraGateway {
     }
 
     @Override
-    public void registrarPagoSimulado(Long id, Long propietario, Instant fecha) {
-        repository.registrarPagoSimulado(id, propietario, fecha);
+    public boolean registrarPagoSimulado(Long id, Long propietario, Instant fecha) {
+        return repository.registrarPagoSimulado(id, propietario, fecha) == 1;
+    }
+
+    @Override public long unidadesCompradas(Long usuarioId, Long productoId) {
+        return repository.unidadesCompradas(usuarioId, productoId);
+    }
+    @Override public void guardarCertificado(Long compraId, Certificado certificado) {
+        certificados.save(new CertificadoData(compraId, certificado));
+    }
+    @Override public Optional<Certificado> certificadoPorCodigo(String codigo) {
+        return certificados.findById(codigo).map(CertificadoData::toDomain);
+    }
+    @Override public List<Certificado> certificados(Long compraId) {
+        return certificados.findAllByCompraIdOrderByProductoId(compraId).stream().map(CertificadoData::toDomain).toList();
     }
 }

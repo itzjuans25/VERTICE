@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { FaSearch, FaShoppingCart } from 'react-icons/fa';
 import Logo from './Logo';
 import { isAdmin } from '../session';
-import { categoriasMercado } from '../categorias';
 import './Navbar.css';
 
 export default function Navbar({ user, onLogout, cartCount }) {
@@ -29,10 +28,14 @@ export default function Navbar({ user, onLogout, cartCount }) {
       </form>
       <button className="tech-nav-toggle" type="button" aria-controls="mercado-navigation" aria-expanded={abierto} onClick={() => abrir(!abierto)}>{abierto ? 'Cerrar menú' : 'Menú'}</button>
       <nav id="mercado-navigation" aria-label="Navegación principal" className={'nav-menu' + (abierto ? ' tech-open' : '')}>
+        <NavLink to="/" end className="nav-link">Inicio</NavLink>
+        <NavLink to="/lanzamientos" className="nav-link">Lanzamientos</NavLink>
         <NavLink to="/subastas" className="nav-link nav-subastas">Subastas</NavLink>
-        <details className="mercado-menu-categorias" key={ubicacion.key + '-categorias'}>
-          <summary>Categorías</summary><div>{categoriasMercado.map(c => <Link key={c.slug} to={'/categoria/' + c.slug + '?ver=subastas'}>{c.nombre}</Link>)}</div>
-        </details>
+        <NavLink to="/productos" className="nav-link">Tienda</NavLink>
+        <Link to="/#como-funciona" className="nav-link">Cómo funciona</Link>
+        {!isAdmin(user) && <NavLink to="/carrito" className="nav-link" aria-label="Carrito">
+          <FaShoppingCart aria-hidden="true" />{cartCount > 0 && <span className="mercado-contador">{cartCount}</span>}
+        </NavLink>}
 
         {user ? <details className="mercado-cuenta" key={ubicacion.key}>
           <summary>{user.nombre || 'Cuenta'}</summary>
@@ -40,12 +43,6 @@ export default function Navbar({ user, onLogout, cartCount }) {
             {isAdmin(user) && <><Link to="/admin">Administrar tienda</Link><Link to="/admin/subastas">Administrar lotes</Link></>}
             <button type="button" onClick={() => { onLogout(); abrir(false); }}>Cerrar sesión</button></div>
         </details> : <><Link to="/login" className="nav-link">Iniciar sesión</Link><Link to="/register" className="nav-link">Registrarse</Link></>}
-              <details className="mercado-menu-categorias nav-archivo" key={ubicacion.key + '-archivo'}>
-          <summary>Catálogo</summary>
-          <div><Link to="/productos">Compra directa</Link>
-            {!isAdmin(user) && <Link to="/carrito"><FaShoppingCart aria-hidden="true" /> Carrito {cartCount > 0 && <span className="mercado-contador">{cartCount}</span>}</Link>}
-          </div>
-        </details>
       </nav>
     </div>
   </header>;

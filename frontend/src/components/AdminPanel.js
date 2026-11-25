@@ -194,17 +194,7 @@ function AdminPanel() {
                   />
                 </div>
               )}
-              <small
-                style={{
-                  color: '#a0a0a0',
-                  fontSize: '12px',
-                  display: 'block',
-                  marginTop: '8px',
-                }}
-              >
-                Ingresa la URL de una imagen (puede ser de Google Images,
-                Imgur, etc.)
-              </small>
+              <small className="ayuda-imagen">Usa la ruta de una imagen local publicada en la galería.</small>
             </div>
 
             <div className="form-row">

@@ -93,7 +93,7 @@ export default function ProductList({ user, setCartCount }) {
         <h2>Nuestros productos</h2>
         {estado.resultado && <span aria-live="polite">{estado.resultado.total} resultados</span>}
       </div>
-      <FiltrosMercado key={reinicio} categorias={categoriasMercado.map(c => [c.slug,c.nombre])} marcas={marcas} alBuscar={aplicar} alLimpiar={limpiar} />
+      <FiltrosMercado key={reinicio} categorias={categoriasMercado.filter(c => c.tienda.length).map(c => [c.slug,c.nombre])} marcas={marcas} alBuscar={aplicar} alLimpiar={limpiar} />
       {mensaje && <p className="tt-aviso" role={mensaje.error ? 'alert' : 'status'}>{mensaje.texto}</p>}
       <EstadoMercado estado={{ cargando:estado.carga, error:estado.error }} reintentar={() => setReintento(v => v+1)}
         vacio={estado.resultado?.items.length === 0 ? 'No hay productos con estos filtros.' : ''} />
