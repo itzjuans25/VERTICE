@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { catalogoApi, imagenProducto } from '../api/catalogoApi';
@@ -24,7 +25,7 @@ export default function ProductDetail({ user, setCartCount }) {
         const producto = await catalogoApi.productos.obtener(id);
         if (vigente) {
           setEstado({ producto });
-          document.title = producto.nombre + ' | TechStore';
+          document.title = tituloMarca(producto.nombre);
         }
       } catch (error) {
         if (vigente && (inicial || error.status === 404)) setEstado({ error: error.message });

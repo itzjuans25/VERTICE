@@ -1,4 +1,4 @@
-# Guion de sustentación de TechStore
+# Guion de sustentación de Remata
 
 **1. Arquitectura, 1 minuto.** Abre la tienda y los cuatro Swagger. Auth emite JWT, Catálogo maneja inventario y pedidos, Subastas valida ofertas y adjudica lotes, y Notificaciones entrega avisos. PostgreSQL conserva los datos y RabbitMQ transporta los mensajes.
 

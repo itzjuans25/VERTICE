@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowRight, FaSearch, FaShoppingCart } from 'react-icons/fa';
@@ -54,7 +55,7 @@ export default function ProductList({ user, setCartCount }) {
   });
 
   useEffect(() => {
-    document.title = 'TechStore | Tienda de tecnología';
+    document.title = tituloMarca();
     catalogoApi.productos.categorias().then(setCategorias).catch(() => setCategorias([]));
     catalogoApi.productos.marcas().then(setMarcas).catch(() => setMarcas([]));
   }, []);

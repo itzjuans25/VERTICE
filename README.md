@@ -1,4 +1,4 @@
-# TechStore
+# Remata
 
 Tienda colombiana de computadores, componentes y electrónica nueva y usada, con subastas de ocho categorías. La tienda administra el inventario, publica los lotes y atiende los pedidos. El nombre del repositorio sigue siendo ECOMMERCE_FRANK.
 

@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useCallback, useEffect, useState } from 'react';
 import './AdminPanel.css';
 import Toast from './Toast';
@@ -15,7 +16,7 @@ const FORMULARIO_VACIO = {
 };
 
 function AdminPanel() {
-  useEffect(() => { document.title = 'Administración | TechStore'; }, []);
+  useEffect(() => { document.title = tituloMarca('Administración'); }, []);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

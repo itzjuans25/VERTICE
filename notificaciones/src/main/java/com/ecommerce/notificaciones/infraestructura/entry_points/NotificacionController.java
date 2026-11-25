@@ -39,7 +39,7 @@ public class NotificacionController {
 
     @PostMapping("/previsualizar/bienvenida")
     public NotificacionEmail bienvenida(@RequestBody Bienvenida solicitud) {
-        return vista("Bienvenido a TechStore", "Hola " + nombre(solicitud.nombre()) + ". Tu cuenta está lista.");
+        return vista("Bienvenido a Remata", "Hola " + nombre(solicitud.nombre()) + ". Tu cuenta está lista.");
     }
 
     @PostMapping("/previsualizar/compra")

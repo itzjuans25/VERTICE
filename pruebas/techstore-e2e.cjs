@@ -96,7 +96,7 @@ async function main() {
     await page.locator('.tt-detail-image').evaluate(img => img.decode());
     await page.getByText('Especificaciones técnicas').waitFor();
     await page.getByText(/Frankfurter · Tasa/).waitFor();
-    assert.equal(await page.title(), candidato.nombre + ' | TechStore');
+    assert.equal(await page.title(), candidato.nombre + ' | Remata');
     await captura('detalle');
 
     await page.getByRole('button', { name: 'Agregar al carrito' }).click();
@@ -147,7 +147,7 @@ async function main() {
       const res = await fetch(mailpit + '/api/v1/search?query=' + encodeURIComponent('to:' + email));
       assert.ok(res.ok);
       const datos = await res.json();
-      mensaje = datos.messages.find(m => m.Subject === 'Confirmacion de Compra #' + pedido.id);
+      mensaje = datos.messages.find(m => m.Subject === 'Confirmacion de Compra #' + pedido.id + ' · Remata');
       if (mensaje) break;
       await new Promise(resolve => setTimeout(resolve, 700));
     }

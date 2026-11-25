@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useCallback, useEffect, useState } from 'react';
 import './Orders.css';
 import { catalogoApi } from '../api/catalogoApi';
@@ -5,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { FaBoxOpen } from 'react-icons/fa';
 
 function Orders({ user }) {
-  useEffect(() => { document.title = 'Mis compras | TechStore'; }, []);
+  useEffect(() => { document.title = tituloMarca('Mis compras'); }, []);
   const [compras, setCompras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

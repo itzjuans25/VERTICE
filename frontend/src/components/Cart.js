@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useCallback, useEffect, useState } from 'react';
 import './Cart.css';
 import Toast from './Toast';
@@ -19,7 +20,7 @@ import { Link } from 'react-router-dom';
 let toastSequence = 0;
 
 function Cart({ setCartCount }) {
-  useEffect(() => { document.title = 'Mi carrito | TechStore'; }, []);
+  useEffect(() => { document.title = tituloMarca('Mi carrito'); }, []);
   const [carrito, setCarrito] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

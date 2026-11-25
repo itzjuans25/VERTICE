@@ -1,4 +1,4 @@
-# Revisión final de TechStore
+# Revisión final de Remata
 
 ## Rama subastas, 24 de noviembre de 2026
 

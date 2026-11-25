@@ -1,10 +1,11 @@
+import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 import { authApi } from '../api/authApi';
 
 function Register() {
-  useEffect(() => { document.title = 'Registrarse | TechStore'; }, []);
+  useEffect(() => { document.title = tituloMarca('Registrarse'); }, []);
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',

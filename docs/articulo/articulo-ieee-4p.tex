@@ -2,18 +2,18 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{booktabs,tabularx,graphicx,url}
-\title{TechStore: comercio electrónico y subastas con cuatro microservicios}
+\title{Remata: comercio electrónico y subastas con cuatro microservicios}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \begin{document}
 \maketitle
 \begin{abstract}
-TechStore integra una tienda de tecnología y subastas administradas por la tienda. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 43 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales devolvieron los códigos esperados y excedieron el máximo académico de 500 ms.
+Remata integra una tienda de tecnología y subastas administradas por la tienda. Cuatro servicios gestionan cuentas, catálogo, pujas y notificaciones sobre PostgreSQL. Se verificaron inventario, adjudicación, correo en Mailpit y latencia de 43 rutas. Los escenarios de 3, 6 y 8 usuarios virtuales devolvieron los códigos esperados y excedieron el máximo académico de 500 ms.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, subastas, microservicios, concurrencia, PostgreSQL
 \end{IEEEkeywords}
 \section{Introducción}
-El inventario de una tienda necesita preservar el precio de una compra y evitar que dos personas adquieran la misma unidad. Una subasta exige resolver además quién ofrece el monto más alto en un plazo limitado. TechStore reúne ambos recorridos en un sitio React con precios en COP. En la tienda, la confirmación registra una compra y descuenta inventario en la misma transacción. En las subastas, la orden de adjudicación habilita un pago simulado. Los lotes de vehículos y joyería son ejemplos ficticios.
+El inventario de una tienda necesita preservar el precio de una compra y evitar que dos personas adquieran la misma unidad. Una subasta exige resolver además quién ofrece el monto más alto en un plazo limitado. Remata reúne ambos recorridos en un sitio React con precios en COP. En la tienda, la confirmación registra una compra y descuenta inventario en la misma transacción. En las subastas, la orden de adjudicación habilita un pago simulado. Los lotes de vehículos y joyería son ejemplos ficticios.
 
 \section{Arquitectura y tecnologías}
 Auth valida contraseñas, controla intentos de login y emite JWT. Catálogo administra información, filtros, inventario, carrito y compras. Subastas administra lotes, pujas, adjudicaciones y el pago simulado. Notificaciones prepara y envía avisos y conserva reintentos y cola de errores. Los cuatro servicios se ejecutan con Java 17 y Spring Boot. Los adaptadores permiten que el dominio y los casos de uso prescindan de dependencias Spring, JPA o AMQP. ArchUnit comprueba esa separación.
@@ -25,7 +25,7 @@ Auth, Catálogo, Subastas $\rightarrow$ RabbitMQ\\
 RabbitMQ $\rightarrow$ Notificaciones $\rightarrow$ Mailpit/Brevo\\
 Los cuatro servicios $\rightarrow$ PostgreSQL
 \end{tabular}\\
-Fig. 1. Componentes de TechStore.
+Fig. 1. Componentes de Remata.
 \end{center}
 
 PostgreSQL conserva cuenta, producto, carrito, compra, lote, puja, adjudicación y avisos. La tabla de pujas y la orden referencian al lote. Los identificadores de usuario se usan como referencias lógicas a Auth. Catálogo usa Frankfurter para mostrar un equivalente en USD y Nager.Date para excluir festivos al calcular la entrega. Las consultas externas fallidas generan una respuesta con datos parciales o un aviso en la ficha.

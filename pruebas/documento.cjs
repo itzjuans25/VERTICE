@@ -19,7 +19,7 @@ async function main() {
     .map(name => '<figure><img src="' + pathToFileURL(path.resolve(directory, name)).href + '"><figcaption>' + name.slice(0, -4).replace(/-/g, ' ') + '</figcaption></figure>').join('');
   const rootUrl = pathToFileURL(path.resolve('.') + path.sep).href;
   const html = '<!doctype html><html lang="es"><meta charset="utf-8"><base href="' + rootUrl + '">' +
-    '<title>Guía de TechStore</title><style>' +
+    '<title>Guía de Remata</title><style>' +
     '@page{size:A4;margin:17mm 17mm 19mm}body{font:11pt/1.45 "Segoe UI",sans-serif;color:#17202c}' +
     'h1,h2,h3{color:#25354c;break-after:avoid}h1{border-bottom:2px solid #298ba6}a{color:#215482}' +
     'table{border-collapse:collapse;width:100%;font-size:9.5pt}thead{display:table-header-group}' +

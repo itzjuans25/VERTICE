@@ -1,4 +1,4 @@
-# Publicar la demo de TechStore
+# Publicar la demo de Remata
 
 La tienda React se aloja en Vercel Hobby. Render ejecuta los cuatro JAR, Neon guarda los datos persistentes, CloudAMQP enruta eventos y Brevo entrega correos. La demo local usa PostgreSQL, RabbitMQ y Mailpit. La publicación requiere las cuentas del propietario.
 

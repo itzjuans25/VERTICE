@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { subastasApi as api } from '../api/subastasApi';
@@ -51,8 +52,8 @@ function useConsulta(consulta, sondeo = false) {
 
 function Titulo({ children }) {
   useEffect(() => {
-    document.title = children + ' | TechStore';
-    return () => { document.title = 'TechStore'; };
+    document.title = tituloMarca(children);
+    return () => { document.title = tituloMarca(); };
   }, [children]);
   return <h1>{children}</h1>;
 }
@@ -107,7 +108,7 @@ export function Inicio() {
 
   return <main id="principal" className="auction-page">
     <section className="auction-hero">
-      <div><Titulo>Tienda y subastas TechStore</Titulo>
+      <div><Titulo>Tienda y subastas</Titulo>
         <p>Compra tecnología nueva y usada o presenta tu oferta en los lotes de la tienda.</p>
         <div className="auction-row">
           <Link className="auction-btn primary" to="/productos">Ver tienda</Link>

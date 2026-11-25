@@ -14,6 +14,8 @@ import { clearSession, getSession, isAdmin } from './session';
 import { catalogoApi, contarItems } from './api/catalogoApi';
 import { SESSION_EXPIRED_EVENT } from './api/client';
 import './tokens.css';
+import Logo from './components/Logo';
+import { marca } from './marca';
 
 const rutaSubastas = nombre => lazy(() => import('./components/Subastas').then(modulo => ({ default: modulo[nombre] })));
 const Inicio = rutaSubastas('Inicio');
@@ -177,8 +179,8 @@ function App() {
         </Suspense>
         </div>
         <footer className="tt-footer">
-          <span>TechStore</span>
-          <span>Tecnología nueva y usada · Precios en COP</span>
+          <Logo />
+          <span>{marca.lema} · Precios en COP</span>
         </footer>
       </div>
     </Router>

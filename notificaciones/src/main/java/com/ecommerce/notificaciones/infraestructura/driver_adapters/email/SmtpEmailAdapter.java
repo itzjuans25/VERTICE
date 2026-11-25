@@ -38,7 +38,7 @@ public class SmtpEmailAdapter implements EmailGateway {
 
     public SmtpEmailAdapter(JavaMailSender mailSender,
                             @Value("${app.mail.from:no-reply@ecommerce.local}") String from,
-                            @Value("${app.mail.from-name:TechStore}") String fromName) {
+                            @Value("${app.mail.from-name:Remata}") String fromName) {
         this.mailSender = mailSender;
         this.from = from;
         this.fromName = fromName;

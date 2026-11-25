@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Auth.css';
@@ -16,7 +17,7 @@ function Login({ onLogin }) {
   const successMessage = new URLSearchParams(location.search).get('clave') === 'actualizada'
     ? 'Contraseña actualizada. Inicia sesión con la nueva.'
     : location.state?.message || '';
-  useEffect(() => { document.title = 'Iniciar sesión | TechStore'; }, []);
+  useEffect(() => { document.title = tituloMarca('Iniciar sesión'); }, []);
 
   const handleChange = (e) => {
     setFormData({

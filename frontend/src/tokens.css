@@ -1,19 +1,7 @@
 @import '@fontsource-variable/inter';
+@import '@fontsource-variable/fraunces';
 
 :root {
-  --tech-background: #0b0f14;
-  --tech-surface: #121923;
-  --tech-raised: #18212d;
-  --tech-border: #243042;
-  --tech-control: #667991;
-  --tech-text: #e6edf5;
-  --tech-muted: #9aa9bc;
-  --tech-accent: #22d3ee;
-  --tech-hover: #06b6d4;
-  --tech-ink: #04222a;
-  --tech-success: #34d399;
-  --tech-warn: #fbbf24;
-  --tech-error: #f87171;
   --tech-radius-sm: 8px;
   --tech-radius: 12px;
   --tech-radius-lg: 16px;
@@ -35,3 +23,11 @@ body { font-family: var(--tech-font); }
 @media (prefers-reduced-motion: reduce) {
   .App *, .App *::before, .App *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+.App h1,.App h2,.marca-logo { font-family:'Fraunces Variable',Georgia,serif; }
+.marca-logo { display:inline-flex; align-items:center; gap:8px; letter-spacing:-.025em; font-weight:650; color:var(--tech-text); }
+.marca-logo svg { color:var(--tech-text); flex:none; }
+
+body,.App { background:var(--tech-background); color:var(--tech-text); }
+.App .navbar { background:var(--tech-surface); border-color:var(--tech-border); box-shadow:none; }
+.App .tt-footer { background:var(--tech-surface); color:var(--tech-muted); border-color:var(--tech-border); }

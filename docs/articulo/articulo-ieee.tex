@@ -3,14 +3,14 @@
 \usepackage[T1]{fontenc}
 \usepackage{booktabs,tabularx,graphicx,url}
 \input{metricas-techstore.tex}
-\title{TechStore: comercio electrónico y subastas con cuatro microservicios}
+\title{Remata: comercio electrónico y subastas con cuatro microservicios}
 \author{\IEEEauthorblockN{Equipo del proyecto ECOMMERCE\_FRANK}}
 \newcommand{\captura}[2]{\begin{center}\includegraphics[width=\columnwidth]{#1}\\[2pt]\footnotesize #2\end{center}}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-TechStore reúne una tienda colombiana de tecnología y un mercado de subastas administrado por la tienda. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
+Remata reúne una tienda colombiana de tecnología y un mercado de subastas administrado por la tienda. Cuatro microservicios separan identidad, inventario y compras, lotes y pujas, y notificaciones. PostgreSQL conserva las transacciones y RabbitMQ distribuye los avisos, comprobados con Mailpit. La revisión de subastas midió 43 rutas con k6 y verificó concurrencia, cierre y entrega de correo. En tres perfiles hubo respuestas por encima de 500 ms, aunque las peticiones devolvieron los códigos esperados. El pago de adjudicaciones es simulado.
 \end{abstract}
 \begin{IEEEkeywords}
 comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
@@ -19,16 +19,16 @@ comercio electrónico, microservicios, catálogo, PostgreSQL, RabbitMQ
 \section{Introducción}
 Una tienda que vende tecnología nueva y usada administra mercancía, cantidades y condiciones. En artículos usados, la ficha debe comunicar el grado, la garantía y la compatibilidad sin ocultar la diferencia entre un anuncio y una unidad física. Se adoptó como alcance una tienda con inventario propio y gestión centralizada de pedidos.
 
-TechStore amplía una aplicación académica con registro, sesión, carrito e historial. El catálogo muestra computadores ensamblados, componentes, periféricos, teléfonos, consolas y artículos de segunda mano. Los precios se expresan en pesos colombianos. La operación de compra registra un pedido y descuenta inventario. El pago y el despacho físico quedan fuera del recorrido académico.
+Remata amplía una aplicación académica con registro, sesión, carrito e historial. El catálogo muestra computadores ensamblados, componentes, periféricos, teléfonos, consolas y artículos de segunda mano. Los precios se expresan en pesos colombianos. La operación de compra registra un pedido y descuenta inventario. El pago y el despacho físico quedan fuera del recorrido académico.
 
 La evaluación se organizó en tres preguntas. La primera comprueba si se puede filtrar, comprar, consultar el pedido y recibir correo en un entorno persistente. La segunda verifica el objetivo de cobertura de líneas superior al 80\,\% en cada servicio. La tercera revisa qué rutas rompen el umbral de 500\,ms y presta atención al costo de autenticar el cambio de clave.
 
 Se conservan los registros históricos y nuevos por perfil. El repositorio incorpora el código de la prueba, los resultados de operación y capturas de los pasos ejecutados. Así se pueden reproducir los escenarios al cambiar de equipo, JVM o red.
 
 \section{Trabajos relacionados}
-Lewis y Fowler describen una organización de servicios alrededor de capacidades de negocio \cite{micro}. TechStore aplica esa separación a identidad, compra y avisos. Una sola instalación PostgreSQL simplifica la demostración. Cada servicio conserva un proceso y artefacto de despliegue propios.
+Lewis y Fowler describen una organización de servicios alrededor de capacidades de negocio \cite{micro}. Remata aplica esa separación a identidad, compra y avisos. Una sola instalación PostgreSQL simplifica la demostración. Cada servicio conserva un proceso y artefacto de despliegue propios.
 
-El patrón de bandeja transaccional descrito por Richardson persiste el evento antes de publicarlo \cite{outbox}. TechStore emplea una bandeja para las solicitudes aceptadas por la API de Notificaciones. Catálogo emite sus avisos tras confirmar su propia transacción. La ventana entre confirmar los datos y publicar un evento del dominio sigue siendo un punto para evolucionar.
+El patrón de bandeja transaccional descrito por Richardson persiste el evento antes de publicarlo \cite{outbox}. Remata emplea una bandeja para las solicitudes aceptadas por la API de Notificaciones. Catálogo emite sus avisos tras confirmar su propia transacción. La ventana entre confirmar los datos y publicar un evento del dominio sigue siendo un punto para evolucionar.
 
 PostgreSQL proporciona operadores e índices por trigramas para apoyar búsquedas por patrón \cite{trgm}. Argon2id permite configurar costo de CPU y memoria para derivar un hash de contraseña \cite{argon}. OWASP documenta una configuración de referencia de 19 MiB, dos iteraciones y paralelismo uno \cite{owasp}. Se usa ese perfil para las contraseñas nuevas y se sigue verificando BCrypt para las cuentas existentes.
 
@@ -118,7 +118,7 @@ Cada usuario realiza un recorrido con registro de cuenta, sesión, rotación de 
 Se reportan promedio, p95, p99, máximo, errores y peticiones por segundo \cite{k6}. El p95 describe la posición debajo de la cual se ubica aproximadamente el 95\,\% de las muestras. El máximo por ruta responde a la condición estricta de 500\,ms. Un máximo superior cuenta aunque el promedio sea menor. Las medidas por solicitud empiezan después del calentamiento y cubren los recorridos completados durante la ventana de prueba.
 
 \subsection{Diseño de comparación}
-Los registros históricos de 33 rutas son una referencia del estado anterior. Con tres usuarios se observó un máximo de 685,62 ms en cambio de clave. Con seis alcanzó 715,10 ms. El guion TechStore amplía el recorrido y tiene un catálogo diferente. Comparar esas cifras directamente no permite aislar un efecto del algoritmo. Las ejecuciones históricas difieren en recorrido, versión del catálogo y ventana de medición.
+Los registros históricos de 33 rutas son una referencia del estado anterior. Con tres usuarios se observó un máximo de 685,62 ms en cambio de clave. Con seis alcanzó 715,10 ms. El guion Remata amplía el recorrido y tiene un catálogo diferente. Comparar esas cifras directamente no permite aislar un efecto del algoritmo. Las ejecuciones históricas difieren en recorrido, versión del catálogo y ventana de medición.
 
 Durante la revisión se priorizó mantener el costo de Argon2id y probar mayor margen de heap y procesadores visibles para Auth. Se conservan las series antes y después. Los perfiles se ejecutan secuencialmente, sin compilar ni ejecutar el recorrido del navegador en paralelo. Para atribuir diferencias a una sola causa se requieren repeticiones con una base clonada y trazas por fase.
 
@@ -143,7 +143,7 @@ El cambio de clave realiza una verificación y deriva otra contraseña. El login
 El listado paginado de productos controla la cardinalidad de respuesta y aplica los filtros en la base de datos. El listado heredado de productos y el listado de compras administrativas se mantienen para compatibilidad. Si se desea comparar esos recorridos entre entornos, debe controlarse la cantidad acumulada de registros. Las compras de k6 se guardan en una base de desarrollo y no se reutilizan como evidencia comercial.
 
 \subsection{Evidencia del catálogo}
-\captura{../capturas/techstore-tienda.png}{Fig. 3. Catálogo TechStore con filtros en Windows.}
+\captura{../capturas/techstore-tienda.png}{Fig. 3. Catálogo Remata con filtros en Windows.}
 La búsqueda en servidor permite comprobar marca, categoría y condición sin depender de la página que estaba visible. El recorrido abre una ficha de segunda mano y cambia a la vista secundaria. Antes de confirmar, el carrito consolida unidades y calcula el total en pesos colombianos.
 
 \subsection{Evidencia de correo}
@@ -196,7 +196,7 @@ Se midió una sola ubicación Windows. La ejecución no representa tráfico púb
 El despliegue en Render y el uso de SMTP fuera de Mailpit requieren cuentas y credenciales que no se usaron en este experimento. Mailpit captura el correo de prueba. El modo SMS registra simulaciones en la base. No se extrapolan resultados de entrega comercial a partir de esos entornos.
 
 \section{Conclusiones y trabajo futuro}
-TechStore ejecuta el recorrido de búsqueda, compra e historial con avisos al cliente. Los registros muestran qué perfiles y rutas satisfacen o exceden el objetivo temporal. Los principales elementos para reproducir la evaluación son el guion k6, las salidas JaCoCo, las imágenes del flujo real y las instrucciones Windows.
+Remata ejecuta el recorrido de búsqueda, compra e historial con avisos al cliente. Los registros muestran qué perfiles y rutas satisfacen o exceden el objetivo temporal. Los principales elementos para reproducir la evaluación son el guion k6, las salidas JaCoCo, las imágenes del flujo real y las instrucciones Windows.
 
 Las siguientes tareas comprenden verificar Render y proveedores reales cuando se necesite un enlace público y diseñar perfiles más largos con control de recursos. La evolución del servicio puede medir el cambio de clave por fase, usar un registro de entrega persistente y extender el patrón de bandeja a las transacciones emisoras.
 

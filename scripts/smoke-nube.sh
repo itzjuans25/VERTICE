@@ -15,7 +15,7 @@ esperar() {
     resto=$((limite-SECONDS)); if (( resto > 5 )); then resto=5; fi
     if dato=$(curl -fsS --max-time "$resto" "$1" 2>/dev/null); then
       if [[ "$2" == web ]]; then
-        if grep -q TechStore <<<"$dato"; then return; fi
+        if grep -q Remata <<<"$dato"; then return; fi
       elif jq -e '.status == "UP"' <<<"$dato" >/dev/null 2>&1; then return; fi
     fi
     if (( SECONDS+2 < limite )); then sleep 2; fi
@@ -33,7 +33,7 @@ cuenta=$(jq -nc --arg email "smoke-$marca@example.test" --arg clave "Smoke-!$mar
 a="$a/api/ecommerce/usuario"; c="$c/api/ecommerce"
 http=(-fsS --max-time 20); json=(-H 'Content-Type: application/json')
 paso=Registro
-registro=$(jq -c '. + {nombre:"Smoke TechStore"}' <<<"$cuenta")
+registro=$(jq -c '. + {nombre:"Smoke Remata"}' <<<"$cuenta")
 r=$(curl "${http[@]}" "${json[@]}" -d "$registro" "$a/save")
 jq -e '.id > 0' <<<"$r" >/dev/null
 echo "OK  $paso"

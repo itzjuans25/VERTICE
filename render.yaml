@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: techstore-auth
+    name: remata-auth
     runtime: docker
     region: oregon
     plan: free
@@ -8,7 +8,7 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - fromGroup: techstore-config
+      - fromGroup: remata-config
       - key: DB_HOST
         sync: false
       - key: DB_NAME
@@ -26,7 +26,7 @@ services:
       - key: CORS_ALLOWED_ORIGINS
         sync: false
   - type: web
-    name: techstore-catalogo
+    name: remata-catalogo
     runtime: docker
     region: oregon
     plan: free
@@ -34,7 +34,7 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - fromGroup: techstore-config
+      - fromGroup: remata-config
       - key: DB_HOST
         sync: false
       - key: DB_NAME
@@ -54,7 +54,7 @@ services:
       - key: AUTH_SERVICE_URL
         sync: false
   - type: web
-    name: techstore-notificaciones
+    name: remata-notificaciones
     runtime: docker
     region: oregon
     plan: free
@@ -62,7 +62,7 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - fromGroup: techstore-config
+      - fromGroup: remata-config
       - key: DB_HOST
         sync: false
       - key: DB_NAME
@@ -94,13 +94,13 @@ services:
       - key: MAIL_FROM
         sync: false
       - key: MAIL_FROM_NAME
-        value: TechStore
+        value: Remata
       - key: SMS_PROVIDER
         value: log
       - key: NOTIFICACIONES_API_KEY
         generateValue: true
   - type: web
-    name: techstore-subastas
+    name: remata-subastas
     runtime: docker
     region: oregon
     plan: free
@@ -108,7 +108,7 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
-      - fromGroup: techstore-config
+      - fromGroup: remata-config
       - key: DB_HOST
         sync: false
       - key: DB_NAME
@@ -126,7 +126,7 @@ services:
       - key: CORS_ALLOWED_ORIGINS
         sync: false
 envVarGroups:
-  - name: techstore-config
+  - name: remata-config
     envVars:
       - key: JWT_SECRET
         generateValue: true

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import Logo from './Logo';
 import {
-  FaMicrochip,
   FaStore,
   FaShoppingCart,
   FaBox,
@@ -24,7 +24,7 @@ function Navbar({ user, onLogout, cartCount }) {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          <FaMicrochip aria-hidden="true" /> TechStore
+          <Logo />
         </Link>
 
         <button className="tech-nav-toggle" type="button" aria-controls="tech-navigation" aria-expanded={abierto} onClick={() => abrir(!abierto)}>

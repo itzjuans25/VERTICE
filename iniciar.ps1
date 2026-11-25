@@ -3,6 +3,7 @@ param([switch]$Docker, [switch]$SinNavegador, [switch]$Recompilar)
 
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
+Write-Host "Remata | Tienda y subastas"
 . (Join-Path $PSScriptRoot 'scripts/windows-local.ps1')
 
 if ($Docker) {

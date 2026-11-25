@@ -1,3 +1,4 @@
+import { tituloMarca } from '../marca';
 import React, { useEffect, useState } from 'react';
 import { authApi } from '../api/authApi';
 import './Auth.css';
@@ -5,7 +6,7 @@ import './Auth.css';
 export default function CambiarClave({ cerrarSesion }) {
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
-  useEffect(() => { document.title = 'Cambiar contraseña | TechStore'; }, []);
+  useEffect(() => { document.title = tituloMarca('Cambiar contraseña'); }, []);
 
   async function guardar(evento) {
     evento.preventDefault();
