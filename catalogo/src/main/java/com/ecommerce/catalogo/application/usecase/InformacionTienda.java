@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,12 +45,16 @@ public class InformacionTienda {
     }
 
     public Cotizacion cotizar(BigDecimal precioCop) {
+        return cotizarSiDisponible(precioCop).orElseThrow(TasaNoDisponibleException::new);
+    }
+
+    public Optional<Cotizacion> cotizarSiDisponible(BigDecimal precioCop) {
         Tasa actual = tasa;
         if (actual == null || !reloj.instant().isBefore(actual.consultada().plusSeconds(21600))) {
-            throw new TasaNoDisponibleException();
+            return Optional.empty();
         }
-        return new Cotizacion(precioCop, precioCop.multiply(actual.valor()).setScale(2, RoundingMode.HALF_UP),
-                actual.valor(), actual.fecha(), "Frankfurter", actual.consultada());
+        return Optional.of(new Cotizacion(precioCop, precioCop.multiply(actual.valor()).setScale(2, RoundingMode.HALF_UP),
+                actual.valor(), actual.fecha(), "Frankfurter", actual.consultada()));
     }
 
     public Entrega estimarEntrega(int diasHabiles) {

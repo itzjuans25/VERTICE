@@ -51,7 +51,7 @@ public class UseCaseConfig {
                                        PlatformTransactionManager gestor) {
         var caso = new CompraUseCase(compraGateway, carritoGateway, productoGateway, usuarioGateway,
                 notificacionGateway, confirmacion);
-        return transaccional(CompraService.class, caso, gestor, new String[]{"realizarCompra", "cambiarEstado"},
+        return transaccional(CompraService.class, caso, gestor, new String[]{"realizarCompra", "cambiarEstado", "pagarSimulado"},
                 "obtenerComprasPorUsuario", "obtenerCompraPorId", "obtenerTodasLasCompras");
     }
 

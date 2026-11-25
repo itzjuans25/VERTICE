@@ -5,6 +5,12 @@
     handle_path /catalogo/* {
         reverse_proxy catalogo:9092
     }
+    handle_path /servicios/subastas/* {
+        reverse_proxy subastas:9094
+    }
+    handle_path /servicios/notificaciones/* {
+        reverse_proxy notificaciones:9093
+    }
     handle {
         reverse_proxy frontend:8080
     }

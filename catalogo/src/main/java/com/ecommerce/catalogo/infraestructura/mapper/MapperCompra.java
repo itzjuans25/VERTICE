@@ -22,7 +22,9 @@ public class MapperCompra {
                 .map(this::mapItemCarritoFromData)
                 .collect(Collectors.toList()),
             data.getTotal(),
-            data.getEstado()
+            data.getEstado(),
+            data.getRequierePagoSimulado(),
+            data.getPagoSimuladoEn()
         );
     }
 
@@ -35,6 +37,8 @@ public class MapperCompra {
         data.setFechaCompra(compra.getFechaCompra());
         data.setTotal(compra.getTotal());
         data.setEstado(compra.getEstado());
+        data.setRequierePagoSimulado(compra.getRequierePagoSimulado());
+        data.setPagoSimuladoEn(compra.getPagoSimuladoEn());
         
         if (compra.getItems() != null) {
             data.setItems(compra.getItems().stream()

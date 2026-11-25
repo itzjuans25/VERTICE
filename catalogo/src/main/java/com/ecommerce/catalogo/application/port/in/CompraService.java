@@ -14,4 +14,5 @@ public interface CompraService {
 
     List<Compra> obtenerTodasLasCompras();
     Compra cambiarEstado(Long id, String estado);
+    Compra pagarSimulado(Long id, Long propietario);
 }

@@ -5,6 +5,7 @@ import { subastasApi as api } from '../api/subastasApi';
 import './Subastas.css';
 import { categoriasMercado, nombresCategorias as categorias, categoriaLote, categoriaPorSlug, vitrinas } from '../categorias';
 import { Cierre, cop, tituloDelLote, TarjetaMercado, FiltrosMercado, Paginacion, EstadoMercado } from './MercadoUI';
+import PagoSimulado from './PagoSimulado';
 
 
 const estados = { ACTIVA: 'Activa', PROGRAMADA: 'Programada', CERRADA: 'Cerrada', ADJUDICADA: 'Adjudicada', CANCELADA: 'Cancelada' };
@@ -192,20 +193,6 @@ export function Detalle({ user }) {
     }
   }
 
-  async function pagar() {
-    setEnviando(true);
-    setError('');
-    try {
-      await api.pagar(id);
-      setAviso('Pago simulado confirmado.');
-      consulta.recargar();
-    } catch (fallo) {
-      setError(fallo.message);
-    } finally {
-      setEnviando(false);
-    }
-  }
-
   return <main id="principal" className="auction-page">
     <Link to="/subastas">Volver a subastas</Link>
     <EstadoConsulta consulta={consulta} />
@@ -249,7 +236,7 @@ export function Detalle({ user }) {
             </button>
             {oferta < lote.pujaMinima && <p role="status">La puja mínima cambió. Edita la oferta.</p>}
           </fieldset>}
-          {detalle.adjudicacion && (detalle.adjudicacion.pagada ? <p>Pago simulado registrado.</p> : <button className="primary" disabled={enviando} onClick={pagar}>Confirmar pago simulado</button>)}
+          {detalle.adjudicacion && <PagoSubasta orden={detalle.adjudicacion} cotizacion={consultaUsd.datos} />}
           {aviso && <p role="status">{aviso}</p>}
           {error && <p role="alert" className="auction-error">{error}</p>}
         </section>
@@ -267,9 +254,24 @@ export function Detalle({ user }) {
   </main>;
 }
 
+function ReferenciaUsd({ monto, cotizacion }) {
+  return <small className="auction-muted">{cotizacion?.disponible
+    ? '≈ ' + usd.format(monto * cotizacion.tasa) + ' · Frankfurter'
+    : 'Referencia USD no disponible'}</small>;
+}
+
+function PagoSubasta({ orden, cotizacion }) {
+  return <PagoSimulado referencia={'SIM-SUBASTA-' + orden.id} monto={orden.monto}
+    referenciaUsd={cotizacion?.disponible ? orden.monto * cotizacion.tasa : null}
+    pagadoEn={orden.pagada} confirmar={async () => (await api.pagar(orden.loteId)).pagada} />;
+}
+
 export function MisPujas({ vista }) {
   const consulta = useConsulta(api.mias, true);
   const entrega = useConsulta(api.entrega);
+  const primerLote = vista === 'ganadas' ? consulta.datos?.adjudicaciones[0]?.loteId : consulta.datos?.pujas[0]?.loteId;
+  const cotizar = useCallback(() => primerLote ? api.precioUsd(primerLote) : Promise.resolve(null), [primerLote]);
+  const cotizacion = useConsulta(cotizar);
   return <main id="principal" className="auction-page">
     <Titulo>{vista === 'ganadas' ? 'Subastas ganadas' : 'Mis pujas'}</Titulo>
     <EstadoConsulta consulta={consulta} />
@@ -277,12 +279,19 @@ export function MisPujas({ vista }) {
       {vista !== 'pujas' && <>
       {!!consulta.datos.adjudicaciones.length && <EntregaLote estado={entrega} />}
       <div className="auction-panel">{consulta.datos.adjudicaciones.length ? <ul className="auction-records">
-        {consulta.datos.adjudicaciones.map(orden => <li key={orden.id}><Link to={'/subastas/' + orden.loteId}>Lote {orden.loteId}</Link><span>{cop.format(orden.monto)} · {orden.pagada ? 'Pago simulado confirmado' : 'Pendiente de pago simulado'}</span></li>)}
+        {consulta.datos.adjudicaciones.map(orden => <li key={orden.id}>
+          <Link to={'/subastas/' + orden.loteId}>Lote {orden.loteId}</Link>
+          <PagoSubasta orden={orden} cotizacion={cotizacion.datos} /></li>)}
       </ul> : <p>Aún no tienes adjudicaciones.</p>}</div>
       </>}
       {vista !== 'ganadas' && <><h2>Historial de pujas</h2>
       <div className="auction-panel">{consulta.datos.pujas.length ? <ul className="auction-records">
-        {consulta.datos.pujas.map((puja, index) => <li key={index}><Link to={'/subastas/' + puja.loteId}>Lote {puja.loteId}</Link><span>{cop.format(puja.monto)} · {fecha(puja.fecha)}</span></li>)}
+        {consulta.datos.pujas.map((puja, index) => <li key={index}>
+          <Link to={'/subastas/' + puja.loteId}>Lote {puja.loteId}</Link>
+          <div className="auction-adjudicacion"><strong>{cop.format(puja.monto)} COP</strong>
+            <ReferenciaUsd monto={puja.monto} cotizacion={cotizacion.datos} />
+            <span>{fecha(puja.fecha)}</span>
+          </div></li>)}
       </ul> : <p>Todavía no has pujado. <Link to="/subastas">Ver subastas</Link></p>}</div></>}
     </>}
   </main>;

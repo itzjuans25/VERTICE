@@ -55,6 +55,13 @@ try {
     $paso='Confirmar compra'; $compra=Consultar "$catApi/compras/realizar" $null $headers
     if (-not $compra.id -or $compra.estado -ne 'COMPLETADA') { throw 'Pedido inválido' }
     Write-Host "OK  $paso. Pedido sintético $($compra.id)"
+    $paso='Pago simulado de compra'
+    $pago=Consultar "$catApi/compras/$($compra.id)/pago" $null $headers
+    $repetido=Consultar "$catApi/compras/$($compra.id)/pago" $null $headers
+    if (-not $pago.pagoSimulado.pagadoEn -or
+        $pago.pagoSimulado.referencia -ne "SIM-COMPRA-$($compra.id)" -or
+        $pago.pagoSimulado.pagadoEn -ne $repetido.pagoSimulado.pagadoEn) { throw 'Pago simulado inválido' }
+    Write-Host "OK  $paso"
     $paso='Puja'; $subApi="$Subastas/api/ecommerce/subastas"
     $lote=Invoke-RestMethod "$subApi/$LoteId" -TimeoutSec 20
     if ($lote.lote.estado -ne 'ACTIVA') { throw 'Lote inactivo' }

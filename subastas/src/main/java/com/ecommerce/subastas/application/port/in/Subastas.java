@@ -29,6 +29,7 @@ public interface Subastas {
     Lote crear(Actor actor, Alta alta);
     Pagina listar(Filtro filtro);
     Detalle detalle(long id);
+    BigDecimal precioActual(long id);
     Lote pujar(Actor actor, long id, BigDecimal monto);
     MisPujas mias(Actor actor);
     Inicio inicio();

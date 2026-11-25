@@ -1,6 +1,7 @@
 package com.ecommerce.catalogo.application.usecase;
 
 import com.ecommerce.catalogo.domain.exception.CarritoVacioException;
+import com.ecommerce.catalogo.domain.exception.CompraNoEncontradaException;
 import com.ecommerce.catalogo.domain.exception.StockInsuficienteException;
 import com.ecommerce.catalogo.domain.model.Carrito;
 import com.ecommerce.catalogo.domain.model.Compra;
@@ -18,12 +19,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,6 +55,32 @@ class CompraUseCaseTest {
     void prepararCaso() {
         useCase = new CompraUseCase(compraGateway, carritoGateway, productoGateway, usuarioGateway,
                 notificacionGateway, Runnable::run);
+    }
+
+    @Test
+    void pagarCompraRegistraUnaSolaVezYDevuelveLaFechaPersistida() {
+        var pendiente = new Compra();
+        pendiente.setUsuarioId(1L);
+        pendiente.setRequierePagoSimulado(true);
+        pendiente.setEstado("COMPLETADA");
+        var pagada = new Compra();
+        pagada.setUsuarioId(1L);
+        pagada.setPagoSimuladoEn(Instant.parse("2026-01-01T12:00:00Z"));
+        when(compraGateway.buscarPorId(91L)).thenReturn(pendiente, pagada);
+
+        assertEquals(pagada.getPagoSimuladoEn(), useCase.pagarSimulado(91L, 1L).getPagoSimuladoEn());
+        assertEquals(pagada.getPagoSimuladoEn(), useCase.pagarSimulado(91L, 1L).getPagoSimuladoEn());
+        verify(compraGateway).registrarPagoSimulado(eq(91L), eq(1L), any(Instant.class));
+    }
+
+    @Test
+    void pagarCompraDeOtroUsuarioNoEscribe() {
+        var compra = new Compra();
+        compra.setUsuarioId(1L);
+        when(compraGateway.buscarPorId(91L)).thenReturn(compra);
+
+        assertThrows(CompraNoEncontradaException.class, () -> useCase.pagarSimulado(91L, 2L));
+        verify(compraGateway, never()).registrarPagoSimulado(any(Long.class), any(Long.class), any(Instant.class));
     }
 
     @Test

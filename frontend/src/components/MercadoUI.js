@@ -54,6 +54,7 @@ export function TarjetaMercado({ lote, producto, agregar, ocupado = false }) {
         <Cierre lote={lote} />
         <span>Incremento {cop.format(lote.incremento)}{lote.estado === 'ACTIVA' && ' · +2 min al pujar en los últimos 2 min'}</span>
         <p><strong>Por qué se subasta</strong><br />{lote.atributos?.['Por qué se subasta'] || 'Consulta el contexto en la ficha.'}</p>
+        {['CARROS', 'MOTOS'].includes(lote.categoria) && <span>Demostración académica · Sin traspaso real</span>}
       </div>}
     </div>
   </article>;

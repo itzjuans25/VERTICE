@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,4 +31,6 @@ public class CompraData {
     
     private BigDecimal total;
     private String estado;
+    private Boolean requierePagoSimulado;
+    private Instant pagoSimuladoEn;
 }

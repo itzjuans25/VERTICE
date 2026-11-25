@@ -4,6 +4,7 @@ import com.ecommerce.catalogo.application.port.in.CompraService;
 import com.ecommerce.catalogo.application.port.out.DespuesDeConfirmar;
 import com.ecommerce.catalogo.domain.exception.CarritoVacioException;
 import com.ecommerce.catalogo.domain.exception.CompraNoEncontradaException;
+import com.ecommerce.catalogo.domain.exception.DatosInvalidosException;
 import com.ecommerce.catalogo.domain.exception.StockInsuficienteException;
 import com.ecommerce.catalogo.domain.exception.UsuarioNoEncontradoException;
 import com.ecommerce.catalogo.domain.model.Carrito;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -100,6 +102,7 @@ public class CompraUseCase implements CompraService {
         compra.setUsuarioId(usuarioId);
         compra.setFechaCompra(LocalDateTime.now());
         compra.setEstado("COMPLETADA");
+        compra.setRequierePagoSimulado(true);
 
         List<ItemCarrito> items = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
@@ -121,6 +124,24 @@ public class CompraUseCase implements CompraService {
         compra.setItems(items);
         compra.setTotal(total);
         return compra;
+    }
+
+    @Override
+    public Compra pagarSimulado(Long id, Long propietario) {
+        Compra compra = obtenerCompraPorId(id);
+        if (!compra.getUsuarioId().equals(propietario)) {
+            throw new CompraNoEncontradaException(id);
+        }
+        if (compra.getPagoSimuladoEn() != null) return compra;
+        if (!Boolean.TRUE.equals(compra.getRequierePagoSimulado()) || "CANCELADA".equals(compra.getEstado())) {
+            throw new DatosInvalidosException("La compra no admite pago simulado");
+        }
+        compraGateway.registrarPagoSimulado(id, propietario, Instant.now());
+        Compra confirmada = obtenerCompraPorId(id);
+        if (confirmada.getPagoSimuladoEn() == null) {
+            throw new DatosInvalidosException("La compra no admite pago simulado");
+        }
+        return confirmada;
     }
 
     @Override
@@ -176,7 +197,7 @@ public class CompraUseCase implements CompraService {
                             + "<p><strong>Fecha:</strong> "
                             + compra.getFechaCompra().format(formatter) + "</p>"
                             + "<p><strong>Total:</strong> $" + compra.getTotal() + "</p>"
-                            + "<p>Gracias por tu compra.</p>")
+                            + "<p>Completa el pago simulado en la actividad de tu cuenta. Demostración académica.</p>")
                     .html(true)
                     .build();
 

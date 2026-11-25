@@ -6,6 +6,7 @@ import com.ecommerce.catalogo.infraestructura.mapper.MapperCompra;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -45,5 +46,10 @@ public class CompraDataGatewayImpl implements CompraGateway {
     @Override
     public boolean cambiarEstado(Long id, String anterior, String nuevo) {
         return repository.cambiarEstado(id, anterior, nuevo) == 1;
+    }
+
+    @Override
+    public void registrarPagoSimulado(Long id, Long propietario, Instant fecha) {
+        repository.registrarPagoSimulado(id, propietario, fecha);
     }
 }

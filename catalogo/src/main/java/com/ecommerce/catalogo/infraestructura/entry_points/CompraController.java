@@ -43,6 +43,11 @@ public class CompraController {
         return mapper.toResponse(compraService.realizarCompra(usuarioId(usuario)));
     }
 
+    @PostMapping("/{compraId}/pago")
+    public CompraResponse pagar(@AuthenticationPrincipal AuthenticatedUser usuario, @PathVariable Long compraId) {
+        return mapper.toResponse(compraService.pagarSimulado(compraId, usuarioId(usuario)));
+    }
+
     @GetMapping("/usuario/{usuarioId}")
     public List<CompraResponse> obtenerComprasPorUsuario(
             @AuthenticationPrincipal AuthenticatedUser usuario,

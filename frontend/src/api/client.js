@@ -6,6 +6,11 @@ export const SERVIDOR_LENTO_EVENT = 'servidor:lento';
 let solicitudesLentas = 0;
 let calentado = false;
 
+function expirarSesion() {
+  clearSession();
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+}
+
 function publicarDemora(cambio) {
   solicitudesLentas += cambio;
   if (typeof window !== 'undefined') {
@@ -114,6 +119,7 @@ export async function request(baseUrl, path, options = {}) {
     body,
     query,
     auth = true,
+    requiereSesion = false,
     timeoutMs = config.REQUEST_TIMEOUT_MS,
   } = options;
 
@@ -126,6 +132,10 @@ export async function request(baseUrl, path, options = {}) {
   }
 
   const token = auth ? getAccessToken() : null;
+  if (requiereSesion && !token) {
+    expirarSesion();
+    throw new ApiError('Inicia sesión para continuar.', { status: 401 });
+  }
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -154,8 +164,7 @@ export async function request(baseUrl, path, options = {}) {
       const payload = await parseResponse(response);
       if (!response.ok) {
         if (response.status === 401 && token) {
-          clearSession();
-          if (typeof window !== 'undefined') window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+          expirarSesion();
         }
         throw new ApiError(extractMessage(payload,response.status),{ status:response.status, payload });
       }

@@ -8,10 +8,8 @@ import { EstadoMercado } from './MercadoUI';
 import { useMercado } from './ExplorarMercado';
 
 const pestanas = [
-  ['/cuenta', 'Mis pujas', ['/mis-pujas']],
-  ['/cuenta/ganadas', 'Subastas ganadas', []],
+  ['/cuenta', 'Actividad', ['/mis-pujas', '/cuenta/ganadas', '/compras']],
   ['/cuenta/avisos', 'Avisos', []],
-  ['/compras', 'Compras', []],
   ['/cuenta/seguridad', 'Seguridad', ['/cuenta/contrasena']],
 ];
 
@@ -29,7 +27,7 @@ export default function Cuenta({ children }) {
 export function Avisos() {
   const [pagina, cambiar] = useState(0);
   const cargar = useCallback(() => request(config.NOTIFICACIONES_URL, '/api/notificaciones/mis-avisos',
-    { query: { pagina, tamano: 20 } }), [pagina]);
+    { query: { pagina, tamano: 20 }, requiereSesion: true }), [pagina]);
   const [estado, reintentar] = useMercado(cargar);
   useEffect(() => { document.title = tituloMarca('Avisos'); }, []);
   return <main className="tt-shell mercado-pagina"><h1>Avisos</h1>

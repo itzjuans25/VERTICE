@@ -88,7 +88,7 @@ public class ExplorarCatalogoController {
             if (maximo != null) criterios.add(cb.lessThanOrEqualTo(root.get("precio"), maximo));
             return cb.and(criterios.toArray(Predicate[]::new));
         };
-        var resultado = productos.findAll(filtro, PageRequest.of(pagina, tamano, sort));
+        var resultado = productos.findAll(filtro.and(ProductoDataJpaRepository.nombrePublico()), PageRequest.of(pagina, tamano, sort));
         return new Pagina(resultado.stream().map(mapper::toProducto).map(dto::toResponse).toList(),
                 resultado.getTotalElements(), resultado.getTotalPages(), pagina);
     }

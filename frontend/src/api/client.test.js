@@ -63,6 +63,22 @@ describe('cliente HTTP', () => {
     expect(options.headers.Authorization).toBeUndefined();
   });
 
+  test('pide reiniciar la sesión antes de consultar actividad con un token vencido', async () => {
+    saveSession(LOGIN);
+    const evento = jest.fn();
+    const futuro = Date.now() + 3601000;
+    const reloj = jest.spyOn(Date, 'now').mockReturnValue(futuro);
+    window.addEventListener(SESSION_EXPIRED_EVENT, evento);
+    try {
+      await expect(request('http://api.local', '/mias', { requiereSesion: true })).rejects.toMatchObject({ status: 401 });
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(evento).toHaveBeenCalledTimes(1);
+    } finally {
+      reloj.mockRestore();
+      window.removeEventListener(SESSION_EXPIRED_EVENT, evento);
+    }
+  });
+
   test('convierte los errores del backend en ApiError', async () => {
     global.fetch.mockResolvedValue(
       jsonResponse({ message: 'Stock insuficiente' }, 400)

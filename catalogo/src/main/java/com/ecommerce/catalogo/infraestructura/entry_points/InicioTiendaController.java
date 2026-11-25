@@ -6,6 +6,7 @@ import com.ecommerce.catalogo.infraestructura.entry_points.mapper.TiendaDtoMappe
 import com.ecommerce.catalogo.infraestructura.mapper.MapperProducto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +27,7 @@ class InicioTiendaController {
     synchronized Inicio inicio() {
         long ahora = System.nanoTime();
         if (resumen == null || ahora - actualizado >= Duration.ofSeconds(30).toNanos()) {
-            var recientes = productos.findTop8ByEstadoPublicacionOrderByIdDesc("ACTIVA").stream()
+            var recientes = productos.recientesPublicos(PageRequest.of(0, 8)).stream()
                     .map(mapper::toProducto).map(dto::toResponse).toList();
             var categorias = productos.contarPorCategoria().stream()
                     .map(c -> new Categoria(c.getCategoria(), c.getTotal())).toList();

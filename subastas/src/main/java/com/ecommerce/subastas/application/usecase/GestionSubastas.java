@@ -45,6 +45,11 @@ public class GestionSubastas implements Subastas {
     }
 
     @Override
+    public BigDecimal precioActual(long id) {
+        return buscar(id, false).precioActual();
+    }
+
+    @Override
     public Lote pujar(Actor actor, long id, BigDecimal monto) {
         return repo.transaccion(() -> {
             var lote = buscar(id, true);

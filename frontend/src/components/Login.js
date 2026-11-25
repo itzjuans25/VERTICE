@@ -40,7 +40,7 @@ function Login({ onLogin }) {
 
       onLogin(session.user);
       const volver = location.state?.volver;
-      const destino = typeof volver === 'string' && /^\/[a-z][a-z0-9/-]*$/.test(volver) ? volver : '/subastas';
+      const destino = typeof volver === 'string' && /^\/[a-z][a-z0-9/-]*(?:\?[^#\r\n]*)?$/.test(volver) ? volver : '/subastas';
       navigate(isAdmin(session.user) ? '/admin' : destino, {
         replace: true,
       });

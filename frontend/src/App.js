@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -32,8 +32,8 @@ function inicioPara(user) {
 }
 
 function RutaPrivada({ user, children }) {
-  const { pathname } = useLocation();
-  return user ? children : <Navigate to="/login" state={{ volver: pathname }} replace />;
+  const { pathname, search } = useLocation();
+  return user ? children : <Navigate to="/login" state={{ volver: pathname + search }} replace />;
 }
 
 function RutaAdmin({ user, children }) {
@@ -45,6 +45,18 @@ function RutaAdmin({ user, children }) {
 
 function RutaCuenta({ user, children }) {
   return <RutaPrivada user={user}><Cuenta>{children}</Cuenta></RutaPrivada>;
+}
+
+const vistasActividad = [['pujas', 'Pujas'], ['ganadas', 'Subastas ganadas'], ['compras', 'Compras']];
+
+function Actividad({ user }) {
+  const [params] = useSearchParams();
+  const elegida = params.get('vista');
+  const vista = vistasActividad.some(([id]) => id === elegida) ? elegida : 'pujas';
+  return <><nav className="mercado-tabs actividad-tabs" aria-label="Actividad de mi cuenta">
+    {vistasActividad.map(([id, titulo]) => <Link key={id} to={'/cuenta?vista=' + id}
+      aria-current={vista === id ? 'page' : undefined}>{titulo}</Link>)}
+  </nav>{vista === 'compras' ? <Orders user={user} /> : <MisPujas vista={vista} />}</>;
 }
 
 function App() {
@@ -155,9 +167,9 @@ function App() {
           <Route path="/productos/:id" element={<ProductDetail user={user} setCartCount={setCartCount} />} />
           <Route path="/cuenta/contrasena" element={<Navigate to="/cuenta/seguridad" replace />} />
           <Route path="/cuenta/seguridad" element={<RutaCuenta user={user}><Seguridad user={user}><CambiarClave cerrarSesion={handleLogout} /></Seguridad></RutaCuenta>} />
-          <Route path="/cuenta" element={<RutaCuenta user={user}><MisPujas vista="pujas" /></RutaCuenta>} />
+          <Route path="/cuenta" element={<RutaCuenta user={user}><Actividad user={user} /></RutaCuenta>} />
           <Route path="/cuenta/avisos" element={<RutaCuenta user={user}><Avisos /></RutaCuenta>} />
-          <Route path="/cuenta/ganadas" element={<RutaCuenta user={user}><MisPujas vista="ganadas" /></RutaCuenta>} />
+          <Route path="/cuenta/ganadas" element={<Navigate to="/cuenta?vista=ganadas" replace />} />
 
           <Route
             path="/carrito"
@@ -170,11 +182,7 @@ function App() {
 
           <Route
             path="/compras"
-            element={
-              <RutaCuenta user={user}>
-                <Orders user={user} />
-              </RutaCuenta>
-            }
+            element={<Navigate to="/cuenta?vista=compras" replace />}
           />
 
           <Route path="/" element={<Inicio />} />
@@ -182,7 +190,7 @@ function App() {
           <Route path="/categoria/:slug" element={<Categoria />} />
           <Route path="/subastas" element={<Subastas />} />
           <Route path="/subastas/:id" element={<Detalle user={user} />} />
-          <Route path="/mis-pujas" element={<RutaCuenta user={user}><MisPujas vista="pujas" /></RutaCuenta>} />
+          <Route path="/mis-pujas" element={<Navigate to="/cuenta?vista=pujas" replace />} />
           <Route path="/admin/subastas" element={<RutaAdmin user={user}><AdminSubastas /></RutaAdmin>} />
           <Route path="*" element={<NoEncontrado />} />
         </Routes>

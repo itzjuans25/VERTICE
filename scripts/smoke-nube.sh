@@ -62,6 +62,12 @@ paso='Confirmar compra'
 r=$(curl "${http[@]}" "${auth[@]}" -X POST "$c/compras/realizar")
 p=$(jq -er 'select(.estado == "COMPLETADA") | .id | select(. > 0)' <<<"$r")
 printf 'OK  %s. Pedido sintético %s\n' "$paso" "$p"
+paso='Pago simulado de compra'
+r=$(curl "${http[@]}" "${auth[@]}" -X POST "$c/compras/$p/pago")
+fecha=$(jq -er --arg ref "SIM-COMPRA-$p" 'select(.pagoSimulado.referencia == $ref) | .pagoSimulado.pagadoEn' <<<"$r")
+r=$(curl "${http[@]}" "${auth[@]}" -X POST "$c/compras/$p/pago")
+jq -e --arg fecha "$fecha" '.pagoSimulado.pagadoEn == $fecha' <<<"$r" >/dev/null
+echo "OK  $paso"
 paso=Puja
 s="$s/api/ecommerce/subastas/$lote"
 r=$(curl "${http[@]}" "$s")

@@ -1,5 +1,6 @@
 package com.ecommerce.catalogo.infraestructura.entry_points.mapper;
 
+import com.ecommerce.catalogo.application.usecase.InformacionTienda;
 import com.ecommerce.catalogo.domain.model.Carrito;
 import com.ecommerce.catalogo.domain.model.Compra;
 import com.ecommerce.catalogo.domain.model.ItemCarrito;
@@ -10,13 +11,16 @@ import com.ecommerce.catalogo.infraestructura.entry_points.dto.ItemCarritoRespon
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.ProductoRequest;
 import com.ecommerce.catalogo.infraestructura.entry_points.dto.ProductoResponse;
 import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class TiendaDtoMapper {
+    private final InformacionTienda informacion;
 
     public Producto toDomain(ProductoRequest request) {
         Producto producto = new Producto();
@@ -71,7 +75,10 @@ public class TiendaDtoMapper {
                 compra.getFechaCompra(),
                 toItemResponses(compra.getItems()),
                 compra.getTotal(),
-                compra.getEstado());
+                compra.getEstado(),
+                Boolean.TRUE.equals(compra.getRequierePagoSimulado()) && !"CANCELADA".equals(compra.getEstado())
+                        ? new CompraResponse.Pago("SIM-COMPRA-" + compra.getId(), compra.getPagoSimuladoEn()) : null,
+                informacion.cotizarSiDisponible(compra.getTotal()).map(InformacionTienda.Cotizacion::precioUsd).orElse(null));
     }
 
     private static List<ItemCarritoResponse> toItemResponses(List<ItemCarrito> items) {

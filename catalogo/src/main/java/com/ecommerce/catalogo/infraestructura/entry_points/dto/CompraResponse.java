@@ -2,6 +2,7 @@ package com.ecommerce.catalogo.infraestructura.entry_points.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 public record CompraResponse(
@@ -10,5 +11,8 @@ public record CompraResponse(
         LocalDateTime fechaCompra,
         List<ItemCarritoResponse> items,
         BigDecimal total,
-        String estado) {
+        String estado,
+        Pago pagoSimulado,
+        BigDecimal referenciaUsd) {
+    public record Pago(String referencia, Instant pagadoEn) {}
 }

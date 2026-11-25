@@ -98,7 +98,10 @@ export const catalogoApi = {
       return request(BASE, `${COMPRAS}/realizar`, { method: 'POST' });
     },
     listarPorUsuario(usuarioId) {
-      return request(BASE, `${COMPRAS}/usuario/${usuarioId}`);
+      return request(BASE, `${COMPRAS}/usuario/${usuarioId}`, { requiereSesion: true });
+    },
+    pagar(compraId) {
+      return request(BASE, `${COMPRAS}/${compraId}/pago`, { method: 'POST', requiereSesion: true });
     },
     obtener(compraId) {
       return request(BASE, `${COMPRAS}/${compraId}`);

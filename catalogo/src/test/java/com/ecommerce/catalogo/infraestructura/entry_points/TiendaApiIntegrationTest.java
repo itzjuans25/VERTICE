@@ -98,6 +98,27 @@ class TiendaApiIntegrationTest {
     }
 
     @Test
+    void excluyeFixturesDeDescubrimientoPeroConservaSusReferencias() throws Exception {
+        var visible = crearProducto("Reloj de taller", "10000", 1);
+        long internoId = 0;
+        for (String nombre : java.util.List.of("k6-reloj", "QA-reloj", "Ensayo-reloj", "Equipo de prueba reloj")) {
+            var interno = crearProducto(nombre, "90000", 1);
+            interno.setMarca("Banco de pruebas");
+            productoRepository.save(interno);
+            internoId = interno.getId();
+        }
+        mockMvc.perform(get("/api/ecommerce/producto/explorar").param("q", "reloj"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(1))
+                .andExpect(jsonPath("$.items[0].id").value(visible.getId()));
+        mockMvc.perform(get("/api/ecommerce/inicio")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(1))
+                .andExpect(jsonPath("$.destacables.length()").value(1));
+        mockMvc.perform(get("/api/ecommerce/producto/marcas")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+        mockMvc.perform(get("/api/ecommerce/producto/{id}", internoId)).andExpect(status().isOk());
+    }
+
+    @Test
     void validaCondicionYGuardaEspecificacionesDeUnUsado() throws Exception {
         String ruta = "/api/ecommerce/producto";
         String admin = bearer(99L, "ADMIN");
@@ -267,6 +288,32 @@ class TiendaApiIntegrationTest {
                         .header("Authorization", bearer(1L, "USER")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isEmpty());
+    }
+
+    @Test
+    void pagoDeCompraEsIdempotenteYAisladoPorUsuario() throws Exception {
+        var producto = crearProducto("Reloj", "10.00", 1);
+        simularUsuario(1L, "USER");
+        String dueño = bearer(1L, "USER");
+        mockMvc.perform(post("/api/ecommerce/carrito/agregar").header("Authorization", dueño)
+                        .contentType(MediaType.APPLICATION_JSON).content(agregarItemJson(producto.getId(), 1)))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/ecommerce/compras/realizar").header("Authorization", dueño))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.pagoSimulado.pagadoEn").isEmpty());
+        long id = compraRepository.findAll().get(0).getId();
+        String ruta = "/api/ecommerce/compras/{id}/pago";
+        mockMvc.perform(post(ruta, id).header("Authorization", bearer(2L, "USER")))
+                .andExpect(status().isNotFound());
+        String pago = mockMvc.perform(post(ruta, id).header("Authorization", dueño))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pagoSimulado.referencia").value("SIM-COMPRA-" + id))
+                .andExpect(jsonPath("$.pagoSimulado.pagadoEn").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+        var instante = objectMapper.readTree(pago).at("/pagoSimulado/pagadoEn").asText();
+        mockMvc.perform(post(ruta, id).header("Authorization", dueño)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.pagoSimulado.pagadoEn").value(instante));
+        assertEquals(0, productoRepository.findById(producto.getId()).orElseThrow().getStock());
+        assertEquals(1, compraRepository.count());
     }
 
     @Test

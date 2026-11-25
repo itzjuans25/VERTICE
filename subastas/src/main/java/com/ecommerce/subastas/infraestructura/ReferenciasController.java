@@ -24,7 +24,7 @@ class ReferenciasController {
     @GetMapping("/lote/{id}/precio-usd")
     @Operation(summary="Referencia de la última puja en USD usando el caché de Frankfurter")
     ReferenciasSubastas.Cotizacion precio(@PathVariable long id) {
-        return referencias.cotizar(subastas.detalle(id).lote().precioActual());
+        return referencias.cotizar(subastas.precioActual(id));
     }
 
     @GetMapping("/entrega")

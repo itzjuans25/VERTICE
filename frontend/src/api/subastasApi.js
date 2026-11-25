@@ -14,6 +14,6 @@ export const subastasApi = {
   crear: body => call('', { method: 'POST', body }),
   pujar: (id, monto) => call('/' + id + '/pujas', { method: 'POST', body: { monto } }),
   cancelar: id => call('/' + id + '/cancelar', { method: 'POST' }),
-  mias: () => call('/mias'),
-  pagar: id => call('/' + id + '/pago', { method: 'POST' }),
+  mias: () => call('/mias', { requiereSesion: true }),
+  pagar: id => call('/' + id + '/pago', { method: 'POST', requiereSesion: true }),
 };

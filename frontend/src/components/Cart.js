@@ -164,7 +164,7 @@ function Cart({ setCartCount }) {
   if (compraConfirmada) {
     return <main className="tt-shell tt-section">
       <h1>Compra #{compraConfirmada} confirmada</h1>
-      <p role="status">El aviso de compra se procesa en segundo plano.</p>
+      <p role="status">El pedido quedó registrado. Completa el pago simulado en tu actividad.</p>
       <div className="tt-acciones">
         <Link className="tt-button" to="/compras">Ver mis compras</Link>
         <Link className="tt-button tt-secondary" to="/productos">Seguir explorando</Link>

@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -20,4 +21,6 @@ public class Compra {
     private List<ItemCarrito> items;
     private BigDecimal total;
     private String estado; // COMPLETADA, PENDIENTE, CANCELADA
+    private Boolean requierePagoSimulado;
+    private Instant pagoSimuladoEn;
 }

@@ -27,7 +27,7 @@ public class RepositorioJdbc implements RepositorioSubastas {
     private static final String CURADURIA_PUBLICA = """
              AND NULLIF(BTRIM(CAST(atributos AS jsonb)->>'Por qué se subasta'), '') IS NOT NULL
              AND (CAST(atributos AS jsonb)->>'Visibilidad') IS DISTINCT FROM 'Interna'
-             AND titulo !~* '^Ensayo curado[[:space:]]*[·–-]'
+             AND titulo !~* '^(k6-|qa-|ensayo-|ensayo curado[[:space:]]*[·–-])'
             """;
     private final JdbcClient jdbc;
     private final TransactionTemplate tx;

@@ -4,6 +4,7 @@ import './Orders.css';
 import { catalogoApi } from '../api/catalogoApi';
 import { Link } from 'react-router-dom';
 import { FaBoxOpen } from 'react-icons/fa';
+import PagoSimulado from './PagoSimulado';
 
 function Orders({ user }) {
   useEffect(() => { document.title = tituloMarca('Mis compras'); }, []);
@@ -87,6 +88,10 @@ function Orders({ user }) {
                 </div>
               </div>
 
+              {compra.pagoSimulado && <PagoSimulado
+                referencia={compra.pagoSimulado.referencia} monto={compra.total}
+                referenciaUsd={compra.referenciaUsd} pagadoEn={compra.pagoSimulado.pagadoEn}
+                confirmar={async () => (await catalogoApi.compras.pagar(compra.id)).pagoSimulado.pagadoEn} />}
               <div className="order-items">
                 <h4>Productos</h4>
                 {(compra.items || []).map((item, index) => (
